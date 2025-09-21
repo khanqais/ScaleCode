@@ -57,18 +57,15 @@ function ProblemDetailPageContent() {
   const router = useRouter()
   const params = useParams()
   
-  // Problem data states
   const [problem, setProblem] = useState<Problem | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   
-  // UI states
   const [copied, setCopied] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   
-  // Revision modal states
   const [showRevisionModal, setShowRevisionModal] = useState(false)
 
   useEffect(() => {
@@ -266,7 +263,6 @@ function ProblemDetailPageContent() {
       <Navbar />
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        {/* Header */}
         <div className="flex items-start justify-between mb-6 sm:mb-8 gap-4">
           <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
             <button
@@ -302,7 +298,6 @@ function ProblemDetailPageContent() {
             </div>
           </div>
 
-          {/* Desktop Action Buttons */}
           <div className="hidden sm:flex items-center gap-2 lg:gap-3 flex-shrink-0">
             <button
               onClick={handleStartRevision}
@@ -330,7 +325,6 @@ function ProblemDetailPageContent() {
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="sm:hidden flex-shrink-0 relative">
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -374,7 +368,6 @@ function ProblemDetailPageContent() {
           </div>
         </div>
 
-        {/* Mobile Primary Action Button */}
         <div className="sm:hidden mb-6">
           <button
             onClick={handleStartRevision}
@@ -385,7 +378,6 @@ function ProblemDetailPageContent() {
           </button>
         </div>
 
-        {/* Metadata */}
         <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-4 sm:mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="flex items-center gap-3">
@@ -412,7 +404,6 @@ function ProblemDetailPageContent() {
           </div>
         </div>
 
-        {/* Problem Statement */}
         <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 mb-4 sm:mb-6">
           <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
             <FileText className="text-blue-500 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />
@@ -426,7 +417,6 @@ function ProblemDetailPageContent() {
           </div>
         </div>
 
-        {/* Intuition */}
         {problem.intuition && (
           <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 mb-4 sm:mb-6">
             <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
@@ -442,7 +432,6 @@ function ProblemDetailPageContent() {
           </div>
         )}
 
-        {/* Solution Code */}
         <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 mb-4 sm:mb-6">
           <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -476,7 +465,6 @@ function ProblemDetailPageContent() {
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Quick Actions</h3>
           <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
@@ -507,7 +495,6 @@ function ProblemDetailPageContent() {
         </div>
       </div>
 
-      {/* Click outside to close mobile menu */}
       {showMobileMenu && (
         <div 
           className="sm:hidden fixed inset-0 z-5" 
@@ -515,7 +502,7 @@ function ProblemDetailPageContent() {
         />
       )}
 
-      {/* Delete Confirmation Modal */}
+      
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-4 sm:p-6 m-4">
@@ -558,7 +545,7 @@ function ProblemDetailPageContent() {
         </div>
       )}
 
-      {/* Revision Modal */}
+     
       {showRevisionModal && (
         <RevisionModal
           isOpen={showRevisionModal}

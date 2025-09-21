@@ -36,7 +36,6 @@ const Hero = () => {
       animate="visible"
       variants={containerVariants}
     >
-      {/* App Icon */}
       <motion.div 
         className="mb-8 sm:mb-12"
         variants={itemVariants}
@@ -51,7 +50,6 @@ const Hero = () => {
         </div>
       </motion.div>
 
-      {/* Main Heading */}
       <motion.h1 
         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black mb-6 sm:mb-8 max-w-4xl leading-tight"
         variants={itemVariants}
@@ -61,7 +59,6 @@ const Hero = () => {
         <span className="sm:hidden"> </span>solutions effectively.
       </motion.h1>
 
-      {/* Subheading */}
       <motion.p 
         className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 sm:mb-12 max-w-2xl leading-relaxed px-4"
         variants={itemVariants}
@@ -71,8 +68,6 @@ const Hero = () => {
         <br className="hidden sm:block" />
         <span className="sm:hidden"> </span>Never lose track of your progress again.
       </motion.p>
-
-      {/* CTA Buttons */}
       <motion.div 
         className="flex flex-col sm:flex-row gap-4 items-center"
         variants={itemVariants}

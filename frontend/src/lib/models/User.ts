@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexing for performance
+
 userSchema.index({ clerkId: 1 });
 userSchema.index({ email: 1 });
 

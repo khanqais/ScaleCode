@@ -1,9 +1,6 @@
 const Problem = require('../models/Problem.js')
 const User = require('../models/User.js')
 
-// @desc    Create new problem
-// @route   POST /api/problems
-// @access  Private
 const createProblem = async (req, res) => {
   try {
     const { userId } = req.auth
@@ -14,13 +11,11 @@ const createProblem = async (req, res) => {
       intuition,
       difficulty,
       category,
-      
     } = req.body
 
     console.log('Creating problem for user:', userId)
     console.log('Request body:', { title, problemStatement: problemStatement?.substring(0, 50) + '...', difficulty, category })
 
-    // Validation
     if (!title || !problemStatement || !myCode || !difficulty || !category) {
       return res.status(400).json({
         success: false,
@@ -29,10 +24,8 @@ const createProblem = async (req, res) => {
       })
     }
 
-    // Ensure user exists in database before creating problem
     await ensureUserExists(userId)
 
-    // Create problem
     const problem = new Problem({
       userId,
       title: title.trim(),
@@ -47,7 +40,6 @@ const createProblem = async (req, res) => {
     const savedProblem = await problem.save()
     console.log('Problem saved successfully:', savedProblem._id)
 
-    // Update user stats
     await updateUserStats(userId)
 
     res.status(201).json({
@@ -59,7 +51,6 @@ const createProblem = async (req, res) => {
   } catch (error) {
     console.error('Create problem error:', error)
     
-    // Handle specific validation errors
     if (error.name === 'ValidationError') {
       return res.status(400).json({
         success: false,
@@ -77,9 +68,6 @@ const createProblem = async (req, res) => {
   }
 }
 
-// @desc    Get user's problems
-// @route   GET /api/problems
-// @access  Private
 const getProblems = async (req, res) => {
   try {
     const { userId } = req.auth
@@ -93,7 +81,6 @@ const getProblems = async (req, res) => {
       order = 'desc'
     } = req.query
 
-    // Build filter query
     const filter = { userId }
     if (category) filter.category = category
     if (difficulty) filter.difficulty = parseInt(difficulty)
@@ -104,7 +91,6 @@ const getProblems = async (req, res) => {
       ]
     }
 
-    // Build sort object
     const sort = {}
     sort[sortBy] = order === 'desc' ? -1 : 1
 
@@ -114,7 +100,7 @@ const getProblems = async (req, res) => {
       .sort(sort)
       .skip(skip)
       .limit(parseInt(limit))
-      .select('-myCode') // Exclude code for list view
+      .select('-myCode')
 
     const total = await Problem.countDocuments(filter)
 
@@ -142,9 +128,6 @@ const getProblems = async (req, res) => {
   }
 }
 
-// @desc    Get single problem
-// @route   GET /api/problems/:id
-// @access  Private
 const getProblem = async (req, res) => {
   try {
     const { userId } = req.auth
@@ -174,9 +157,6 @@ const getProblem = async (req, res) => {
   }
 }
 
-// @desc    Update problem
-// @route   PUT /api/problems/:id
-// @access  Private
 const updateProblem = async (req, res) => {
   try {
     const { userId } = req.auth
@@ -211,9 +191,6 @@ const updateProblem = async (req, res) => {
   }
 }
 
-// @desc    Delete problem
-// @route   DELETE /api/problems/:id
-// @access  Private
 const deleteProblem = async (req, res) => {
   try {
     const { userId } = req.auth
@@ -228,7 +205,6 @@ const deleteProblem = async (req, res) => {
       })
     }
 
-    // Update user stats
     await updateUserStats(userId)
 
     res.status(200).json({
@@ -246,16 +222,14 @@ const deleteProblem = async (req, res) => {
   }
 }
 
-// Helper function to ensure user exists in database
 const ensureUserExists = async (userId) => {
   try {
     let user = await User.findOne({ clerkId: userId })
     
     if (!user) {
-      // Create a basic user record if it doesn't exist
       user = new User({
         clerkId: userId,
-        email: '', // Will be updated when user syncs
+        email: '',
         firstName: '',
         lastName: '',
         stats: {
@@ -276,7 +250,6 @@ const ensureUserExists = async (userId) => {
   }
 }
 
-// Helper function to update user stats
 const updateUserStats = async (userId) => {
   try {
     const problems = await Problem.find({ userId })
@@ -285,7 +258,6 @@ const updateUserStats = async (userId) => {
       ? problems.reduce((sum, p) => sum + p.difficulty, 0) / totalProblems
       : 0
 
-    // Ensure user exists first
     await ensureUserExists(userId)
 
     await User.findOneAndUpdate(

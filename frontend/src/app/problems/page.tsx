@@ -25,18 +25,15 @@ function ProblemsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
-  // Modal states
   const [showRevisionModal, setShowRevisionModal] = useState(false)
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null)
   const [loadingProblem, setLoadingProblem] = useState(false)
   
-  // Data states
   const [allProblems, setAllProblems] = useState<Problem[]>([])
   const [filteredProblems, setFilteredProblems] = useState<Problem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   
-  // Filter states
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [searchTerm, setSearchTerm] = useState('')
   const [availableCategories, setAvailableCategories] = useState<string[]>([])
@@ -48,7 +45,6 @@ function ProblemsPageContent() {
   }, [user])
 
   useEffect(() => {
-    // Get category from URL parameters
     const categoryFromUrl = searchParams.get('category')
     if (categoryFromUrl) {
       const decodedCategory = decodeURIComponent(categoryFromUrl)
@@ -59,7 +55,6 @@ function ProblemsPageContent() {
   }, [searchParams])
 
   useEffect(() => {
-    // Filter problems based on selected category and search term
     let filtered = allProblems
 
     if (selectedCategory) {
@@ -99,7 +94,6 @@ function ProblemsPageContent() {
         const problems = result.data.problems || []
         setAllProblems(problems)
         
-        // Extract unique categories
         const categories = [...new Set(problems.map((p: Problem) => p.category))] as string[]
         setAvailableCategories(categories)
       } else {
@@ -113,7 +107,6 @@ function ProblemsPageContent() {
     }
   }
 
-  // Fetch complete problem data for revision
   const fetchProblemDetails = async (problemId: string) => {
     try {
       setLoadingProblem(true)
@@ -145,7 +138,6 @@ function ProblemsPageContent() {
   }
 
   const handleStartRevision = async (problem: Problem) => {
-    // Fetch complete problem data including problemStatement and myCode
     const fullProblem = await fetchProblemDetails(problem._id)
     
     if (fullProblem) {
@@ -212,7 +204,6 @@ function ProblemsPageContent() {
       <Navbar />
       
       <main className="max-w-7xl mx-auto p-6">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Problems</h1>
           <p className="text-gray-600">
@@ -223,7 +214,6 @@ function ProblemsPageContent() {
           </p>
         </div>
 
-        {/* Filters */}
         {availableCategories.length > 0 && (
           <div className="mb-8 space-y-4">
             {/* Search */}
@@ -238,7 +228,6 @@ function ProblemsPageContent() {
               />
             </div>
 
-            {/* Category Filters */}
             <div className="flex flex-wrap items-center gap-3">
               <Filter className="text-gray-500 h-5 w-5" />
               <span className="text-sm font-medium text-gray-700">Categories:</span>
@@ -268,7 +257,6 @@ function ProblemsPageContent() {
               )}
             </div>
 
-            {/* Active Filter Display */}
             {selectedCategory && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-blue-800 text-sm">
@@ -358,7 +346,6 @@ function ProblemsPageContent() {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex items-center justify-between gap-2">
                   <button
                     onClick={() => handleStartRevision(problem)}
@@ -382,7 +369,6 @@ function ProblemsPageContent() {
           </div>
         )}
 
-        {/* Loading overlay when fetching problem details */}
         {loadingProblem && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
             <div className="bg-white rounded-lg p-6 flex items-center gap-3">
@@ -392,7 +378,6 @@ function ProblemsPageContent() {
           </div>
         )}
 
-        {/* Revision Modal */}
         {showRevisionModal && selectedProblem && (
           <RevisionModal
             isOpen={showRevisionModal}

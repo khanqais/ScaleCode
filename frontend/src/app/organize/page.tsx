@@ -67,7 +67,7 @@ export default function OrganizePage() {
     }
   }, [])
 
-  // Sync user with backend (ensure user exists in MongoDB)
+  
   const syncUser = useCallback(async () => {
     try {
       console.log('Starting user sync...')
@@ -98,7 +98,7 @@ export default function OrganizePage() {
     }
   }, [getToken])
 
-  // Fetch user's problems
+  
   const fetchProblems = useCallback(async () => {
     try {
       const response = await fetch('/api/problems?limit=6', {
@@ -125,7 +125,7 @@ export default function OrganizePage() {
     }
   }, [])
 
-  // Fetch user's stats
+  
   const fetchStats = useCallback(async () => {
     try {
       const response = await fetch('/api/users/stats', {
@@ -209,7 +209,7 @@ export default function OrganizePage() {
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
-        {/* Error Message */}
+        
         {error && (
           <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
@@ -228,7 +228,7 @@ export default function OrganizePage() {
         )}
 
         <div className="mb-6 sm:mb-8">
-          {/* Header */}
+          
           <div className="flex flex-col gap-4 sm:gap-6 mb-6">
             <div className="text-center sm:text-left">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
@@ -239,7 +239,7 @@ export default function OrganizePage() {
               </p>
             </div>
             
-            {/* Action Buttons */}
+            
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button 
                 onClick={() => router.push('')}
@@ -262,7 +262,7 @@ export default function OrganizePage() {
             </div>
           </div>
 
-          {/* Stats Grid */}
+         
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
             <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
@@ -284,15 +284,7 @@ export default function OrganizePage() {
               </div>
             </div>
 
-            {/* <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Avg Difficulty</p>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{stats.averageDifficulty}/10</p>
-                </div>
-                <Star className="text-yellow-500" size={20} />
-              </div>
-            </div> */}
+
 
             <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
@@ -305,7 +297,7 @@ export default function OrganizePage() {
             </div>
           </div>
 
-          {/* Category Breakdown */}
+         
           {stats.totalProblems > 0 && Object.keys(stats.categoryStats).length > 0 && (
             <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-6 sm:mb-8">
               <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-4">Category Breakdown</h3>
@@ -329,7 +321,7 @@ export default function OrganizePage() {
           )}
         </div>
 
-        {/* Recent Problems Section */}
+        
         {problems.length === 0 ? (
           <div className="text-center py-12 sm:py-20 px-4">
             <Code size={60} className="sm:w-20 sm:h-20 mx-auto text-gray-300 mb-4 sm:mb-6" />

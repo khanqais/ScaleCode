@@ -2,21 +2,15 @@ const User = require('../models/User.js')
 const Problem = require('../models/Problem.js')
 const { clerkClient } = require('@clerk/clerk-sdk-node')
 
-// @desc    Ensure user exists in database
-// @route   POST /api/users/sync
-// @access  Private
 const syncUser = async (req, res) => {
   try {
     const { userId } = req.auth
     
-    // Get user details from Clerk
     const clerkUser = await clerkClient.users.getUser(userId)
     
-    // Check if user exists in database
     let user = await User.findOne({ clerkId: userId })
     
     if (!user) {
-      // Create new user
       user = new User({
         clerkId: userId,
         email: clerkUser.emailAddresses[0]?.emailAddress || '',
@@ -26,7 +20,6 @@ const syncUser = async (req, res) => {
       })
       await user.save()
     } else {
-      // Update existing user info
       user.email = clerkUser.emailAddresses[0]?.emailAddress || user.email
       user.firstName = clerkUser.firstName || user.firstName
       user.lastName = clerkUser.lastName || user.lastName
@@ -50,10 +43,6 @@ const syncUser = async (req, res) => {
   }
 }
 
-
-// @desc    Get user stats
-// @route   GET /api/users/stats
-// @access  Private
 const getUserStats = async (req, res) => {
   try {
     const { userId } = req.auth
@@ -71,7 +60,6 @@ const getUserStats = async (req, res) => {
     weekAgo.setDate(weekAgo.getDate() - 7)
     const recentActivity = problems.filter(p => p.createdAt > weekAgo).length
 
-    // Category distribution
     const categoryStats = problems.reduce((acc, problem) => {
       acc[problem.category] = (acc[problem.category] || 0) + 1
       return acc

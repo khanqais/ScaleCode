@@ -49,7 +49,6 @@ const problemSchema = new mongoose.Schema({
   timestamps: true
 })
 
-// Index for better query performance
 problemSchema.index({ userId: 1, createdAt: -1 })
 problemSchema.index({ category: 1 })
 problemSchema.index({ difficulty: 1 })

@@ -38,7 +38,6 @@ const Footer = () => {
     >
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <motion.div 
               className="flex items-center space-x-3 mb-4"
@@ -55,7 +54,6 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-gray-900 mb-4">Quick Links</h3>
             <ul className="space-y-3">
@@ -79,7 +77,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Support */}
           <div>
             <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
             <ul className="space-y-3">
@@ -104,14 +101,12 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-gray-200 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-600 text-sm">
               © {currentYear} ScaleCode. All rights reserved.
             </p>
             
-            {/* Social Links */}
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <p className="text-gray-600 text-sm mr-2">Follow us:</p>
               {[

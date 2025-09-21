@@ -135,7 +135,6 @@ const problemSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexing for performance
 problemSchema.index({ userId: 1, createdAt: -1 });
 problemSchema.index({ userId: 1, category: 1 });
 problemSchema.index({ userId: 1, difficulty: 1 });

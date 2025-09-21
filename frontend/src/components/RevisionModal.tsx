@@ -28,7 +28,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
   const [isMobile, setIsMobile] = useState(false)
   const [mobileView, setMobileView] = useState<'problem' | 'code'>('problem')
 
-  // Check if mobile on mount
+  
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
@@ -39,7 +39,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Timer effect
+  
   useEffect(() => {
     let interval: NodeJS.Timeout
 
@@ -54,7 +54,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
     }
   }, [isTimerRunning, startTime])
 
-  // Start timer when modal opens
+ 
   useEffect(() => {
     if (isOpen && !startTime) {
       const time = new Date()
@@ -63,7 +63,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
     }
   }, [isOpen, startTime])
 
-  // Reset state when modal closes
+  
   useEffect(() => {
     if (!isOpen) {
       setUserCode('')
@@ -99,7 +99,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
     setIsTimerRunning(false)
     setShowComparison(true)
     if (isMobile) {
-      setMobileView('code') // Switch to code view to show comparison
+      setMobileView('code')
     }
   }
 
@@ -112,7 +112,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
     setElapsedTime(0)
     setIsTimerRunning(true)
     if (isMobile) {
-      setMobileView('code') // Switch back to code view
+      setMobileView('code') 
     }
   }
 
@@ -131,7 +131,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white rounded-xl w-full max-w-7xl h-[95vh] sm:h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-        {/* Header */}
+        
         <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gray-50 gap-3 sm:gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 min-w-0">
             <h2 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{problem.title}</h2>
@@ -146,7 +146,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
           </div>
           
           <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4">
-            {/* Timer */}
+            
             <div className="flex items-center gap-2 bg-white px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-gray-200">
               <Clock className="text-gray-500 w-3 h-3 sm:w-4 sm:h-4" />
               <span className={`font-mono text-xs sm:text-sm ${isTimerRunning ? 'text-blue-600' : 'text-gray-600'}`}>
@@ -154,7 +154,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
               </span>
             </div>
             
-            {/* Action Buttons */}
+            
             <div className="flex items-center gap-2">
               <button
                 onClick={handleReset}
@@ -174,7 +174,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
           </div>
         </div>
 
-        {/* Mobile Tab Switcher */}
+        
         {isMobile && (
           <div className="flex bg-gray-100 p-1 mx-4 mt-4 rounded-lg">
             <button
@@ -201,10 +201,10 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
         )}
 
         <div className="flex flex-1 overflow-hidden">
-          {/* Desktop Layout */}
+         
           {!isMobile ? (
             <>
-              {/* Left Panel - Problem Statement */}
+              
               <div className="w-1/2 border-r border-gray-200 flex flex-col">
                 <div className="p-4 sm:p-6 border-b border-gray-200 bg-gray-50">
                   <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Problem Statement</h3>
@@ -217,7 +217,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
                     </pre>
                   </div>
                   
-                  {/* Intuition Section */}
+                  
                   {problem.intuition && (
                     <div className="mt-6 pt-6 border-t border-gray-200">
                       <button
@@ -241,7 +241,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
                 </div>
               </div>
 
-              {/* Right Panel - Code Editor */}
+             
               <div className="w-1/2 flex flex-col">
                 {!showComparison ? (
                   <CodingPhase 
@@ -264,7 +264,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
               </div>
             </>
           ) : (
-            /* Mobile Layout */
+            
             <div className="flex-1 flex flex-col">
               {mobileView === 'problem' ? (
                 <MobileProblemView 
@@ -304,7 +304,6 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
   )
 }
 
-// Coding Phase Component
 function CodingPhase({ 
   userCode, 
   setUserCode, 
@@ -338,7 +337,6 @@ function solution() {
           />
         </div>
         
-        {/* Fixed Submit Button Bar */}
         <div className="bg-gray-50 border-t border-gray-200 p-3 sm:p-4 flex items-center justify-between gap-3 flex-shrink-0">
           <div className="text-xs sm:text-sm text-gray-600">
             <span className="hidden sm:inline">Lines: {userCode.split('\n').length} | </span>
@@ -359,7 +357,6 @@ function solution() {
   )
 }
 
-// Comparison Phase Component
 function ComparisonPhase({ 
   userCode, 
   problem, 

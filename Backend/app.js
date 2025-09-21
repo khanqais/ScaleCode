@@ -5,13 +5,13 @@ const connectDB = require('./DB/connect.js')
 const problemRoutes = require('./routes/problemRoutes.js')
 const userRoutes = require('./routes/UserRoutes.js')
 
-// Load environment variables
+
 dotenv.config()
 
-// Initialize Express app
+
 const app = express()
 
-// Middleware
+
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
@@ -26,7 +26,7 @@ app.use('/api/users', userRoutes)
 
 
 
-// Global error handler
+
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).json({
