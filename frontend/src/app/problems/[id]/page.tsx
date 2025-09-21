@@ -20,7 +20,8 @@ import {
   Code2,
   Target,
   Lightbulb,
-  AlertTriangle
+  AlertTriangle,
+  MoreVertical
 } from 'lucide-react'
 
 interface Problem {
@@ -41,7 +42,7 @@ export default function ProblemDetailPage() {
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh]">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
+          <div className="animate-spin rounded-full h-24 w-24 sm:h-32 sm:w-32 border-b-2 border-black"></div>
         </div>
       </div>
     }>
@@ -65,6 +66,7 @@ function ProblemDetailPageContent() {
   const [copied, setCopied] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   
   // Revision modal states
   const [showRevisionModal, setShowRevisionModal] = useState(false)
@@ -81,7 +83,7 @@ function ProblemDetailPageContent() {
       setError('')
       const token = await getToken()
       
-      const response = await fetch(`http://localhost:5000/api/problems/${params.id}`, {
+      const response = await fetch(`/api/problems/${params.id}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -131,7 +133,7 @@ function ProblemDetailPageContent() {
       setDeleting(true)
       const token = await getToken()
       
-      const response = await fetch(`http://localhost:5000/api/problems/${problem._id}`, {
+      const response = await fetch(`/api/problems/${problem._id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -182,10 +184,14 @@ function ProblemDetailPageContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh] text-center p-6">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Please sign in to view this problem</h2>
-            <p className="text-gray-600 text-lg">You need to be signed in to access your coding solutions.</p>
+        <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-6">
+          <div className="max-w-md mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+              Please sign in to view this problem
+            </h2>
+            <p className="text-base sm:text-lg text-gray-600">
+              You need to be signed in to access your coding solutions.
+            </p>
           </div>
         </div>
       </div>
@@ -196,19 +202,19 @@ function ProblemDetailPageContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="max-w-5xl mx-auto p-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="animate-pulse">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
-              <div className="w-64 h-8 bg-gray-200 rounded"></div>
+            <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-lg"></div>
+              <div className="w-48 sm:w-64 h-6 sm:h-8 bg-gray-200 rounded"></div>
             </div>
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-              <div className="w-3/4 h-8 bg-gray-200 rounded mb-4"></div>
-              <div className="w-1/2 h-6 bg-gray-200 rounded mb-6"></div>
-              <div className="space-y-3">
-                <div className="w-full h-4 bg-gray-200 rounded"></div>
-                <div className="w-5/6 h-4 bg-gray-200 rounded"></div>
-                <div className="w-4/5 h-4 bg-gray-200 rounded"></div>
+            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-sm border border-gray-100">
+              <div className="w-3/4 h-6 sm:h-8 bg-gray-200 rounded mb-3 sm:mb-4"></div>
+              <div className="w-1/2 h-4 sm:h-6 bg-gray-200 rounded mb-4 sm:mb-6"></div>
+              <div className="space-y-2 sm:space-y-3">
+                <div className="w-full h-3 sm:h-4 bg-gray-200 rounded"></div>
+                <div className="w-5/6 h-3 sm:h-4 bg-gray-200 rounded"></div>
+                <div className="w-4/5 h-3 sm:h-4 bg-gray-200 rounded"></div>
               </div>
             </div>
           </div>
@@ -221,26 +227,28 @@ function ProblemDetailPageContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="max-w-5xl mx-auto p-6">
-          <div className="flex items-center gap-4 mb-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
             <button
               onClick={() => router.back()}
               className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
             >
-              <ArrowLeft size={24} />
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
-            <h1 className="text-3xl font-bold text-gray-900">Problem Not Found</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Problem Not Found</h1>
           </div>
           
-          <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
-            <AlertTriangle className="mx-auto text-red-500 mb-4" size={64} />
-            <h2 className="text-2xl font-bold text-red-900 mb-2">{error}</h2>
-            <p className="text-red-700 mb-6">This problem might have been deleted or you don&apos;t have access to it.</p>
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 sm:p-8 text-center">
+            <AlertTriangle className="mx-auto text-red-500 mb-4 w-12 h-12" />
+            <h2 className="text-xl sm:text-2xl font-bold text-red-900 mb-2">{error}</h2>
+            <p className="text-red-700 mb-4 sm:mb-6 text-sm sm:text-base">
+              This problem might have been deleted or you don&apos;t have access to it.
+            </p>
             <Link
               href="/problems"
-              className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors inline-flex items-center gap-2"
+              className="bg-red-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-red-700 transition-colors inline-flex items-center gap-2 text-sm sm:text-base"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               Back to Problems
             </Link>
           </div>
@@ -257,30 +265,32 @@ function ProblemDetailPageContent() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      <div className="max-w-5xl mx-auto p-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
+        <div className="flex items-start justify-between mb-6 sm:mb-8 gap-4">
+          <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
             <button
               onClick={() => router.back()}
-              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-200 rounded-lg transition-colors flex-shrink-0 mt-1"
             >
-              <ArrowLeft size={24} />
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{problem.title}</h1>
-              <div className="flex items-center gap-3 mt-2">
-                <span className="text-sm text-blue-600 bg-blue-100 px-3 py-1 rounded-full font-medium">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">
+                {problem.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span className="text-xs sm:text-sm text-blue-600 bg-blue-100 px-2 sm:px-3 py-1 rounded-full font-medium">
                   {problem.category}
                 </span>
-                <span className={`text-sm px-3 py-1 rounded-full font-medium ${getDifficultyColor(problem.difficulty)}`}>
+                <span className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium ${getDifficultyColor(problem.difficulty)}`}>
                   {getDifficultyLabel(problem.difficulty)} ({problem.difficulty}/10)
                 </span>
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`h-4 w-4 ${
+                      className={`h-3 w-3 sm:h-4 sm:w-4 ${
                         i < Math.floor(problem.difficulty / 2) 
                           ? 'text-yellow-400 fill-current' 
                           : 'text-gray-300'
@@ -292,51 +302,110 @@ function ProblemDetailPageContent() {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3">
+          {/* Desktop Action Buttons */}
+          <div className="hidden sm:flex items-center gap-2 lg:gap-3 flex-shrink-0">
             <button
               onClick={handleStartRevision}
-              className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium shadow-md hover:shadow-lg transform hover:scale-105"
+              className="flex items-center gap-2 px-3 lg:px-6 py-2 lg:py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium shadow-md hover:shadow-lg transform hover:scale-105 text-sm lg:text-base"
             >
-              <Play size={20} />
-              Start Revision
+              <Play className="w-4 h-4 lg:w-5 lg:h-5" />
+              <span className="hidden lg:inline">Start Revision</span>
+              <span className="lg:hidden">Revise</span>
             </button>
             
             <Link
               href={`/problems/${problem._id}/edit`}
-              className="flex items-center gap-2 px-4 py-3 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
             >
-              <Edit size={20} />
+              <Edit className="w-4 h-4" />
               Edit
             </Link>
             
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="flex items-center gap-2 px-4 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm"
             >
-              <Trash2 size={20} />
+              <Trash2 className="w-4 h-4" />
               Delete
             </button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="sm:hidden flex-shrink-0 relative">
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </button>
+            
+            {showMobileMenu && (
+              <div className="absolute right-0 top-12 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10 min-w-[160px]">
+                <button
+                  onClick={() => {
+                    handleStartRevision()
+                    setShowMobileMenu(false)
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 flex items-center gap-2"
+                >
+                  <Play className="w-4 h-4" />
+                  Start Revision
+                </button>
+                <Link
+                  href={`/problems/${problem._id}/edit`}
+                  className="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 flex items-center gap-2"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit Problem
+                </Link>
+                <button
+                  onClick={() => {
+                    setShowDeleteConfirm(true)
+                    setShowMobileMenu(false)
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete Problem
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Primary Action Button */}
+        <div className="sm:hidden mb-6">
+          <button
+            onClick={handleStartRevision}
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium shadow-md"
+          >
+            <Play className="w-5 h-5" />
+            Start Revision
+          </button>
         </div>
 
         {/* Metadata */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="flex items-center gap-3">
-              <Calendar className="text-gray-400" size={20} />
-              <div>
-                <p className="text-sm text-gray-600">Created</p>
-                <p className="font-medium text-gray-900">{formatDate(problem.createdAt)}</p>
+              <Calendar className="text-gray-400 flex-shrink-0 w-5 h-5" />
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-gray-600">Created</p>
+                <p className="font-medium text-gray-900 text-sm sm:text-base break-words">
+                  {formatDate(problem.createdAt)}
+                </p>
               </div>
             </div>
             
             {problem.updatedAt !== problem.createdAt && (
               <div className="flex items-center gap-3">
-                <Edit className="text-gray-400" size={20} />
-                <div>
-                  <p className="text-sm text-gray-600">Last Updated</p>
-                  <p className="font-medium text-gray-900">{formatDate(problem.updatedAt)}</p>
+                <Edit className="text-gray-400 flex-shrink-0 w-5 h-5" />
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm text-gray-600">Last Updated</p>
+                  <p className="font-medium text-gray-900 text-sm sm:text-base break-words">
+                    {formatDate(problem.updatedAt)}
+                  </p>
                 </div>
               </div>
             )}
@@ -344,14 +413,14 @@ function ProblemDetailPageContent() {
         </div>
 
         {/* Problem Statement */}
-        <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <FileText className="text-blue-500" size={24} />
-            <h2 className="text-2xl font-bold text-gray-900">Problem Statement</h2>
+        <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 mb-4 sm:mb-6">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <FileText className="text-blue-500 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Problem Statement</h2>
           </div>
           
-          <div className="prose prose-lg max-w-none">
-            <pre className="whitespace-pre-wrap text-gray-700 leading-relaxed font-sans bg-gray-50 p-6 rounded-lg border">
+          <div className="prose prose-sm sm:prose-lg max-w-none">
+            <pre className="whitespace-pre-wrap text-gray-700 leading-relaxed font-sans bg-gray-50 p-3 sm:p-4 lg:p-6 rounded-lg border text-xs sm:text-sm lg:text-base overflow-x-auto">
               {problem.problemStatement}
             </pre>
           </div>
@@ -359,14 +428,14 @@ function ProblemDetailPageContent() {
 
         {/* Intuition */}
         {problem.intuition && (
-          <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Lightbulb className="text-yellow-500" size={24} />
-              <h2 className="text-2xl font-bold text-gray-900">Your Intuition & Approach</h2>
+          <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <Lightbulb className="text-yellow-500 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Your Intuition & Approach</h2>
             </div>
             
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-r-lg">
-              <pre className="whitespace-pre-wrap text-gray-700 leading-relaxed font-sans">
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4 lg:p-6 rounded-r-lg">
+              <pre className="whitespace-pre-wrap text-gray-700 leading-relaxed font-sans text-xs sm:text-sm lg:text-base overflow-x-auto">
                 {problem.intuition}
               </pre>
             </div>
@@ -374,94 +443,103 @@ function ProblemDetailPageContent() {
         )}
 
         {/* Solution Code */}
-        <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Code2 className="text-green-500" size={24} />
-              <h2 className="text-2xl font-bold text-gray-900">Your Solution</h2>
+        <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 mb-4 sm:mb-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <Code2 className="text-green-500 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Your Solution</h2>
             </div>
             
             <button
               onClick={handleCopyCode}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs sm:text-sm flex-shrink-0"
             >
-              {copied ? <Check size={16} /> : <Copy size={16} />}
-              {copied ? 'Copied!' : 'Copy Code'}
+              {copied ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+              <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy Code'}</span>
+              <span className="sm:hidden">{copied ? 'Copied!' : 'Copy'}</span>
             </button>
           </div>
           
           <div className="bg-gray-900 rounded-lg overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
+            <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-800">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
+                <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
               </div>
-              <span className="text-gray-400 text-sm">Solution Code</span>
+              <span className="text-gray-400 text-xs sm:text-sm">Solution Code</span>
             </div>
             
-            <pre className="p-6 text-green-400 font-mono text-sm overflow-x-auto leading-relaxed">
+            <pre className="p-3 sm:p-4 lg:p-6 text-green-400 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed">
               <code>{problem.myCode}</code>
             </pre>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-          <div className="flex flex-wrap gap-3">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Quick Actions</h3>
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
             <button
               onClick={handleStartRevision}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm justify-center sm:justify-start"
             >
-              <Brain size={16} />
+              <Brain className="w-4 h-4" />
               Practice This Problem
             </button>
             
             <Link
               href={`/problems?category=${encodeURIComponent(problem.category)}`}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm justify-center sm:justify-start"
             >
-              <Target size={16} />
+              <Target className="w-4 h-4" />
               More {problem.category} Problems
             </Link>
             
             <Link
               href="/add-problem"
-              className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm justify-center sm:justify-start"
             >
-              <FileText size={16} />
+              <FileText className="w-4 h-4" />
               Add New Problem
             </Link>
           </div>
         </div>
       </div>
 
+      {/* Click outside to close mobile menu */}
+      {showMobileMenu && (
+        <div 
+          className="sm:hidden fixed inset-0 z-5" 
+          onClick={() => setShowMobileMenu(false)}
+        />
+      )}
+
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
+          <div className="bg-white rounded-xl max-w-md w-full p-4 sm:p-6 m-4">
             <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle className="text-red-500" size={24} />
-              <h2 className="text-xl font-bold text-gray-900">Delete Problem</h2>
+              <AlertTriangle className="text-red-500 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Delete Problem</h2>
             </div>
             
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
               Are you sure you want to delete &ldquo;{problem.title}&rdquo;? This action cannot be undone.
             </p>
             
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleting}
-                className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 {deleting ? (
                   <>
@@ -470,7 +548,7 @@ function ProblemDetailPageContent() {
                   </>
                 ) : (
                   <>
-                    <Trash2 size={16} />
+                    <Trash2 className="w-4 h-4" />
                     Delete Problem
                   </>
                 )}
