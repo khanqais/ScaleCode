@@ -9,12 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.32.0",
     "@radix-ui/react-slot": "^1.2.3",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.57.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.23.16",
     "jose": "^6.1.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.544.0",

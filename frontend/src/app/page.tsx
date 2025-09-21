@@ -1,10 +1,12 @@
-import { Button } from '@/components/ui/button'
 import React from 'react'
+import Navbar from '@/components/navbar'
+import Hero from '@/components/hero'
 
 const page = () => {
   return (
-    <div className="p-8">
-      <Button>Click Me</Button>
+    <div className="min-h-screen">
+      <Navbar />
+      <Hero />
     </div>
   )
 }
