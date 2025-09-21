@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useUser, useAuth } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -19,7 +19,7 @@ interface Problem {
   intuition?: string
 }
 
-export default function ProblemsPage() {
+function ProblemsPageContent() {
   const { user } = useUser()
   const { getToken } = useAuth()
   const router = useRouter()
@@ -406,5 +406,20 @@ export default function ProblemsPage() {
         )}
       </main>
     </div>
+  )
+}
+
+export default function ProblemsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
+        </div>
+      </div>
+    }>
+      <ProblemsPageContent />
+    </Suspense>
   )
 }

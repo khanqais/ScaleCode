@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useUser, useAuth } from '@clerk/nextjs'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
@@ -36,6 +36,21 @@ interface Problem {
 }
 
 export default function ProblemDetailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
+        </div>
+      </div>
+    }>
+      <ProblemDetailPageContent />
+    </Suspense>
+  )
+}
+
+function ProblemDetailPageContent() {
   const { user } = useUser()
   const { getToken } = useAuth()
   const router = useRouter()
