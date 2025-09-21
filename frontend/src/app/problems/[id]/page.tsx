@@ -220,7 +220,7 @@ export default function ProblemDetailPage() {
           <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
             <AlertTriangle className="mx-auto text-red-500 mb-4" size={64} />
             <h2 className="text-2xl font-bold text-red-900 mb-2">{error}</h2>
-            <p className="text-red-700 mb-6">This problem might have been deleted or you don't have access to it.</p>
+            <p className="text-red-700 mb-6">This problem might have been deleted or you don&apos;t have access to it.</p>
             <Link
               href="/problems"
               className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors inline-flex items-center gap-2"
@@ -432,7 +432,7 @@ export default function ProblemDetailPage() {
             </div>
             
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "{problem.title}"? This action cannot be undone.
+              Are you sure you want to delete &ldquo;{problem.title}&rdquo;? This action cannot be undone.
             </p>
             
             <div className="flex gap-3">

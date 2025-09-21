@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useUser, useAuth } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
@@ -49,7 +49,7 @@ export default function OrganizePage() {
     }
   }, [user])
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       setLoading(true)
       setError('')
@@ -65,7 +65,7 @@ export default function OrganizePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   // Sync user with backend (ensure user exists in MongoDB)
   const syncUser = async () => {

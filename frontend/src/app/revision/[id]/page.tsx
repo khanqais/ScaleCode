@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useUser, useAuth } from '@clerk/nextjs'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Check, X, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Check, Eye, EyeOff } from 'lucide-react'
 
 interface Problem {
   id: string
@@ -17,7 +17,6 @@ interface Problem {
 
 export default function RevisionPage() {
   const { user } = useUser()
-  const { getToken } = useAuth()
   const router = useRouter()
   const params = useParams()
   const [problem, setProblem] = useState<Problem | null>(null)

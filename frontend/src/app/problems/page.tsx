@@ -118,12 +118,10 @@ export default function ProblemsPage() {
   const fetchProblemDetails = async (problemId: string) => {
     try {
       setLoadingProblem(true)
-      const token = await getToken()
-      
-      const response = await fetch(`http://localhost:5000/api/problems/${problemId}`, {
+      const response = await fetch(`/api/problems/${problemId}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       })
 
@@ -275,7 +273,7 @@ export default function ProblemsPage() {
             {selectedCategory && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-blue-800 text-sm">
-                  <strong>Active Filter:</strong> Showing problems in "{selectedCategory}" category
+                  <strong>Active Filter:</strong> Showing problems in &ldquo;{selectedCategory}&rdquo; category
                 </p>
               </div>
             )}

@@ -11,8 +11,8 @@ interface RevisionModalProps {
     title: string
     category: string
     difficulty: number
-    problemStatement: string
-    myCode: string
+    problemStatement?: string
+    myCode?: string
     intuition?: string
   }
 }
@@ -160,7 +160,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
             <div className="flex-1 overflow-y-auto p-6">
               <div className="prose prose-sm max-w-none">
                 <pre className="whitespace-pre-wrap text-gray-700 leading-relaxed font-sans">
-                  {problem.problemStatement}
+                  {problem.problemStatement || 'No problem statement available'}
                 </pre>
               </div>
               
@@ -261,7 +261,7 @@ function solution() {
                     <div className="flex items-center justify-between p-4 bg-green-50">
                       <h4 className="font-semibold text-green-900">Your Original Solution</h4>
                       <button
-                        onClick={() => handleCopy(problem.myCode, 'solution')}
+                        onClick={() => handleCopy(problem.myCode || '', 'solution')}
                         className="flex items-center gap-1 px-3 py-1 text-green-700 hover:bg-green-200 rounded transition-colors text-sm"
                       >
                         {copied === 'solution' ? <Check size={14} /> : <Copy size={14} />}
@@ -270,7 +270,7 @@ function solution() {
                     </div>
                     <div className="bg-gray-900 overflow-x-auto">
                       <pre className="p-4 text-green-400 font-mono text-sm">
-                        <code>{problem.myCode}</code>
+                        <code>{problem.myCode || 'No solution available'}</code>
                       </pre>
                     </div>
                   </div>

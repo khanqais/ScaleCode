@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import connectDB from '@/lib/db';
 import User from '@/lib/models/User';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     await connectDB();
     
@@ -46,12 +46,12 @@ export async function POST(request: NextRequest) {
       data: user
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Sync user error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to sync user',
-      message: error.message
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

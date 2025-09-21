@@ -30,7 +30,7 @@ async function updateUserStats(userId: string) {
     const problems = await Problem.find({ userId });
     const totalProblems = problems.length;
     const averageDifficulty = totalProblems > 0 
-      ? problems.reduce((sum: number, p: any) => sum + p.difficulty, 0) / totalProblems 
+      ? problems.reduce((sum: number, p: { difficulty: number }) => sum + p.difficulty, 0) / totalProblems 
       : 0;
 
     await User.findOneAndUpdate(
@@ -95,23 +95,23 @@ export async function POST(request: NextRequest) {
       data: savedProblem
     }, { status: 201 });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Create problem error:', error);
     
     // Handle specific validation errors
-    if (error.name === 'ValidationError') {
+    if (error instanceof Error && error.name === 'ValidationError') {
       return NextResponse.json({
         success: false,
         error: 'Validation failed',
         message: error.message,
-        details: error.errors
+        details: (error as any).errors
       }, { status: 400 });
     }
 
     return NextResponse.json({
       success: false,
       error: 'Failed to create problem',
-      message: error.message
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
     const order = searchParams.get('order') || 'desc';
 
     // Build filter query
-    const filter: any = { userId };
+    const filter: Record<string, any> = { userId };
     if (category) filter.category = category;
     if (difficulty) filter.difficulty = parseInt(difficulty);
     if (search) {
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build sort object
-    const sortOptions: any = {};
+    const sortOptions: Record<string, 1 | -1> = {};
     sortOptions[sortBy] = order === 'desc' ? -1 : 1;
 
     // Execute query with pagination
@@ -181,12 +181,12 @@ export async function GET(request: NextRequest) {
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Get problems error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch problems',
-      message: error.message
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

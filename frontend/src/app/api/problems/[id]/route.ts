@@ -37,12 +37,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       data: problem
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Get problem error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch problem',
-      message: error.message
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
@@ -81,22 +81,22 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       data: problem
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Update problem error:', error);
     
-    if (error.name === 'ValidationError') {
+    if (error instanceof Error && error.name === 'ValidationError') {
       return NextResponse.json({
         success: false,
         error: 'Validation failed',
         message: error.message,
-        details: error.errors
+        details: (error as any).errors
       }, { status: 400 });
     }
 
     return NextResponse.json({
       success: false,
       error: 'Failed to update problem',
-      message: error.message
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
@@ -129,12 +129,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       message: 'Problem deleted successfully'
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Delete problem error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to delete problem',
-      message: error.message
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
