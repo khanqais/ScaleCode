@@ -31,7 +31,7 @@ const Hero = () => {
 
   return (
     <motion.div 
-      className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center"
+      className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center mb-8"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -78,19 +78,19 @@ const Hero = () => {
         variants={itemVariants}
       >
         <Link href="/organize">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-          >
-            <Button 
-              size="lg" 
-              className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-lg font-medium rounded-full"
-            >
-              Start organizing
-            </Button>
-          </motion.div>
-        </Link>
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+  >
+    <Button 
+      size="lg" 
+      className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-lg font-medium rounded-full"
+    >
+      Start organizing
+    </Button>
+  </motion.div>
+</Link>
         <Link href="/pricing">
           <motion.div
             whileHover={{ scale: 1.05 }}

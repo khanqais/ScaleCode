@@ -49,7 +49,7 @@ export const makeAuthenticatedCall = async (
   return response.json()
 }
 
-// Example usage functions
-export const getProblems = async (getToken: () => Promise<string | null>) => {
-  return makeAuthenticatedCall(getToken, '/api/problems')
-}
+// // Example usage functions
+// export const getProblems = async (getToken: () => Promise<string | null>) => {
+//   return makeAuthenticatedCall(getToken, '/api/problems')
+// }

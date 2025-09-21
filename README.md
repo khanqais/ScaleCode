@@ -1,6 +1,6 @@
 # ScaleCode - DSA Revision Platform
 
-A comprehensive platform for organizing, storing, and revising Data Structures & Algorithms (DSA) problems. Built with Next.js, TypeScript, Supabase, and Clerk authentication.
+A comprehensive platform for organizing, storing, and revising Data Structures & Algorithms (DSA) problems. Built with Next.js, TypeScript, MongoDB, and Clerk authentication.
 
 ## 🚀 Features
 
@@ -31,17 +31,15 @@ A comprehensive platform for organizing, storing, and revising Data Structures &
 ## 🛠️ Setup Instructions
 
 ### 1. Database Setup
-1. Go to your Supabase project dashboard
-2. Navigate to SQL Editor
-3. Copy and paste the contents from `database_schema.sql`
-4. Run the SQL to create all necessary tables and policies
-5. Optional: Run `setup_database.sql` for additional views and sample data
+1. Set up MongoDB database (local or cloud)
+2. Configure connection string in environment variables
+3. Database schema will be automatically created when needed
+4. TODO: Add MongoDB schema documentation
 
 ### 2. Environment Variables
 Make sure you have these environment variables set:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+MONGODB_URI=your_mongodb_connection_string
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
 ```
