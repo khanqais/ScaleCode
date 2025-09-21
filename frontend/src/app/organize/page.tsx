@@ -101,8 +101,6 @@ export default function OrganizePage() {
   // Fetch user's problems
   const fetchProblems = useCallback(async () => {
     try {
-      const token = await getToken()
-      
       const response = await fetch('/api/problems?limit=6', {
         method: 'GET',
         headers: {
@@ -126,7 +124,7 @@ export default function OrganizePage() {
       console.error('Error fetching problems:', error)
       // Don't set error for problems - just show empty state
     }
-  }, [getToken])
+  }, [])
 
   // Fetch user's stats
   const fetchStats = useCallback(async () => {

@@ -3,13 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/db';
 import Problem from '@/lib/models/Problem';
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectDB();
     
@@ -47,7 +41,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectDB();
     
@@ -101,7 +95,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectDB();
     
