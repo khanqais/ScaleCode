@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "env": {
     "MONGO_URI": "@mongo_uri",
     "CLERK_SECRET_KEY": "@clerk_secret_key",
