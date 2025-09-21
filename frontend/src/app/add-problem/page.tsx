@@ -21,7 +21,94 @@ export default function AddProblemPage() {
     category: 'Graph'
   })
 
-  const categories = ['Graph', 'Array', 'Dynamic Programming', 'Tree', 'Two Pointer', 'String', 'Binary Search']
+  const categories = [
+  // Step 1: Basics
+  'Basic Maths',
+  'Basic Recursion',
+  'Basic Hashing',
+  
+  // Step 2: Sorting
+  'Sorting Algorithms',
+  
+  // Step 3: Arrays
+  'Arrays',
+  
+  // Step 4: Binary Search
+  'Binary Search',
+  
+  // Step 5: Strings
+  'Strings',
+  
+  // Step 6: Linked List
+  'Linked List',
+  'Doubly Linked List',
+  
+  // Step 7: Recursion Patterns
+  'Recursion',
+  'Subsequences',
+  'Backtracking',
+  
+  // Step 8: Bit Manipulation
+  'Bit Manipulation',
+  
+  // Step 9: Stack and Queues
+  'Stack',
+  'Queue',
+  'Monotonic Stack',
+  
+  // Step 10: Sliding Window & Two Pointer
+  'Sliding Window',
+  'Two Pointers',
+  
+  // Step 11: Heaps
+  'Heap',
+  'Priority Queue',
+  
+  // Step 12: Greedy
+  'Greedy Algorithms',
+  
+  // Step 13: Binary Trees
+  'Binary Tree',
+  'Tree Traversal',
+  
+  // Step 14: Binary Search Trees
+  'Binary Search Tree',
+  
+  // Step 15: Graphs
+  'Graph',
+  'BFS',
+  'DFS',
+  'Shortest Path',
+  'Minimum Spanning Tree',
+  'Topological Sort',
+  
+  // Step 16: Dynamic Programming
+  'Dynamic Programming',
+  'DP on Arrays',
+  'DP on Grids',
+  'DP on Strings',
+  'DP on Trees',
+  'DP on Subsequences',
+  
+  // Step 17: Tries
+  'Trie',
+  
+  // Additional Important Categories
+  'Mathematical',
+  'Geometry',
+  'Number Theory',
+  'Combinatorics',
+  'Game Theory',
+  'Matrix',
+  'Design',
+  'System Design',
+  
+  // Company/Contest Specific
+  'Interview Questions',
+  'Contest Problems',
+  'Mock Interview',
+]
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
