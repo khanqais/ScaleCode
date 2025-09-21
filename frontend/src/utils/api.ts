@@ -1,8 +1,8 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+// Use internal Next.js API routes for Vercel deployment
+const API_BASE_URL = '/api'
 
-// Make authenticated API calls using Clerk
+// Make authenticated API calls using Clerk's built-in authentication
 export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
-  // This will be used from components where useAuth is available
   const config: RequestInit = {
     ...options,
     headers: {
@@ -14,39 +14,27 @@ export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config)
   
   if (response.status === 401) {
-    // Token expired or invalid, redirect to login
+    // Authentication required, redirect to login
     window.location.href = '/login'
     return
+  }
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Unknown error' }))
+    throw new Error(error.message || error.error || 'API call failed')
   }
 
   return response.json()
 }
 
-// Helper function to make API calls with token from useAuth hook
+// Helper function for authenticated API calls (kept for backward compatibility)
 export const makeAuthenticatedCall = async (
   getToken: () => Promise<string | null>,
   endpoint: string, 
   options: RequestInit = {}
 ) => {
-  const token = await getToken()
-  
-  const config: RequestInit = {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    },
-  }
-
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config)
-  
-  if (response.status === 401) {
-    window.location.href = '/login'
-    return
-  }
-
-  return response.json()
+  // Since we're using Clerk's server-side auth with cookies, we don't need the token
+  return apiCall(endpoint, options)
 }
 
 // // Example usage functions
