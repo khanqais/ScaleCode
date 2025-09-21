@@ -12,7 +12,7 @@ const page = () => {
       <Hero />
       <Features />
       <CallToAction />
-      <Footer />
+      
     </div>
   )
 }

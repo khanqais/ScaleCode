@@ -233,7 +233,7 @@ export default function AddProblemPage() {
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Difficulty (1-10)
+                Confidence (1-10)
               </label>
               <input
                 type="range"
@@ -244,9 +244,9 @@ export default function AddProblemPage() {
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               />
               <div className="flex justify-between text-sm text-gray-500 mt-1">
-                <span>Easy (1)</span>
+                <span>low (1)</span>
                 <span className="font-medium">{formData.difficulty}</span>
-                <span>Hard (10)</span>
+                <span>High (10)</span>
               </div>
             </div>
 

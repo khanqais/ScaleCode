@@ -242,7 +242,7 @@ export default function OrganizePage() {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button 
-                onClick={() => router.push('/')}
+                onClick={() => router.push('')}
                 className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center sm:justify-start gap-3"
               >
                 <Brain size={20} className="sm:w-6 sm:h-6" />
@@ -284,7 +284,7 @@ export default function OrganizePage() {
               </div>
             </div>
 
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+            {/* <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Avg Difficulty</p>
@@ -292,7 +292,7 @@ export default function OrganizePage() {
                 </div>
                 <Star className="text-yellow-500" size={20} />
               </div>
-            </div>
+            </div> */}
 
             <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
