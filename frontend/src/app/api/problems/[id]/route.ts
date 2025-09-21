@@ -89,7 +89,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         success: false,
         error: 'Validation failed',
         message: error.message,
-        details: (error as any).errors
+        details: (error as Error & { errors: unknown }).errors
       }, { status: 400 });
     }
 

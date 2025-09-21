@@ -68,17 +68,16 @@ export default function OrganizePage() {
   }, [])
 
   // Sync user with backend (ensure user exists in MongoDB)
-  const syncUser = async () => {
+  const syncUser = useCallback(async () => {
     try {
       console.log('Starting user sync...')
       const token = await getToken()
       console.log('Token obtained:', token ? 'Yes' : 'No')
       
-      const response = await fetch('http://localhost:5000/api/users/sync', {
+      const response = await fetch('/api/users/sync', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
       })
 
@@ -97,17 +96,17 @@ export default function OrganizePage() {
       console.error('Error syncing user:', error)
       throw error
     }
-  }
+  }, [getToken])
 
   // Fetch user's problems
-  const fetchProblems = async () => {
+  const fetchProblems = useCallback(async () => {
     try {
       const token = await getToken()
       
-      const response = await fetch('http://localhost:5000/api/problems?limit=6', {
+      const response = await fetch('/api/problems?limit=6', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       })
 
@@ -127,17 +126,15 @@ export default function OrganizePage() {
       console.error('Error fetching problems:', error)
       // Don't set error for problems - just show empty state
     }
-  }
+  }, [getToken])
 
   // Fetch user's stats
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
-      const token = await getToken()
-      
-      const response = await fetch('http://localhost:5000/api/users/stats', {
+      const response = await fetch('/api/users/stats', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       })
 
@@ -157,7 +154,7 @@ export default function OrganizePage() {
       console.error('Error fetching stats:', error)
       // Keep default stats if fetch fails
     }
-  }
+  }, [])
 
   const getDifficultyColor = (difficulty: number) => {
     if (difficulty <= 3) return 'text-green-600 bg-green-100'

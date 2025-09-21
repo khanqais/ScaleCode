@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useUser, useAuth } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, Check, Eye, EyeOff } from 'lucide-react'
 
@@ -19,7 +19,7 @@ export default function RevisionPage() {
   const { user } = useUser()
   const router = useRouter()
   const params = useParams()
-  const [problem, setProblem] = useState<Problem | null>(null)
+  const [problem, ] = useState<Problem | null>(null)
   const [userCode, setUserCode] = useState('')
   const [showSolution, setShowSolution] = useState(false)
   const [showIntuition, setShowIntuition] = useState(false)

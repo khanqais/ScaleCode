@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: 'Validation failed',
         message: error.message,
-        details: (error as any).errors
+        details: (error as Error & { errors: unknown }).errors
       }, { status: 400 });
     }
 
@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
     const order = searchParams.get('order') || 'desc';
 
     // Build filter query
-    const filter: Record<string, any> = { userId };
+    const filter: Record<string, unknown> = { userId };
     if (category) filter.category = category;
     if (difficulty) filter.difficulty = parseInt(difficulty);
     if (search) {
