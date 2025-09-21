@@ -35,6 +35,9 @@ app.use((err, req, res, next) => {
     message: process.env.NODE_ENV === 'development' ? err.message : undefined
   })
 })
+app.get('/',(req,res)=>{
+  res.send("Hii mom")
+})
 
 const PORT = process.env.PORT || 5000
 

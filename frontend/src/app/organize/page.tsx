@@ -242,7 +242,7 @@ export default function OrganizePage() {
             
             <div className="flex gap-4">
               <button 
-                onClick={() => router.push('/revision/practice')}
+                onClick={() => router.push('/')}
                 className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg flex items-center gap-3"
               >
                 <Brain size={24} />
