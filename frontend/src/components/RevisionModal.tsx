@@ -389,7 +389,7 @@ function ComparisonPhase({
       </div>
       
       <div className="flex-1 overflow-y-auto">
-        {/* Your Attempt */}
+        
         <div className="border-b border-gray-200">
           <div className="flex items-center justify-between p-3 sm:p-4 bg-blue-50">
             <h4 className="font-semibold text-blue-900 text-sm sm:text-base">Your Current Attempt</h4>
@@ -408,7 +408,7 @@ function ComparisonPhase({
           </div>
         </div>
 
-        {/* Original Solution */}
+        
         <div>
           <div className="flex items-center justify-between p-3 sm:p-4 bg-green-50">
             <h4 className="font-semibold text-green-900 text-sm sm:text-base">Your Original Solution</h4>
@@ -455,7 +455,7 @@ function ComparisonPhase({
   )
 }
 
-// Mobile Problem View Component
+
 function MobileProblemView({ 
   problem, 
   showIntuition, 
