@@ -81,12 +81,11 @@ function ProblemsPageContent() {
   const fetchProblems = async () => {
     try {
       setLoading(true)
-      const token = await getToken()
       
-      const response = await fetch('http://localhost:5000/api/problems', {
+      const response = await fetch('/api/problems', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       })
 
