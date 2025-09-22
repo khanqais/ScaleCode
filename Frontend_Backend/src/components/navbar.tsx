@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { UserButton, useUser, SignInButton } from '@clerk/nextjs'
+import Image from 'next/image'
 
 const Navbar = () => {
   const { isSignedIn, user } = useUser()
@@ -21,8 +22,14 @@ const Navbar = () => {
         whileTap={{ scale: 0.95 }}
       >
         <Link href="/" className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">SC</span>
+          <div className="w-12 h-12 rounded-lg overflow-hidden">
+            <Image 
+              src="/logo.png" 
+              alt="AlgoGrid Logo" 
+              width={50} 
+              height={50}
+              className="w-full h-full object-cover"
+            />
           </div>
           <span className="text-xl font-bold text-gray-900">AlgoGrid</span>
         </Link>
