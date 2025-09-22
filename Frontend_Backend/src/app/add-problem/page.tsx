@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle } from 'lucide-react'
 
 export default function AddProblemPage() {
+  
   const { user } = useUser()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
