@@ -1,6 +1,21 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
+// Problem interface
+interface Problem {
+  _id: string
+  userId?: string
+  title: string
+  problemStatement?: string
+  myCode?: string
+  intuition?: string
+  difficulty: number
+  category: string
+  isPublic?: boolean
+  createdAt?: string
+  updatedAt?: string
+}
 import { X, Play, Eye, EyeOff, Copy, Check, RotateCcw, Clock, Brain, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface RevisionModalProps {
@@ -275,11 +290,10 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
               ) : (
                 <div className="flex-1 flex flex-col">
                   {!showComparison ? (
-                    <CodingPhase 
+                    <CodingPhase
                       userCode={userCode}
                       setUserCode={setUserCode}
                       handleSubmit={handleSubmit}
-                      isMobile={true}
                     />
                   ) : (
                     <ComparisonPhase 
@@ -291,7 +305,6 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
                       formatTime={formatTime}
                       handleReset={handleReset}
                       onClose={onClose}
-                      isMobile={true}
                     />
                   )}
                 </div>
@@ -307,13 +320,11 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
 function CodingPhase({ 
   userCode, 
   setUserCode, 
-  handleSubmit, 
-  isMobile = false 
+  handleSubmit
 }: {
   userCode: string
   setUserCode: (code: string) => void
   handleSubmit: () => void
-  isMobile?: boolean
 }) {
   return (
     <>
@@ -365,18 +376,16 @@ function ComparisonPhase({
   elapsedTime, 
   formatTime, 
   handleReset, 
-  onClose,
-  isMobile = false
+  onClose
 }: {
   userCode: string
-  problem: any
+  problem: Problem
   copied: 'user' | 'solution' | null
   handleCopy: (code: string, type: 'user' | 'solution') => void
   elapsedTime: number
   formatTime: (seconds: number) => string
   handleReset: () => void
   onClose: () => void
-  isMobile?: boolean
 }) {
   return (
     <>
@@ -458,7 +467,7 @@ function MobileProblemView({
   showIntuition, 
   setShowIntuition 
 }: {
-  problem: any
+  problem: Problem
   showIntuition: boolean
   setShowIntuition: (show: boolean) => void
 }) {
