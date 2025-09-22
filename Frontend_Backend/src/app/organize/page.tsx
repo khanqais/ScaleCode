@@ -124,17 +124,17 @@ export default function OrganizePage() {
     }
   }, [user])
 
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && user) {
-        console.log('👁️ Organize page became visible, refreshing data...')
-        fetchAllData()
-      }
-    }
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     if (document.visibilityState === 'visible' && user) {
+  //       console.log('👁️ Organize page became visible, refreshing data...')
+  //       fetchAllData()
+  //     }
+  //   }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [user])
+  //   document.addEventListener('visibilitychange', handleVisibilityChange)
+  //   return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  // }, [user])
 
   const getDifficultyColor = (difficulty: number) => {
     if (difficulty <= 3) {
