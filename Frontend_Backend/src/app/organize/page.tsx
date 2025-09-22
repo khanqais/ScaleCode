@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
-import { Plus, Folder as FolderIcon, FileCode, Brain, Star, TrendingUp, Code, Calendar, AlertCircle, RefreshCw } from 'lucide-react'
+import RevisionModal from '@/components/RevisionModal'
+import { Plus, Folder as FolderIcon, FileCode, Brain, Star, TrendingUp, Code, Calendar, AlertCircle, RefreshCw, Play } from 'lucide-react'
 
 interface Problem {
   _id: string
@@ -12,6 +13,9 @@ interface Problem {
   category: string
   difficulty: number
   createdAt: string
+  problemStatement?: string
+  myCode?: string
+  intuition?: string
 }
 
 interface Stats {
@@ -31,7 +35,6 @@ export default function OrganizePage() {
   const { user } = useUser()
   const router = useRouter()
   
-  
   const [problems, setProblems] = useState<Problem[]>([])
   const [stats, setStats] = useState<Stats>({
     totalProblems: 0,
@@ -44,20 +47,18 @@ export default function OrganizePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const [showRevisionModal, setShowRevisionModal] = useState(false)
+  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null)
+  const [loadingProblem, setLoadingProblem] = useState(false)
 
   const fetchProblems = async () => {
-    if (!user){
+    if (!user) {
        return
     }
     
     try {
-      
-      
-     
       const response = await fetch(`/api/problems?t=${Date.now()}`)
       const data = await response.json()
-      
-      
       
       if (data.success) {
         setProblems(data.data.problems || [])
@@ -65,37 +66,30 @@ export default function OrganizePage() {
         setError('Failed to fetch problems')
       }
     } catch (error) {
-      console.error('❌ Error fetching problems:', error)
+      console.error(' Error fetching problems:', error)
       setError('Failed to fetch problems')
     }
   }
 
-  
   const fetchStats = async () => {
     if (!user) return
     
     try {
-      
-      
-     
       const response = await fetch(`/api/users/stats?t=${Date.now()}`)
       const data = await response.json()
       
-      
-      
       if (data.success) {
-        console.log('✅ Total problems from stats:', data.data.totalProblems) 
+        console.log('Total problems from stats:', data.data.totalProblems) 
         setStats(data.data)
       } else {
         setError('Failed to fetch stats')
       }
     } catch (error) {
-      console.error('❌ Error fetching stats:', error)
+      console.error(' Error fetching stats:', error)
       setError('Failed to fetch stats')
     }
   }
 
- 
   const fetchAllData = async () => {
     if (!user) return
     
@@ -107,9 +101,48 @@ export default function OrganizePage() {
     setLoading(false)
   }
 
+  const fetchProblemDetails = async (problemId: string) => {
+    try {
+      setLoadingProblem(true)
+      const response = await fetch(`/api/problems/${problemId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch problem details: ${response.status}`)
+      }
+
+      const result = await response.json()
+      
+      if (result.success) {
+        return result.data
+      } else {
+        throw new Error(result.error || 'Failed to fetch problem details')
+      }
+    } catch (err) {
+      console.error('Error fetching problem details:', err)
+      alert('Failed to load problem details for revision')
+      return null
+    } finally {
+      setLoadingProblem(false)
+    }
+  }
+
+  const handleStartRevision = async (problem: Problem) => {
+    const fullProblem = await fetchProblemDetails(problem._id)
+    
+    if (fullProblem) {
+      setSelectedProblem(fullProblem)
+      setShowRevisionModal(true)
+    }
+  }
+
   useEffect(() => {
     if (user) {
-      console.log('👤 User available, fetching data...') // Debug log
+      console.log(' User available, fetching data...')
       fetchAllData()
     }
   }, [user, router])
@@ -123,7 +156,6 @@ export default function OrganizePage() {
       window.history.replaceState({}, '', '/organize')
     }
   }, [user])
-
 
   const getDifficultyColor = (difficulty: number) => {
     if (difficulty <= 3) {
@@ -234,10 +266,7 @@ export default function OrganizePage() {
           </div>
         )}
 
-        
-
         <div className="mb-6 sm:mb-8">
-          
           <div className="flex flex-col gap-4 sm:gap-6 mb-6">
             <div className="text-center sm:text-left">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
@@ -394,17 +423,39 @@ export default function OrganizePage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        router.push(`/revision/${problem._id}`)
+                        handleStartRevision(problem)
                       }}
-                      className="text-purple-600 hover:text-purple-800 font-medium flex-shrink-0 ml-2"
+                      disabled={loadingProblem}
+                      className="text-purple-600 hover:text-purple-800 font-medium flex-shrink-0 ml-2 flex items-center gap-1 disabled:opacity-50"
                     >
-                      Practice →
+                      <Play size={12} />
+                      {loadingProblem ? 'Loading...' : 'Practice'}
                     </button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+        )}
+
+        {loadingProblem && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+            <div className="bg-white rounded-lg p-6 flex items-center gap-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+              <span className="text-gray-700">Loading problem for revision...</span>
+            </div>
+          </div>
+        )}
+
+        {showRevisionModal && selectedProblem && (
+          <RevisionModal
+            isOpen={showRevisionModal}
+            onClose={() => {
+              setShowRevisionModal(false)
+              setSelectedProblem(null)
+            }}
+            problem={selectedProblem}
+          />
         )}
       </div>
     </div>
