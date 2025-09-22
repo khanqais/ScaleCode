@@ -1,44 +1,49 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import connectDB from '@/lib/db';
-import Problem from '@/lib/models/Problem';
+import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
+import connectDB from '@/lib/db'
+import Problem from '@/lib/models/Problem'
 
-interface ProblemDoc {
-  category: string;
-  difficulty: number;
-  createdAt: Date;
+interface ProblemLeanDoc {
+  _id: unknown
+  userId: string
+  category: string
+  difficulty: number
+  createdAt: Date
+  __v?: number
 }
 
 export async function GET() {
   try {
-    await connectDB();
+    await connectDB()
     
-    const { userId } = await auth();
+    const { userId } = await auth()
     if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
-      );
+      )
     }
 
-    const problems: ProblemDoc[] = await Problem.find({ userId });
-    const totalProblems = problems.length;
+    console.log('🔍 Fetching stats for user:', userId)
+
+    const problems = await Problem.find({ userId }).lean() as ProblemLeanDoc[]
+    const totalProblems = problems.length
+    console.log(`📈 Stats API: Found ${totalProblems} problems for user ${userId}`)
     
-    const categories = [...new Set(problems.map((p) => p.category))].length;
+    const categories = [...new Set(problems.map((p) => p.category))].length
     
     const averageDifficulty = totalProblems > 0
       ? problems.reduce((sum: number, p) => sum + p.difficulty, 0) / totalProblems
-      : 0;
+      : 0
 
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const recentActivity = problems.filter((p) => p.createdAt > weekAgo).length;
+    const weekAgo = new Date()
+    weekAgo.setDate(weekAgo.getDate() - 7)
+    const recentActivity = problems.filter((p) => p.createdAt > weekAgo).length
 
-    // Category distribution
     const categoryStats = problems.reduce((acc: Record<string, number>, problem) => {
-      acc[problem.category] = (acc[problem.category] || 0) + 1;
-      return acc;
-    }, {});
+      acc[problem.category] = (acc[problem.category] || 0) + 1
+      return acc
+    }, {})
 
     const stats = {
       totalProblems,
@@ -51,19 +56,27 @@ export async function GET() {
         medium: problems.filter((p) => p.difficulty >= 4 && p.difficulty <= 7).length,
         hard: problems.filter((p) => p.difficulty >= 8).length
       }
-    };
+    }
 
-    return NextResponse.json({
+    console.log('📊 Stats calculated:', stats)
+
+    const response = NextResponse.json({
       success: true,
       data: stats
-    });
+    })
+
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    
+    return response
 
   } catch (error: unknown) {
-    console.error('Get user stats error:', error);
+    console.error('❌ Get user stats error:', error)
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch user stats',
       message: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    }, { status: 500 })
   }
 }

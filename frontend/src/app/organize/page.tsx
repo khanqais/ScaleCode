@@ -1,10 +1,10 @@
 ﻿'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { useUser, useAuth } from '@clerk/nextjs'
+import { useState, useEffect } from 'react'
+import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
-import { Plus, Folder as FolderIcon, FileCode, Brain, Star, TrendingUp, Code, Calendar, AlertCircle } from 'lucide-react'
+import { Plus, Folder as FolderIcon, FileCode, Brain, Star, TrendingUp, Code, Calendar, AlertCircle, RefreshCw } from 'lucide-react'
 
 interface Problem {
   _id: string
@@ -29,11 +29,10 @@ interface Stats {
 
 export default function OrganizePage() {
   const { user } = useUser()
-  const { getToken } = useAuth()
   const router = useRouter()
+  
+  
   const [problems, setProblems] = useState<Problem[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const [stats, setStats] = useState<Stats>({
     totalProblems: 0,
     categories: 0,
@@ -42,119 +41,108 @@ export default function OrganizePage() {
     categoryStats: {},
     difficultyStats: { easy: 0, medium: 0, hard: 0 }
   })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+
+  const fetchProblems = async () => {
+    if (!user){
+       return
+    }
+    
+    try {
+      
+      
+     
+      const response = await fetch(`/api/problems?t=${Date.now()}`)
+      const data = await response.json()
+      
+      
+      
+      if (data.success) {
+        setProblems(data.data.problems || [])
+      } else {
+        setError('Failed to fetch problems')
+      }
+    } catch (error) {
+      console.error('❌ Error fetching problems:', error)
+      setError('Failed to fetch problems')
+    }
+  }
+
+  
+  const fetchStats = async () => {
+    if (!user) return
+    
+    try {
+      
+      
+     
+      const response = await fetch(`/api/users/stats?t=${Date.now()}`)
+      const data = await response.json()
+      
+      
+      
+      if (data.success) {
+        console.log('✅ Total problems from stats:', data.data.totalProblems) 
+        setStats(data.data)
+      } else {
+        setError('Failed to fetch stats')
+      }
+    } catch (error) {
+      console.error('❌ Error fetching stats:', error)
+      setError('Failed to fetch stats')
+    }
+  }
+
+ 
+  const fetchAllData = async () => {
+    if (!user) return
+    
+    setLoading(true)
+    setError(null)
+    
+    await Promise.all([fetchProblems(), fetchStats()])
+    
+    setLoading(false)
+  }
 
   useEffect(() => {
     if (user) {
-      fetchUserData()
+      console.log('👤 User available, fetching data...') // Debug log
+      fetchAllData()
+    }
+  }, [user, router])
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    const refresh = searchParams.get('refresh')
+    
+    if (refresh && user) {
+      fetchAllData()
+      window.history.replaceState({}, '', '/organize')
     }
   }, [user])
 
-  const fetchUserData = useCallback(async () => {
-    try {
-      setLoading(true)
-      setError('')
-      
-      await Promise.all([
-        syncUser(),
-        fetchProblems(),
-        fetchStats()
-      ])
-    } catch (error) {
-      console.error('Error fetching user data:', error)
-      setError('Failed to load data. Please try again.')
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && user) {
+        console.log('👁️ Organize page became visible, refreshing data...')
+        fetchAllData()
+      }
     }
-  }, [])
 
-  
-  const syncUser = useCallback(async () => {
-    try {
-      console.log('Starting user sync...')
-      const token = await getToken()
-      console.log('Token obtained:', token ? 'Yes' : 'No')
-      
-      const response = await fetch('/api/users/sync', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      console.log('Response status:', response.status)
-      console.log('Response ok:', response.ok)
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Server error:', errorText)
-        throw new Error(`Failed to sync user: ${response.status} - ${errorText}`)
-      }
-
-      const result = await response.json()
-      console.log('User synced:', result.data)
-    } catch (error) {
-      console.error('Error syncing user:', error)
-      throw error
-    }
-  }, [getToken])
-
-  
-  const fetchProblems = useCallback(async () => {
-    try {
-      const response = await fetch('/api/problems?limit=6', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch problems: ${response.status}`)
-      }
-
-      const result = await response.json()
-      
-      if (result.success) {
-        setProblems(result.data.problems || [])
-        console.log('Problems fetched:', result.data.problems?.length || 0)
-      } else {
-        throw new Error(result.error || 'Failed to fetch problems')
-      }
-    } catch (error) {
-      console.error('Error fetching problems:', error)
-    }
-  }, [])
-
-  
-  const fetchStats = useCallback(async () => {
-    try {
-      const response = await fetch('/api/users/stats', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch stats: ${response.status}`)
-      }
-
-      const result = await response.json()
-      
-      if (result.success) {
-        setStats(result.data)
-        console.log('Stats fetched:', result.data)
-      } else {
-        throw new Error(result.error || 'Failed to fetch stats')
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error)
-    }
-  }, [])
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [user])
 
   const getDifficultyColor = (difficulty: number) => {
-    if (difficulty <= 3) return 'text-green-600 bg-green-100'
-    if (difficulty <= 6) return 'text-yellow-600 bg-yellow-100'
+    if (difficulty <= 3) {
+      return 'text-green-600 bg-green-100'
+    }
+    if (difficulty <= 6) {
+      return 'text-yellow-600 bg-yellow-100'
+    }
     return 'text-red-600 bg-red-100'
   }
 
@@ -170,8 +158,8 @@ export default function OrganizePage() {
     }
   }
 
-  const handleRetry = () => {
-    fetchUserData()
+  const handleRetry = async () => {
+    await fetchAllData()
   }
 
   if (!user) {
@@ -196,9 +184,39 @@ export default function OrganizePage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh] flex-col px-4">
-          <div className="animate-spin rounded-full h-24 w-24 sm:h-32 sm:w-32 border-b-2 border-black mb-4"></div>
-          <p className="text-gray-600 text-center">Loading your data...</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+          <div className="animate-pulse">
+            <div className="mb-6 sm:mb-8">
+              <div className="h-8 bg-gray-200 rounded w-48 mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-96"></div>
+            </div>
+            
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="bg-white p-4 sm:p-6 rounded-xl shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="h-5 bg-gray-200 rounded w-16"></div>
+                    <div className="h-5 w-5 bg-gray-200 rounded"></div>
+                  </div>
+                  <div className="h-8 bg-gray-200 rounded w-12 mb-1"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20"></div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+              <div className="h-6 bg-gray-200 rounded w-40 mb-4"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[1,2,3,4,5,6].map(i => (
+                  <div key={i} className="border border-gray-100 rounded-lg p-4">
+                    <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                    <div className="h-6 bg-gray-200 rounded w-16"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -227,6 +245,8 @@ export default function OrganizePage() {
           </div>
         )}
 
+        
+
         <div className="mb-6 sm:mb-8">
           
           <div className="flex flex-col gap-4 sm:gap-6 mb-6">
@@ -238,7 +258,6 @@ export default function OrganizePage() {
                 Organize your DSA solutions by patterns and ace your revisions
               </p>
             </div>
-            
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button 
@@ -262,7 +281,19 @@ export default function OrganizePage() {
             </div>
           </div>
 
-         
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Your Progress</h2>
+            <button
+              onClick={handleRetry}
+              disabled={loading}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+              title="Refresh stats"
+            >
+              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
+          </div>
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
             <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
@@ -284,8 +315,6 @@ export default function OrganizePage() {
               </div>
             </div>
 
-
-
             <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
@@ -297,7 +326,6 @@ export default function OrganizePage() {
             </div>
           </div>
 
-         
           {stats.totalProblems > 0 && Object.keys(stats.categoryStats).length > 0 && (
             <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-6 sm:mb-8">
               <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-4">Category Breakdown</h3>
@@ -321,7 +349,6 @@ export default function OrganizePage() {
           )}
         </div>
 
-        
         {problems.length === 0 ? (
           <div className="text-center py-12 sm:py-20 px-4">
             <Code size={60} className="sm:w-20 sm:h-20 mx-auto text-gray-300 mb-4 sm:mb-6" />

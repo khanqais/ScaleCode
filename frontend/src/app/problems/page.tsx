@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useMemo } from 'react'
 import { useUser, useAuth } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
 import RevisionModal from '@/components/RevisionModal'
-import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play } from 'lucide-react'
+import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play, Trash2 } from 'lucide-react'
 
 interface Problem {
   _id: string
@@ -29,73 +29,36 @@ function ProblemsPageContent() {
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null)
   const [loadingProblem, setLoadingProblem] = useState(false)
   
+  // Simple state management instead of SWR
   const [allProblems, setAllProblems] = useState<Problem[]>([])
-  const [filteredProblems, setFilteredProblems] = useState<Problem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  
+  const [errorMessage, setErrorMessage] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [searchTerm, setSearchTerm] = useState('')
-  const [availableCategories, setAvailableCategories] = useState<string[]>([])
-
-  useEffect(() => {
-    if (user) {
-      fetchProblems()
-    }
-  }, [user])
-
-  useEffect(() => {
-    const categoryFromUrl = searchParams.get('category')
-    if (categoryFromUrl) {
-      const decodedCategory = decodeURIComponent(categoryFromUrl)
-      setSelectedCategory(decodedCategory)
-    } else {
-      setSelectedCategory('')
-    }
-  }, [searchParams])
-
-  useEffect(() => {
-    let filtered = allProblems
-
-    if (selectedCategory) {
-      filtered = filtered.filter(problem => {
-        return problem.category.toLowerCase().trim() === selectedCategory.toLowerCase().trim()
-      })
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(problem =>
-        problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        problem.category.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    setFilteredProblems(filtered)
-  }, [allProblems, selectedCategory, searchTerm])
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const fetchProblems = async () => {
+    if (!user) return
+    
     try {
       setLoading(true)
-      
       const response = await fetch('/api/problems', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       })
-
+      
       if (!response.ok) {
         throw new Error(`Failed to fetch problems: ${response.status}`)
       }
-
+      
       const result = await response.json()
       
       if (result.success) {
-        const problems = result.data.problems || []
-        setAllProblems(problems)
-        
-        const categories = [...new Set(problems.map((p: Problem) => p.category))] as string[]
-        setAvailableCategories(categories)
+        setAllProblems(result.data.problems || [])
+        setError('')
       } else {
         setError(result.error || 'Failed to fetch problems')
       }
@@ -106,6 +69,43 @@ function ProblemsPageContent() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (user) {
+      fetchProblems()
+    }
+  }, [user])
+
+  const availableCategories = [...new Set(allProblems.map((p: Problem) => p.category))] as string[]
+
+  const filteredProblems = useMemo(() => {
+    let filtered = allProblems
+
+    if (selectedCategory) {
+      filtered = filtered.filter((problem: Problem) => {
+        return problem.category.toLowerCase().trim() === selectedCategory.toLowerCase().trim()
+      })
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter((problem: Problem) =>
+        problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        problem.category.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    return filtered
+  }, [allProblems, selectedCategory, searchTerm])
+
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category')
+    if (categoryFromUrl) {
+      const decodedCategory = decodeURIComponent(categoryFromUrl)
+      setSelectedCategory(decodedCategory)
+    } else {
+      setSelectedCategory('')
+    }
+  }, [searchParams])
 
   const fetchProblemDetails = async (problemId: string) => {
     try {
@@ -147,14 +147,22 @@ function ProblemsPageContent() {
   }
 
   const getDifficultyColor = (difficulty: number) => {
-    if (difficulty <= 3) return 'text-green-600'
-    if (difficulty <= 6) return 'text-yellow-600'
+    if (difficulty <= 3) {
+      return 'text-green-600'
+    }
+    if (difficulty <= 6) {
+      return 'text-yellow-600'
+    }
     return 'text-red-600'
   }
 
   const getDifficultyLabel = (difficulty: number) => {
-    if (difficulty <= 3) return 'Easy'
-    if (difficulty <= 6) return 'Medium'
+    if (difficulty <= 3) {
+      return 'Easy'
+    }
+    if (difficulty <= 6) {
+      return 'Medium'
+    }
     return 'Hard'
   }
 
@@ -172,6 +180,37 @@ function ProblemsPageContent() {
     setSelectedCategory('')
     setSearchTerm('')
     router.push('/problems')
+  }
+
+  const handleDeleteProblem = async (problemId: string) => {
+    if (!confirm('Are you sure you want to delete this problem? This action cannot be undone.')) {
+      return
+    }
+
+    setDeletingId(problemId)
+    try {
+      const response = await fetch(`/api/problems?id=${problemId}`, {
+        method: 'DELETE'
+      })
+
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        console.log('Problem deleted successfully, refreshing data...')
+        
+        // Simple refresh - just refetch the data
+        await fetchProblems()
+        
+        console.log('Data refreshed after deletion')
+      } else {
+        setErrorMessage(result.error || 'Failed to delete problem')
+      }
+    } catch (error) {
+      console.error('Error deleting problem:', error)
+      setErrorMessage('Failed to delete problem. Please try again.')
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   if (!user) {
@@ -267,9 +306,9 @@ function ProblemsPageContent() {
           </div>
         )}
 
-        {error && (
+        {(error || errorMessage) && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-            {error}
+            {error || errorMessage}
           </div>
         )}
 
@@ -302,7 +341,7 @@ function ProblemsPageContent() {
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredProblems.map((problem) => (
+            {filteredProblems.map((problem: Problem) => (
               <div key={problem._id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -347,14 +386,26 @@ function ProblemsPageContent() {
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <button
-                    onClick={() => handleStartRevision(problem)}
-                    disabled={loadingProblem}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium disabled:opacity-50"
-                  >
-                    <Play className="h-4 w-4" />
-                    {loadingProblem ? 'Loading...' : 'Practice'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleStartRevision(problem)}
+                      disabled={loadingProblem}
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium disabled:opacity-50"
+                    >
+                      <Play className="h-4 w-4" />
+                      {loadingProblem ? 'Loading...' : 'Practice'}
+                    </button>
+                    
+                    <button
+                      onClick={() => handleDeleteProblem(problem._id)}
+                      disabled={deletingId === problem._id}
+                      className="flex items-center gap-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium disabled:opacity-50"
+                      title="Delete problem"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {deletingId === problem._id ? 'Deleting...' : ''}
+                    </button>
+                  </div>
                   
                   <Link 
                     href={`/problems/${problem._id}`}

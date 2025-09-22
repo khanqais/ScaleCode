@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    required: false,
     lowercase: true,
     trim: true
   },
@@ -54,8 +54,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-
-userSchema.index({ clerkId: 1 });
+// Only keep email index since clerkId already has unique: true
 userSchema.index({ email: 1 });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);

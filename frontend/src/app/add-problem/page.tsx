@@ -111,7 +111,9 @@ export default function AddProblemPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user) return
+    if (!user) {
+      return
+    }
 
     setLoading(true)
     setError('')
@@ -134,14 +136,14 @@ export default function AddProblemPage() {
 
       const result = await response.json()
 
-      if (response.ok && result.success) {
-        // Success - show success message and redirect
-        setSuccess(true)
-        setTimeout(() => {
-          router.push('/organize')
-        }, 1500)
-      } else {
-        // Handle API errors
+if (response.ok && result.success) {
+  console.log('Problem created successfully!')
+  setSuccess(true)
+  setTimeout(() => {
+    router.push(`/organize?refresh=${Date.now()}`)
+  }, 1500)
+}
+ else {
         setError(result.error || 'Failed to save problem')
       }
       
@@ -153,7 +155,6 @@ export default function AddProblemPage() {
     }
   }
 
-  // Show success message
   if (success) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -179,7 +180,6 @@ export default function AddProblemPage() {
           <h1 className="text-3xl font-bold text-gray-900">Add New Problem</h1>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
             <AlertCircle className="text-red-500" size={20} />
