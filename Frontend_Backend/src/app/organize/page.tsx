@@ -169,7 +169,7 @@ export default function OrganizePage() {
         <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8">
           <div className="max-w-md mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-              Please sign in to access ScaleCode
+              Please sign in to access AlgoGrid
             </h2>
             <p className="text-base sm:text-lg text-gray-600">
               You need to be signed in to organize your coding solutions.

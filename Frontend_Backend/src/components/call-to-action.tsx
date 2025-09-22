@@ -59,7 +59,7 @@ const CallToAction = () => {
             variants={itemVariants}
             className="text-lg sm:text-xl text-gray-200 mb-8 max-w-3xl mx-auto"
           >
-            Join thousands of developers who are already using ScaleCode to track their progress,
+            Join thousands of developers who are already using AlgoGrid to track their progress,
             organize their solutions, and accelerate their learning.
           </motion.p>
           

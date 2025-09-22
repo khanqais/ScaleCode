@@ -46,7 +46,7 @@ const Footer = () => {
               <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SC</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">ScaleCode</span>
+              <span className="text-xl font-bold text-gray-900">AlgoGrid</span>
             </motion.div>
             <p className="text-gray-600 mb-4 max-w-md">
               Organize and manage your coding solutions from LeetCode, HackerRank, 
@@ -104,7 +104,7 @@ const Footer = () => {
         <div className="border-t border-gray-200 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-600 text-sm">
-              © {currentYear} ScaleCode. All rights reserved.
+              © {currentYear} AlgoGrid. All rights reserved.
             </p>
             
             <div className="flex items-center space-x-4 mt-4 md:mt-0">

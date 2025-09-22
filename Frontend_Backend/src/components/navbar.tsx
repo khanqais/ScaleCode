@@ -24,7 +24,7 @@ const Navbar = () => {
           <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">SC</span>
           </div>
-          <span className="text-xl font-bold text-gray-900">ScaleCode</span>
+          <span className="text-xl font-bold text-gray-900">AlgoGrid</span>
         </Link>
       </motion.div>
 

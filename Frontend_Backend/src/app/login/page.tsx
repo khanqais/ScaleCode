@@ -53,7 +53,7 @@ export default function LoginPage() {
               <p className="text-gray-600 mt-2">
                 {isLogin 
                   ? 'Enter your credentials to access your account' 
-                  : 'Join ScaleCode and organize your coding solutions'
+                  : 'Join AlgoGrid and organize your coding solutions'
                 }
               </p>
             </div>

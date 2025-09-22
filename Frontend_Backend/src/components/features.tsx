@@ -74,7 +74,7 @@ const Features = () => {
           variants={itemVariants}
           className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-6"
         >
-          Why choose ScaleCode?
+          Why choose AlgoGrid?
         </motion.h2>
         <motion.p
           variants={itemVariants}
