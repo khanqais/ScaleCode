@@ -72,13 +72,13 @@ const Features = () => {
       <div className="text-center mb-16">
         <motion.h2
           variants={itemVariants}
-          className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-6"
+          className="text-3xl sm:text-4xl md:text-5xl font-bold text-black dark:text-white mb-6"
         >
           Why choose AlgoGrid?
         </motion.h2>
         <motion.p
           variants={itemVariants}
-          className="text-lg text-gray-600 max-w-2xl mx-auto"
+          className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
         >
           Everything you need to organize, track, and improve your coding skills in one place.
         </motion.p>
@@ -93,13 +93,13 @@ const Features = () => {
               scale: 1.05,
               transition: { type: 'spring', stiffness: 400, damping: 10 }
             }}
-            className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-xl transition-shadow"
+            className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/30 shadow-lg hover:shadow-xl transition-all"
           >
             <div className="text-4xl mb-4">{feature.icon}</div>
-            <h3 className="text-xl font-semibold text-black mb-3">
+            <h3 className="text-xl font-semibold text-black dark:text-white mb-3">
               {feature.title}
             </h3>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               {feature.description}
             </p>
           </motion.div>

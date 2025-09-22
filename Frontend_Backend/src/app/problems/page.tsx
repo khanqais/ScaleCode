@@ -215,12 +215,12 @@ function ProblemsPageContent() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh] text-center p-6">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Please sign in to access your problems</h2>
-            <p className="text-gray-600 text-lg">You need to be signed in to view your coding solutions.</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors">Please sign in to access your problems</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-lg transition-colors">You need to be signed in to view your coding solutions.</p>
           </div>
         </div>
       </div>
@@ -229,7 +229,7 @@ function ProblemsPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh]">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -239,13 +239,13 @@ function ProblemsPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
       <Navbar />
       
       <main className="max-w-7xl mx-auto p-6">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Problems</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">Your Problems</h1>
+          <p className="text-gray-600 dark:text-gray-400 transition-colors">
             {selectedCategory 
               ? `Showing ${filteredProblems.length} ${selectedCategory} problems`
               : `${filteredProblems.length} total problems`
@@ -342,18 +342,18 @@ function ProblemsPageContent() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredProblems.map((problem: Problem) => (
-              <div key={problem._id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+              <div key={problem._id} className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-all">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 transition-colors">
                       {problem.title}
                     </h3>
-                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 transition-colors">
                       <span 
                         className={`px-2 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${
                           selectedCategory === problem.category
                             ? 'bg-blue-600 text-white'
-                            : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                            : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800/40'
                         }`}
                         onClick={() => handleCategoryFilter(problem.category)}
                       >
@@ -379,7 +379,7 @@ function ProblemsPageContent() {
                 </div>
 
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 transition-colors">
                     <Calendar className="h-4 w-4" />
                     {new Date(problem.createdAt).toLocaleDateString()}
                   </div>
@@ -390,7 +390,7 @@ function ProblemsPageContent() {
                     <button
                       onClick={() => handleStartRevision(problem)}
                       disabled={loadingProblem}
-                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium disabled:opacity-50"
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 dark:bg-purple-700 text-white rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors text-sm font-medium disabled:opacity-50"
                     >
                       <Play className="h-4 w-4" />
                       {loadingProblem ? 'Loading...' : 'Practice'}
@@ -399,7 +399,7 @@ function ProblemsPageContent() {
                     <button
                       onClick={() => handleDeleteProblem(problem._id)}
                       disabled={deletingId === problem._id}
-                      className="flex items-center gap-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium disabled:opacity-50"
+                      className="flex items-center gap-1 px-3 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800/40 transition-colors text-sm font-medium disabled:opacity-50"
                       title="Delete problem"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -409,7 +409,7 @@ function ProblemsPageContent() {
                   
                   <Link 
                     href={`/problems/${problem._id}`}
-                    className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1 transition-colors"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm flex items-center gap-1 transition-colors"
                   >
                     View Details
                     <ArrowRight className="h-4 w-4" />

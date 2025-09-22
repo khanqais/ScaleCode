@@ -40,24 +40,24 @@ const CallToAction = () => {
     >
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-r from-black to-gray-800 rounded-3xl p-8 sm:p-12 text-center text-white relative overflow-hidden"
+        className="bg-gradient-to-r from-black to-gray-800 dark:from-white dark:to-gray-200 rounded-3xl p-8 sm:p-12 text-center text-white dark:text-black relative overflow-hidden transition-colors"
       >
         {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-gray-800/90"></div>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full transform translate-x-16 -translate-y-16"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full transform -translate-x-12 translate-y-12"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-gray-800/90 dark:from-white/90 dark:to-gray-200/90"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 dark:bg-black/5 rounded-full transform translate-x-16 -translate-y-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 dark:bg-black/5 rounded-full transform -translate-x-12 translate-y-12"></div>
         
         <div className="relative z-10">
           <motion.h2
             variants={itemVariants}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white dark:text-black transition-colors"
           >
             Ready to organize your coding journey?
           </motion.h2>
           
           <motion.p
             variants={itemVariants}
-            className="text-lg sm:text-xl text-gray-200 mb-8 max-w-3xl mx-auto"
+            className="text-lg sm:text-xl text-gray-200 dark:text-gray-800 mb-8 max-w-3xl mx-auto transition-colors"
           >
             Join thousands of developers who are already using AlgoGrid to track their progress,
             organize their solutions, and accelerate their learning.
@@ -75,7 +75,7 @@ const CallToAction = () => {
               >
                 <Button 
                   size="lg" 
-                  className="bg-white text-black hover:bg-gray-100 px-8 py-6 text-lg font-medium rounded-full"
+                  className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors"
                 >
                   Get Started Free
                 </Button>
@@ -91,7 +91,7 @@ const CallToAction = () => {
                 <Button 
                   variant="ghost" 
                   size="lg" 
-                  className="text-white hover:text-gray-200 hover:bg-white/10 px-8 py-6 text-lg font-medium border border-white/20 rounded-full"
+                  className="text-white dark:text-black hover:text-gray-200 dark:hover:text-gray-800 hover:bg-white/10 dark:hover:bg-black/10 px-8 py-6 text-lg font-medium border border-white/20 dark:border-black/20 rounded-full transition-colors"
                 >
                   View Problems
                 </Button>
@@ -101,7 +101,7 @@ const CallToAction = () => {
           
           <motion.p
             variants={itemVariants}
-            className="text-sm text-gray-300 mt-6"
+            className="text-sm text-gray-300 dark:text-gray-700 mt-6 transition-colors"
           >
             No credit card required • Start organizing today
           </motion.p>

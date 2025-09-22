@@ -45,13 +45,13 @@ const Hero = () => {
           transition: { type: 'spring', stiffness: 400, damping: 10 }
         }}
       >
-        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-black rounded-3xl flex items-center justify-center shadow-lg">
-          <span className="text-white text-2xl sm:text-3xl font-bold">{'</>'}</span>
+        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-black dark:bg-white rounded-3xl flex items-center justify-center shadow-lg">
+          <span className="text-white dark:text-black text-2xl sm:text-3xl font-bold">{'</>'}</span>
         </div>
       </motion.div>
 
       <motion.h1 
-        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black mb-6 sm:mb-8 max-w-4xl leading-tight"
+        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black dark:text-white mb-6 sm:mb-8 max-w-4xl leading-tight"
         variants={itemVariants}
       >
         Organize your coding
@@ -60,7 +60,7 @@ const Hero = () => {
       </motion.h1>
 
       <motion.p 
-        className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 sm:mb-12 max-w-2xl leading-relaxed px-4"
+        className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl leading-relaxed px-4"
         variants={itemVariants}
       >
         Save and organize your LeetCode, HackerRank, and coding platform solutions. 
@@ -80,7 +80,7 @@ const Hero = () => {
   >
     <Button 
       size="lg" 
-      className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-lg font-medium rounded-full"
+      className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-8 py-6 text-lg font-medium rounded-full transition-colors"
     >
       Start organizing
     </Button>
@@ -95,7 +95,7 @@ const Hero = () => {
             <Button 
               variant="ghost" 
               size="lg" 
-              className="text-black hover:text-gray-700 px-8 py-6 text-lg font-medium group"
+              className="text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300 px-8 py-6 text-lg font-medium group transition-colors"
             >
               See our plans 
               <motion.span 

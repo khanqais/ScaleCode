@@ -34,7 +34,7 @@ const Footer = () => {
       whileInView="visible"
       viewport={{ once: true }}
       variants={footerVariants}
-      className="bg-white/80 backdrop-blur-sm border-t border-gray-200 mt-16"
+      className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 mt-16 transition-colors"
     >
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -43,19 +43,19 @@ const Footer = () => {
               className="flex items-center space-x-3 mb-4"
               whileHover={{ scale: 1.02 }}
             >
-              <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SC</span>
+              <div className="w-10 h-10 bg-black dark:bg-white rounded-lg flex items-center justify-center transition-colors">
+                <span className="text-white dark:text-black font-bold text-sm">SC</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">AlgoGrid</span>
+              <span className="text-xl font-bold text-black dark:text-white transition-colors">AlgoGrid</span>
             </motion.div>
-            <p className="text-gray-600 mb-4 max-w-md">
+            <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md transition-colors">
               Organize and manage your coding solutions from LeetCode, HackerRank, 
               and other coding platforms. Keep track of your progress and improve your skills.
             </p>
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Quick Links</h3>
+            <h3 className="font-semibold text-black dark:text-white mb-4 transition-colors">Quick Links</h3>
             <ul className="space-y-3">
               {[
                 { name: 'Home', href: '/' },
@@ -67,7 +67,7 @@ const Footer = () => {
                   <motion.div variants={linkVariants} whileHover="hover">
                     <Link 
                       href={link.href}
-                      className="text-gray-600 hover:text-gray-900 transition-colors"
+                      className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -78,7 +78,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
+            <h3 className="font-semibold text-black dark:text-white mb-4 transition-colors">Support</h3>
             <ul className="space-y-3">
               {[
                 { name: 'Help Center', href: '#' },
@@ -90,7 +90,7 @@ const Footer = () => {
                   <motion.div variants={linkVariants} whileHover="hover">
                     <Link 
                       href={link.href}
-                      className="text-gray-600 hover:text-gray-900 transition-colors"
+                      className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -101,14 +101,14 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 mt-8 pt-8">
+        <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 transition-colors">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 dark:text-gray-400 text-sm transition-colors">
               © {currentYear} AlgoGrid. All rights reserved.
             </p>
             
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
-              <p className="text-gray-600 text-sm mr-2">Follow us:</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mr-2 transition-colors">Follow us:</p>
               {[
                 { name: 'GitHub', href: '#', icon: '🐙' },
                 { name: 'Twitter', href: '#', icon: '🐦' },

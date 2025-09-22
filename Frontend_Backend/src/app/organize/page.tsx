@@ -185,14 +185,14 @@ export default function OrganizePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8">
           <div className="max-w-md mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors">
               Please sign in to access AlgoGrid
             </h2>
-            <p className="text-base sm:text-lg text-gray-600">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 transition-colors">
               You need to be signed in to organize your coding solutions.
             </p>
           </div>
@@ -203,7 +203,7 @@ export default function OrganizePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
           <div className="animate-pulse">
@@ -244,7 +244,7 @@ export default function OrganizePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
@@ -269,10 +269,10 @@ export default function OrganizePage() {
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col gap-4 sm:gap-6 mb-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
                 Welcome back, {user?.firstName}! 👋
               </h1>
-              <p className="text-sm sm:text-base lg:text-lg text-gray-600">
+              <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-400 transition-colors">
                 Organize your DSA solutions by patterns and ace your revisions
               </p>
             </div>
@@ -291,7 +291,7 @@ export default function OrganizePage() {
               
               <button
                 onClick={() => router.push('/add-problem')}
-                className="w-full sm:w-auto bg-black text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-black dark:bg-white text-white dark:text-black px-4 sm:px-6 py-3 sm:py-4 rounded-xl font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
               >
                 <Plus size={20} />
                 <span className="text-sm sm:text-base">Add Problem</span>
@@ -300,11 +300,11 @@ export default function OrganizePage() {
           </div>
 
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Your Progress</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white transition-colors">Your Progress</h2>
             <button
               onClick={handleRetry}
               disabled={loading}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50"
               title="Refresh stats"
             >
               <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
@@ -313,31 +313,31 @@ export default function OrganizePage() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Total Problems</p>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{stats.totalProblems}</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 transition-colors">Total Problems</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white transition-colors">{stats.totalProblems}</p>
                 </div>
                 <FileCode className="text-blue-500" size={20} />
               </div>
             </div>
 
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Categories</p>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{stats.categories}</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 transition-colors">Categories</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white transition-colors">{stats.categories}</p>
                 </div>
                 <FolderIcon className="text-green-500" size={20} />
               </div>
             </div>
 
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">This Week</p>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{stats.recentActivity}</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 transition-colors">This Week</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white transition-colors">{stats.recentActivity}</p>
                 </div>
                 <TrendingUp className="text-purple-500" size={20} />
               </div>
@@ -345,18 +345,18 @@ export default function OrganizePage() {
           </div>
 
           {stats.totalProblems > 0 && Object.keys(stats.categoryStats).length > 0 && (
-            <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-6 sm:mb-8">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-4">Category Breakdown</h3>
-              <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">Click on any category to view filtered problems</p>
+            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6 sm:mb-8 transition-colors">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 sm:mb-4 transition-colors">Category Breakdown</h3>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4 transition-colors">Click on any category to view filtered problems</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
                 {Object.entries(stats.categoryStats).map(([category, count]) => (
                   <div 
                     key={category} 
-                    className="text-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 cursor-pointer transform hover:scale-105 shadow-sm hover:shadow-md"
+                    className="text-center p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 cursor-pointer transform hover:scale-105 shadow-sm hover:shadow-md"
                     onClick={() => router.push(`/problems?category=${encodeURIComponent(category)}`)}
                   >
-                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{count}</div>
-                    <div className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 line-clamp-2">{category}</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white transition-colors">{count}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 sm:mb-2 line-clamp-2 transition-colors">{category}</div>
                     <div className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
                       View Problems →
                     </div>
@@ -386,10 +386,10 @@ export default function OrganizePage() {
         ) : (
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Recent Problems</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white transition-colors">Recent Problems</h2>
               <button
                 onClick={() => router.push('/problems')}
-                className="text-blue-600 hover:text-blue-800 font-medium text-sm sm:text-base self-start sm:self-center"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm sm:text-base self-start sm:self-center transition-colors"
               >
                 View all →
               </button>
@@ -399,11 +399,11 @@ export default function OrganizePage() {
               {problems.map((problem) => (
                 <div
                   key={problem._id}
-                  className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-all cursor-pointer"
+                  className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all cursor-pointer"
                   onClick={() => router.push(`/problems/${problem._id}`)}
                 >
                   <div className="flex items-start justify-between mb-3 sm:mb-4">
-                    <span className="text-xs sm:text-sm text-blue-600 bg-blue-100 px-2 sm:px-3 py-1 rounded-full font-medium">
+                    <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 sm:px-3 py-1 rounded-full font-medium transition-colors">
                       {problem.category}
                     </span>
                     <span className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium ${getDifficultyColor(problem.difficulty)}`}>
@@ -411,11 +411,11 @@ export default function OrganizePage() {
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg line-clamp-2">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg line-clamp-2 transition-colors">
                     {problem.title}
                   </h3>
 
-                  <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 dark:text-gray-400 transition-colors">
                     <div className="flex items-center">
                       <Calendar size={14} className="mr-1 flex-shrink-0" />
                       <span className="truncate">{formatDate(problem.createdAt)}</span>
@@ -426,7 +426,7 @@ export default function OrganizePage() {
                         handleStartRevision(problem)
                       }}
                       disabled={loadingProblem}
-                      className="text-purple-600 hover:text-purple-800 font-medium flex-shrink-0 ml-2 flex items-center gap-1 disabled:opacity-50"
+                      className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-medium flex-shrink-0 ml-2 flex items-center gap-1 disabled:opacity-50 transition-colors"
                     >
                       <Play size={12} />
                       {loadingProblem ? 'Loading...' : 'Practice'}

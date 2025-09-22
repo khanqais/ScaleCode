@@ -145,11 +145,11 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-xl w-full max-w-7xl h-[95vh] sm:h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+      <div className="bg-white dark:bg-gray-900 rounded-xl w-full max-w-7xl h-[95vh] sm:h-[90vh] flex flex-col overflow-hidden shadow-2xl">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gray-50 gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 gap-3 sm:gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 min-w-0">
-            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{problem.title}</h2>
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{problem.title}</h2>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs sm:text-sm text-blue-600 bg-blue-100 px-2 sm:px-3 py-1 rounded-full font-medium">
                 {problem.category}
@@ -162,9 +162,9 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
           
           <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4">
             
-            <div className="flex items-center gap-2 bg-white px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-gray-200">
-              <Clock className="text-gray-500 w-3 h-3 sm:w-4 sm:h-4" />
-              <span className={`font-mono text-xs sm:text-sm ${isTimerRunning ? 'text-blue-600' : 'text-gray-600'}`}>
+            <div className="flex items-center gap-2 bg-white dark:bg-gray-700 px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-gray-200 dark:border-gray-600">
+              <Clock className="text-gray-500 dark:text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+              <span className={`font-mono text-xs sm:text-sm ${isTimerRunning ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300'}`}>
                 {formatTime(elapsedTime)}
               </span>
             </div>
@@ -173,7 +173,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
             <div className="flex items-center gap-2">
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors text-xs sm:text-sm"
+                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-800/50 transition-colors text-xs sm:text-sm"
               >
                 <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Reset</span>
@@ -181,9 +181,9 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
               
               <button
                 onClick={onClose}
-                className="p-1 sm:p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                className="p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" />
               </button>
             </div>
           </div>
@@ -191,13 +191,13 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
 
         
         {isMobile && (
-          <div className="flex bg-gray-100 p-1 mx-4 mt-4 rounded-lg">
+          <div className="flex bg-gray-100 dark:bg-gray-700 p-1 mx-4 mt-4 rounded-lg">
             <button
               onClick={() => setMobileView('problem')}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 mobileView === 'problem'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               Problem
@@ -206,8 +206,8 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
               onClick={() => setMobileView('code')}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 mobileView === 'code'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               Code
@@ -220,24 +220,24 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
           {!isMobile ? (
             <>
               
-              <div className="w-1/2 border-r border-gray-200 flex flex-col">
-                <div className="p-4 sm:p-6 border-b border-gray-200 bg-gray-50">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Problem Statement</h3>
+              <div className="w-1/2 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+                <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Problem Statement</h3>
                 </div>
                 
                 <div className="flex-1 overflow-y-auto p-4 sm:p-6">
                   <div className="prose prose-sm max-w-none">
-                    <pre className="whitespace-pre-wrap text-gray-700 leading-relaxed font-sans text-sm">
+                    <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed font-sans text-sm">
                       {problem.problemStatement || 'No problem statement available'}
                     </pre>
                   </div>
                   
                   
                   {problem.intuition && (
-                    <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                       <button
                         onClick={() => setShowIntuition(!showIntuition)}
-                        className="flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 font-medium text-sm"
+                        className="flex items-center gap-2 mb-4 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium text-sm"
                       >
                         <Brain className="w-4 h-4" />
                         {showIntuition ? 'Hide' : 'Show'} Intuition
@@ -245,8 +245,8 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
                       </button>
                       
                       {showIntuition && (
-                        <div className="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-r-lg">
-                          <pre className="whitespace-pre-wrap text-purple-800 text-sm leading-relaxed font-sans">
+                        <div className="bg-purple-50 dark:bg-purple-900/30 border-l-4 border-purple-400 p-4 rounded-r-lg">
+                          <pre className="whitespace-pre-wrap text-purple-800 dark:text-purple-300 text-sm leading-relaxed font-sans">
                             {problem.intuition}
                           </pre>
                         </div>
@@ -328,9 +328,9 @@ function CodingPhase({
 }) {
   return (
     <>
-      <div className="p-4 sm:p-6 border-b border-gray-200 bg-gray-50">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Write Your Solution</h3>
-        <p className="text-xs sm:text-sm text-gray-600">Code your solution below and click submit when ready</p>
+      <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Write Your Solution</h3>
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Code your solution below and click submit when ready</p>
       </div>
       
       <div className="flex-1 flex flex-col min-h-0">
@@ -348,8 +348,8 @@ function solution() {
           />
         </div>
         
-        <div className="bg-gray-50 border-t border-gray-200 p-3 sm:p-4 flex items-center justify-between gap-3 flex-shrink-0">
-          <div className="text-xs sm:text-sm text-gray-600">
+        <div className="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-3 sm:p-4 flex items-center justify-between gap-3 flex-shrink-0">
+          <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
             <span className="hidden sm:inline">Lines: {userCode.split('\n').length} | </span>
             Characters: {userCode.length}
           </div>
@@ -389,19 +389,19 @@ function ComparisonPhase({
 }) {
   return (
     <>
-      <div className="p-4 sm:p-6 border-b border-gray-200 bg-gray-50">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Solution Comparison</h3>
-        <p className="text-xs sm:text-sm text-gray-600">Compare your solution with your original solution</p>
+      <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Solution Comparison</h3>
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Compare your solution with your original solution</p>
       </div>
       
       <div className="flex-1 overflow-y-auto">
         
-        <div className="border-b border-gray-200">
-          <div className="flex items-center justify-between p-3 sm:p-4 bg-blue-50">
-            <h4 className="font-semibold text-blue-900 text-sm sm:text-base">Your Current Attempt</h4>
+        <div className="border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/30">
+            <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm sm:text-base">Your Current Attempt</h4>
             <button
               onClick={() => handleCopy(userCode, 'user')}
-              className="flex items-center gap-1 px-2 sm:px-3 py-1 text-blue-700 hover:bg-blue-200 rounded transition-colors text-xs sm:text-sm"
+              className="flex items-center gap-1 px-2 sm:px-3 py-1 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800/50 rounded transition-colors text-xs sm:text-sm"
             >
               {copied === 'user' ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <Copy className="w-3 h-3 sm:w-4 sm:h-4" />}
               {copied === 'user' ? 'Copied!' : 'Copy'}
@@ -416,11 +416,11 @@ function ComparisonPhase({
 
         
         <div>
-          <div className="flex items-center justify-between p-3 sm:p-4 bg-green-50">
-            <h4 className="font-semibold text-green-900 text-sm sm:text-base">Your Original Solution</h4>
+          <div className="flex items-center justify-between p-3 sm:p-4 bg-green-50 dark:bg-green-900/30">
+            <h4 className="font-semibold text-green-900 dark:text-green-100 text-sm sm:text-base">Your Original Solution</h4>
             <button
               onClick={() => handleCopy(problem.myCode || '', 'solution')}
-              className="flex items-center gap-1 px-2 sm:px-3 py-1 text-green-700 hover:bg-green-200 rounded transition-colors text-xs sm:text-sm"
+              className="flex items-center gap-1 px-2 sm:px-3 py-1 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800/50 rounded transition-colors text-xs sm:text-sm"
             >
               {copied === 'solution' ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <Copy className="w-3 h-3 sm:w-4 sm:h-4" />}
               {copied === 'solution' ? 'Copied!' : 'Copy'}
@@ -435,15 +435,15 @@ function ComparisonPhase({
       </div>
 
       {/* Comparison Actions */}
-      <div className="p-3 sm:p-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="text-xs sm:text-sm text-gray-600">
+      <div className="p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
           Time taken: <span className="font-mono font-medium">{formatTime(elapsedTime)}</span>
         </div>
         
         <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
           <button
             onClick={handleReset}
-            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-xs sm:text-sm flex-1 sm:flex-none justify-center"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-xs sm:text-sm flex-1 sm:flex-none justify-center"
           >
             <RotateCcw className="w-4 h-4" />
             Try Again
@@ -474,9 +474,9 @@ function MobileProblemView({
   return (
     <div className="flex-1 overflow-y-auto p-4">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">Problem Statement</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Problem Statement</h3>
         <div className="prose prose-sm max-w-none">
-          <pre className="whitespace-pre-wrap text-gray-700 leading-relaxed font-sans text-sm bg-gray-50 p-4 rounded-lg border">
+          <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed font-sans text-sm bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
             {problem.problemStatement || 'No problem statement available'}
           </pre>
         </div>
@@ -484,10 +484,10 @@ function MobileProblemView({
       
       {/* Intuition Section */}
       {problem.intuition && (
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
             onClick={() => setShowIntuition(!showIntuition)}
-            className="flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 font-medium text-sm"
+            className="flex items-center gap-2 mb-4 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium text-sm"
           >
             <Brain className="w-4 h-4" />
             {showIntuition ? 'Hide' : 'Show'} Intuition
@@ -495,8 +495,8 @@ function MobileProblemView({
           </button>
           
           {showIntuition && (
-            <div className="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-r-lg">
-              <pre className="whitespace-pre-wrap text-purple-800 text-sm leading-relaxed font-sans">
+            <div className="bg-purple-50 dark:bg-purple-900/30 border-l-4 border-purple-400 p-4 rounded-r-lg">
+              <pre className="whitespace-pre-wrap text-purple-800 dark:text-purple-300 text-sm leading-relaxed font-sans">
                 {problem.intuition}
               </pre>
             </div>
