@@ -64,7 +64,7 @@ const Hero = () => {
         variants={itemVariants}
       >
         Save and organize your LeetCode, HackerRank, and coding platform solutions. 
-        Group them by topics, difficulty, or custom categories—
+        Group them by topics, difficulty, or custom categories,
         <br className="hidden sm:block" />
         <span className="sm:hidden"> </span>Never lose track of your progress again.
       </motion.p>
