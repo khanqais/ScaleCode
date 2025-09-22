@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useUser, useAuth } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle } from 'lucide-react'
 
 export default function AddProblemPage() {
   const { user } = useUser()
-  const { getToken } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -118,15 +117,10 @@ export default function AddProblemPage() {
     setError('')
     
     try {
-      // Get the Clerk auth token
-      const token = await getToken()
-      
-      
-      const response = await fetch('http://localhost:5000/api/problems', {
+      const response = await fetch('/api/problems', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, 
         },
         body: JSON.stringify({
           title: formData.title,
