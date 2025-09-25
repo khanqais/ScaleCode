@@ -339,12 +339,7 @@ function CodingPhase({
             value={userCode}
             onChange={(e) => setUserCode(e.target.value)}
             className="absolute inset-0 w-full h-full p-3 sm:p-6 font-mono text-xs sm:text-sm border-0 resize-none focus:outline-none focus:ring-0 bg-gray-900 text-green-400"
-            placeholder="// Write your solution here...
-function solution() {
-    // Your code goes here
-    
-    return result;
-}"
+            placeholder=""
           />
         </div>
         

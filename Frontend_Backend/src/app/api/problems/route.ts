@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
 
     const totalPages = Math.ceil(total / limit);
 
-    console.log(`📊 Found ${problems.length} problems out of ${total} total`);
+    
 
     const response = NextResponse.json({
       success: true,
@@ -257,7 +257,7 @@ export async function DELETE(request: NextRequest) {
     });
 
     if (!deletedProblem) {
-      console.log('❌ Problem not found for deletion:', problemId);
+      console.log(' Problem not found for deletion:', problemId);
       return NextResponse.json({
         success: false,
         error: 'Problem not found or you do not have permission to delete it'

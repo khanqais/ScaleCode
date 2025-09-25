@@ -28,7 +28,7 @@ export async function GET() {
 
     const problems = await Problem.find({ userId }).lean() as ProblemLeanDoc[]
     const totalProblems = problems.length
-    console.log(`📈 Stats API: Found ${totalProblems} problems for user ${userId}`)
+    
     
     const categories = [...new Set(problems.map((p) => p.category))].length
     
@@ -58,7 +58,7 @@ export async function GET() {
       }
     }
 
-    console.log('📊 Stats calculated:', stats)
+    
 
     const response = NextResponse.json({
       success: true,

@@ -49,14 +49,14 @@ export async function GET(
     const problem = await Problem.findOne({ _id: id, userId });
 
     if (!problem) {
-      console.log('❌ Problem not found:', id);
+      console.log('Problem not found:', id);
       return NextResponse.json({
         success: false,
         error: 'Problem not found'
       }, { status: 404 });
     }
 
-    console.log('✅ Problem found:', problem.title);
+   
 
     const response = NextResponse.json({
       success: true,
@@ -107,7 +107,7 @@ export async function PUT(
     );
 
     if (!problem) {
-      console.log('❌ Problem not found for update:', id);
+      console.log(' Problem not found for update:', id);
       return NextResponse.json({
         success: false,
         error: 'Problem not found'
@@ -170,7 +170,7 @@ export async function DELETE(
     const problem = await Problem.findOneAndDelete({ _id: id, userId });
 
     if (!problem) {
-      console.log('❌ Problem not found for deletion:', id);
+      console.log(' Problem not found for deletion:', id);
       return NextResponse.json({
         success: false,
         error: 'Problem not found'
