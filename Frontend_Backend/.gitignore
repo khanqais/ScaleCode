@@ -10,6 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 .env
+REVISION_SYSTEM_COMPLETE_GUIDE.md
 
 # testing
 /coverage
