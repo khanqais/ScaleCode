@@ -1,51 +1,105 @@
-# 🚀 AlgoGrid - DSA Practice Platform
+# 🚀 ScaleCode - Intelligent DSA Revision Platform
 
-A modern, full-stack web application for organizing and practicing Data Structures & Algorithms problems. Built to help developers systematically prepare for coding interviews and improve their problem-solving skills.
+A modern, full-stack web application designed to **revolutionize how you revise Data Structures & Algorithms**. Unlike traditional problem trackers, ScaleCode uses an **intelligent spaced-repetition algorithm** to ensure you never forget what you've learned.
 
 **🌐 Live Demo:** [https://scale-code.vercel.app/](https://scale-code.vercel.app/)
 
-## ✨ Features
+## 🎯 The Problem We Solve
+
+You solve hundreds of DSA problems, but **retention is the real challenge**. Most developers forget solutions within weeks. ScaleCode ensures **lasting mastery** through:
+
+✅ **Automatic confidence decay** - Your confidence drops 10% every 2 weeks without revision  
+✅ **Smart priority scoring** - AI-driven algorithm determines which problems need attention  
+✅ **Spaced repetition** - Review problems at optimal intervals for long-term retention  
+✅ **Save & Organize** - Store every DSA problem you solve with your code, approach, and intuition  
+
+## 🧠 Smart Revision System - The Core Feature
+
+### How It Works
+
+1. **Save Your Solutions**: Add problems with your code, approach, and initial confidence level (1-10)
+2. **Confidence Decay**: Your confidence automatically decays 10% every 2 weeks (capped at 50% max decay)
+3. **Priority Algorithm**: Problems are ranked using:
+   ```
+   Priority Score = (Adjusted Confidence × 0.7) - (Time Factor × 0.3)
+   Lower Score = Higher Priority
+   ```
+4. **Smart Revision**: Get notified which problems need urgent revision vs. which can wait
+
+### Confidence-Based Learning
+
+Replace arbitrary "difficulty ratings" with **personal confidence tracking**:
+- **1-3 (Red)**: Very Low - Urgent revision needed
+- **4-6 (Orange)**: Medium - High priority for revision  
+- **7-8 (Light Green)**: Good - Medium priority
+- **9-10 (Dark Green)**: Excellent - Low priority
+
+Your confidence decays over time, ensuring you revisit problems before forgetting them completely.
+
+### Revision Modes
+
+- **Priority Mode**: Focus on problems with lowest priority scores
+- **Urgent Mode**: Only problems with confidence < 4 (red zone)
+- **Needs Revision**: Problems with decayed confidence
+- **All Problems**: Complete overview with filtering and sorting
+
+## ✨ Additional Features
 
 ### 📚 Problem Management
-- **Add Problems**: Store your solved coding problems with complete solutions
+- **Save DSA Problems**: Store your solved coding problems with complete solutions
 - **Rich Categories**: 50+ DSA categories based on Striver's A2Z course
-- **Difficulty Tracking**: Rate problems from 1-10 based on your confidence
-- **Solution Storage**: Save your code, approach, and intuition for each problem
+- **Confidence Tracking**: Rate your understanding from 1-10, updated automatically with decay
+- **Solution Storage**: Save your code, approach, intuition, and revision attempts
 
-### 🎯 Smart Practice System
-- **Revision Mode**: Practice problems without looking at solutions first
-- **Timed Sessions**: Track how long you take to solve problems
+### 🎯 Interactive Revision System
+- **Timed Practice**: Track how long you take to solve problems
 - **Solution Comparison**: Compare your revision attempt with original solution
-- **Progressive Learning**: Focus on areas that need improvement
+- **Progressive Learning**: Focus on areas that need improvement based on decay
+- **Revision History**: Track all your revision attempts with timestamps
 
 ### 📊 Progress Analytics
 - **Personal Dashboard**: Track total problems, categories covered, and recent activity
 - **Category Breakdown**: Visual representation of your problem distribution
-- **Weekly Progress**: Monitor your consistency with weekly activity tracking
+- **Confidence Analytics**: Monitor your confidence levels across categories
+- **Decay Visualization**: See which problems are losing confidence and need attention
 - **Performance Stats**: View your growth and improvement over time
 
 ### 🔍 Advanced Organization
-- **Smart Filtering**: Filter by category, difficulty, or search terms
-- **Sorting Options**: Sort by date, difficulty, or alphabetically
+- **Smart Filtering**: Filter by category, confidence level, or search terms
+- **Intelligent Sorting**: Sort by priority score, confidence, date, or alphabetically
 - **Category Navigation**: Quick access to specific problem types
 - **Responsive Design**: Perfect experience on all devices
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Next.js 14** - React framework with App Router
+- **Next.js 14** - React framework with App Router and Server Components
 - **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
-- **Lucide Icons** - Beautiful, customizable icons
+- **Tailwind CSS** - Utility-first styling framework
+- **Lucide Icons** - Beautiful, customizable icon library
+- **React Hooks** - Modern state management
 
 ### Backend
 - **Next.js API Routes** - Serverless backend functions
-- **MongoDB** - Document-based database
-- **Mongoose** - MongoDB object modeling
+- **MongoDB** - NoSQL document-based database
+- **Mongoose** - ODM (Object Data Modeling) for MongoDB
+- **RESTful API** - Clean API architecture
 
-### Authentication & Deployment
-- **Clerk** - Complete authentication solution
-- **Vercel** - Cloud deployment platform
+### Authentication & Security
+- **Clerk** - Complete authentication solution with webhooks
+- **JWT Tokens** - Secure session management
+- **Protected Routes** - Middleware-based route protection
+
+### Development Tools
+- **ESLint** - Code quality and consistency
+- **Prettier** - Code formatting
+- **TypeScript** - Static type checking
+- **Git** - Version control
+
+### Deployment & Hosting
+- **Vercel** - Serverless deployment platform with CI/CD
+- **MongoDB Atlas** - Cloud database hosting
+- **Edge Functions** - Global edge network for optimal performance
 
 ## 🚀 Getting Started
 
@@ -102,31 +156,86 @@ Visit `http://localhost:3000` to see the application.
    - Problem title and statement
    - Your solution code
    - Your approach/intuition
-   - Difficulty level (1-10)
+   - **Confidence level (1-10)** - How well do you understand this problem?
    - Category (e.g., Arrays, Dynamic Programming)
 
-### Practicing Problems
-1. Navigate to any problem from your dashboard
-2. Click "Start Revision" to enter practice mode
-3. Code your solution without looking at the original
+### Using the Smart Revision System
+1. Navigate to **Main Revision** from the dashboard
+2. View your problems sorted by **priority score** (automatically calculated)
+3. Problems are color-coded by confidence:
+   - 🔴 Red (1-3): Urgent - Needs immediate revision
+   - 🟠 Orange (4-6): High priority
+   - 🟢 Green (7-10): Low priority
+4. Click on any problem to start revision
+5. The system tracks:
+   - Days since last revision
+   - Confidence decay percentage
+   - Adjusted confidence after decay
+   - Priority score for intelligent sorting
+
+### Revising a Problem
+1. Click "Start Revision" on any problem
+2. Try solving it without looking at the original solution
+3. Code your solution in the provided editor
 4. Submit to compare with your previous solution
-5. Review differences and improve your approach
+5. Your confidence is updated, and decay timer resets
 
 ### Tracking Progress
-- **Dashboard**: Overview of your coding journey
-- **Category Stats**: See which topics you've mastered
-- **Recent Activity**: Track your consistency
-- **Filtering**: Find specific problems quickly
+- **Dashboard**: Overview of your coding journey with total problems and categories
+- **Confidence Stats**: See average confidence across all problems and by category
+- **Decay Monitoring**: Identify which problems have decayed and need urgent attention
+- **Revision History**: Track when you last revised each problem
+- **Category Mastery**: View confidence distribution across different DSA topics
+- **Filtering**: Find specific problems quickly with smart search
 
 ## 🎨 Features in Detail
+
+### Intelligent Revision Algorithm
+The core of ScaleCode is its **spaced-repetition algorithm**:
+
+#### Confidence Decay
+```
+Decay Rate: 10% every 2 weeks (14 days)
+Maximum Decay: 50% (your confidence won't drop below half)
+Minimum Confidence: 1 (floor value)
+```
+
+**Example:**
+- Day 0: You solve a problem with confidence 8
+- Day 14: Confidence decays to 7.2 (8 × 0.9)
+- Day 28: Confidence decays to 6.4 (8 × 0.8)
+- Day 70: Confidence capped at 4.0 (8 × 0.5, max 50% decay)
+
+#### Priority Scoring
+Problems are ranked using a weighted formula:
+```
+Priority Score = (Adjusted Confidence × 0.7) - (Time Factor × 0.3)
+
+Where:
+- Adjusted Confidence = Original Confidence × (1 - Decay)
+- Time Factor = (Days Since Revision / 30) × 10
+- Lower Score = Higher Priority (appears first)
+```
+
+This ensures:
+- ✅ Low confidence problems get priority
+- ✅ Old problems don't get forgotten
+- ✅ Optimal spacing for long-term retention
 
 ### Problem Categories
 Based on **Striver's A2Z DSA Course**, including:
 - **Fundamentals**: Basic Maths, Recursion, Hashing
-- **Data Structures**: Arrays, Strings, Linked Lists, Trees
-- **Algorithms**: Sorting, Searching, Graph Algorithms
-- **Advanced Topics**: Dynamic Programming, Greedy, Backtracking
-- **Specialized**: Bit Manipulation, Tries, System Design
+- **Data Structures**: Arrays, Strings, Linked Lists, Stacks, Queues, Trees, Heaps, Graphs
+- **Algorithms**: Sorting, Searching, Two Pointers, Sliding Window, Binary Search
+- **Advanced Topics**: Dynamic Programming, Greedy Algorithms, Backtracking
+- **Specialized**: Bit Manipulation, Tries, Segment Trees, System Design
+
+### Why Confidence Over Difficulty?
+Traditional platforms rate problem difficulty as a static value. ScaleCode is **personal**:
+- **Subjective Understanding**: What's hard for others might be easy for you
+- **Dynamic Learning**: Your confidence changes as you learn
+- **Decay Tracking**: Ensures you don't fool yourself into thinking you remember something you don't
+- **Personalized Revision**: Focus on YOUR weak areas, not arbitrary difficulty ratings
 
 ### Responsive Design
 - **Mobile-First**: Optimized for phones and tablets
@@ -136,23 +245,54 @@ Based on **Striver's A2Z DSA Course**, including:
 
 ## 🚀 Deployment
 
-The application is optimized for **Vercel** deployment:
+The application is optimized for **Vercel** deployment with automatic CI/CD:
 
 1. **Push to GitHub**
 ```bash
+git add .
+git commit -m "Your changes"
 git push origin main
 ```
 
 2. **Connect to Vercel**
    - Import your repository on Vercel
    - Add environment variables
-   - Deploy automatically
+   - Deploy automatically on every push
 
 3. **Environment Variables**
 Set production values for:
-   - `MONGODB_URI`
-   - `CLERK_SECRET_KEY`
-   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+   - `MONGODB_URI` - Your MongoDB Atlas connection string
+   - `CLERK_SECRET_KEY` - Clerk secret key
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk publishable key
+   - Clerk webhook secret for user synchronization
+
+## 📖 Documentation
+
+For a complete deep-dive into the revision algorithm, see [REVISION_SYSTEM_COMPLETE_GUIDE.md](REVISION_SYSTEM_COMPLETE_GUIDE.md)
+
+The guide includes:
+- Mathematical formulas and examples
+- System architecture
+- API endpoint documentation
+- Implementation details
+- Configuration options
+
+## 🎯 Use Cases
+
+### For Interview Preparation
+- Save every problem you solve during prep
+- Get automatic reminders when problems need revision
+- Build lasting muscle memory instead of cramming
+
+### For Continuous Learning
+- Add problems as you encounter them
+- The system ensures you never forget what you've learned
+- Maintain your DSA skills long-term
+
+### For Educators
+- Track student progress through confidence metrics
+- Identify topics that need more attention
+- Personalized learning paths based on decay patterns
 
 ## 🤝 Contributing
 
@@ -178,22 +318,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - **Striver's A2Z DSA Course** for the comprehensive category structure
+- **Spaced Repetition Research** for the scientific foundation of our algorithm
 - **Clerk** for seamless authentication
-- **Vercel** for reliable hosting
+- **Vercel** for reliable hosting and edge functions
 - **MongoDB** for flexible data storage
+- **The Developer Community** for continuous feedback and support
 
-***
+---
 
-**Built with ❤️ for the coding community**
+## 🌟 Why ScaleCode?
 
-*Happy Coding! 🎯*
+**"The best time to revise a problem was 2 weeks ago. The second best time is now."**
 
-[1](https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/scale)
-[2](https://www.scale.at/blog/websites-at-scale)
-[3](https://www.w3schools.com/cssref/css_pr_scale.php)
-[4](https://www.clarity-ventures.com/blog/ten-key-elements-every-business-website-should-have-functionality-and-design-ed)
-[5](https://acropolium.com/blog/how-to-scale-web-app/)
-[6](https://www.sei.cmu.edu/blog/scale-a-tool-for-managing-output-from-static-analysis-tools/)
-[7](https://www.browserstack.com/guide/responsive-web-design)
-[8](https://www.w3schools.com/html/html_responsive.asp)
-[9](https://www.greatfrontend.com/blog/web-apps-at-scale-javascript)
+Stop forgetting what you've learned. Start building **lasting mastery** with intelligent, data-driven revision.
+
+---
+
+**Built with ❤️ by developers, for developers**
+
+*Master DSA. Retain Forever. 🧠*
