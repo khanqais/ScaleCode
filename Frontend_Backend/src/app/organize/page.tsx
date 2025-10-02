@@ -270,7 +270,7 @@ export default function OrganizePage() {
           <div className="flex flex-col gap-4 sm:gap-6 mb-6">
             <div className="text-center sm:text-left">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
-                Welcome back, {user?.firstName}! 👋
+                Welcome back, {user?.firstName}! 
               </h1>
               <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-400 transition-colors">
                 Organize your DSA solutions by patterns and ace your revisions

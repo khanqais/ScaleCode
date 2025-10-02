@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { UserButton, useUser, SignInButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import ThemeToggle from './ThemeToggle'
+import { Button } from '@/components/ui/button'
 
 const Navbar = () => {
   const { isSignedIn, user } = useUser()
@@ -39,10 +40,14 @@ const Navbar = () => {
       <div className="hidden md:flex items-center space-x-8">
         <motion.div whileHover={{ scale: 1.05 }}>
           <Link 
-            href="/pricing" 
+            href="/" 
             className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors font-medium"
           >
+           <Button
+           onClick={()=>alert('Not available')}
+           >
             Pricing
+           </Button>
           </Link>
         </motion.div>
         <ThemeToggle />
