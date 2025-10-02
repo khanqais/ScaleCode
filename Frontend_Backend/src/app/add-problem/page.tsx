@@ -17,7 +17,7 @@ export default function AddProblemPage() {
     problemStatement: '',
     myCode: '',
     intuition: '',
-    difficulty: 5,
+    Confidence: 5,
     category: 'Graph'
   })
 
@@ -103,7 +103,8 @@ export default function AddProblemPage() {
   'Design',
   'System Design',
   
-  // Company/Contest Specific
+ 
+  
   'Interview Questions',
   'Contest Problems',
   'Mock Interview',
@@ -120,22 +121,27 @@ export default function AddProblemPage() {
     setError('')
     
     try {
+      const problemData = {
+        title: formData.title,
+        problemStatement: formData.problemStatement,
+        myCode: formData.myCode,
+        intuition: formData.intuition,
+        Confidence: formData.Confidence,
+        category: formData.category,
+      }
+      
+      console.log('Sending problem data:', problemData)
+      
       const response = await fetch('/api/problems', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          title: formData.title,
-          problemStatement: formData.problemStatement,
-          myCode: formData.myCode,
-          intuition: formData.intuition,
-          difficulty: formData.difficulty,
-          category: formData.category,
-        }),
+        body: JSON.stringify(problemData),
       })
 
       const result = await response.json()
+      console.log('API Response:', result)
 
 if (response.ok && result.success) {
   console.log('Problem created successfully!')
@@ -146,6 +152,7 @@ if (response.ok && result.success) {
 }
  else {
         setError(result.error || 'Failed to save problem')
+        console.error('API Error:', result)
       }
       
     } catch (error) {
@@ -228,21 +235,24 @@ if (response.ok && result.success) {
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Confidence (1-10)
+                Your Confidence (1-10)
               </label>
               <input
                 type="range"
                 min="1"
                 max="10"
-                value={formData.difficulty}
-                onChange={(e) => setFormData({...formData, difficulty: parseInt(e.target.value)})}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                value={formData.Confidence}
+                onChange={(e) => setFormData({...formData, Confidence: parseInt(e.target.value)})}
+                className="w-full h-2 bg-blue-200 dark:bg-blue-600 rounded-lg appearance-none cursor-pointer"
               />
               <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-1">
-                <span>low (1)</span>
-                <span className="font-medium">{formData.difficulty}</span>
+                <span>Low (1)</span>
+                <span className="font-medium text-blue-600 dark:text-blue-400">{formData.Confidence}</span>
                 <span>High (10)</span>
               </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                How confident are you in solving this problem again?
+              </p>
             </div>
 
             <div>

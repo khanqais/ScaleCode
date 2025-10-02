@@ -27,11 +27,19 @@ const problemSchema = new mongoose.Schema({
     trim: true,
     default: ''
   },
-  difficulty: {
+  Confidence: {
     type: Number,
-    required: [true, 'Difficulty level is required'],
-    min: [1, 'Difficulty must be at least 1'],
-    max: [10, 'Difficulty cannot exceed 10']
+    required: [true, 'Confidence level is required'],
+    min: [1, 'Confidence must be at least 1'],
+    max: [10, 'Confidence cannot exceed 10']
+  },
+  lastRevised: {
+    type: Date,
+    default: Date.now
+  },
+  revisionCount: {
+    type: Number,
+    default: 0
   },
   category: {
     type: String,
@@ -137,8 +145,12 @@ const problemSchema = new mongoose.Schema({
 
 problemSchema.index({ userId: 1, createdAt: -1 });
 problemSchema.index({ userId: 1, category: 1 });
-problemSchema.index({ userId: 1, difficulty: 1 });
 
-const Problem = mongoose.models.Problem || mongoose.model('Problem', problemSchema);
+// Clear any cached model to ensure we use the latest schema
+if (mongoose.models.Problem) {
+  delete mongoose.models.Problem;
+}
+
+const Problem = mongoose.model('Problem', problemSchema);
 
 export default Problem;

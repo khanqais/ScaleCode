@@ -9,20 +9,20 @@ async function updateUserStats(userId: string) {
   try {
     const problems = await Problem.find({ userId });
     const totalProblems = problems.length;
-    const averageDifficulty = totalProblems > 0 
-      ? problems.reduce((sum: number, p: { difficulty: number }) => sum + p.difficulty, 0) / totalProblems 
+    const averageConfidence = totalProblems > 0 
+      ? problems.reduce((sum: number, p: { Confidence: number }) => sum + p.Confidence, 0) / totalProblems 
       : 0;
 
     await User.findOneAndUpdate(
       { clerkId: userId },
       {
         'stats.totalProblems': totalProblems,
-        'stats.averageDifficulty': Math.round(averageDifficulty * 10) / 10,
+        'stats.averageConfidence': Math.round(averageConfidence * 10) / 10,
         'stats.lastActive': new Date()
       }
     );
     
-    console.log(`📈 Updated stats for user ${userId}: ${totalProblems} problems, avg difficulty ${averageDifficulty}`);
+    
   } catch (error) {
     console.error('❌ Error updating user stats:', error);
   }
@@ -44,7 +44,7 @@ export async function GET(
     }
 
     const { id } = await params;
-    console.log('🔍 Fetching problem:', id, 'for user:', userId);
+    
 
     const problem = await Problem.findOne({ _id: id, userId });
 
@@ -63,7 +63,7 @@ export async function GET(
       data: problem
     });
 
-    // DISABLE CACHING
+    
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
@@ -71,7 +71,7 @@ export async function GET(
     return response;
 
   } catch (error: unknown) {
-    console.error('❌ Get problem error:', error);
+    console.error('Get problem error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch problem',
@@ -98,7 +98,7 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    console.log('✏️ Updating problem:', id, 'for user:', userId);
+   
 
     const problem = await Problem.findOneAndUpdate(
       { _id: id, userId },
@@ -114,7 +114,7 @@ export async function PUT(
       }, { status: 404 });
     }
 
-    console.log('✅ Problem updated successfully:', problem.title);
+    
 
     const response = NextResponse.json({
       success: true,
@@ -165,7 +165,6 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    console.log('🗑️ Deleting problem:', id, 'for user:', userId);
 
     const problem = await Problem.findOneAndDelete({ _id: id, userId });
 
@@ -177,9 +176,8 @@ export async function DELETE(
       }, { status: 404 });
     }
 
-    console.log('✅ Problem deleted successfully:', problem.title);
 
-    // Update user stats after deletion
+    
     await updateUserStats(userId);
 
     const response = NextResponse.json({
@@ -187,7 +185,7 @@ export async function DELETE(
       message: 'Problem deleted successfully'
     });
 
-    // DISABLE CACHING
+    
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
@@ -195,7 +193,7 @@ export async function DELETE(
     return response;
 
   } catch (error: unknown) {
-    console.error('❌ Delete problem error:', error);
+    console.error(' Delete problem error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to delete problem',

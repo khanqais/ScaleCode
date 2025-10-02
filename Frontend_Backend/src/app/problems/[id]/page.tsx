@@ -28,7 +28,7 @@ interface Problem {
   _id: string
   title: string
   category: string
-  difficulty: number
+  Confidence: number
   problemStatement: string
   myCode: string
   intuition: string
@@ -149,6 +149,26 @@ function ProblemDetailPageContent() {
       setDeleting(false)
       setShowDeleteConfirm(false)
     }
+  }
+
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence <= 3) {
+      return 'text-red-600 bg-red-100'
+    }
+    if (confidence <= 6) {
+      return 'text-yellow-600 bg-yellow-100'
+    }
+    return 'text-green-600 bg-green-100'
+  }
+
+  const getConfidenceLabel = (confidence: number) => {
+    if (confidence <= 3) {
+      return 'Low Confidence'
+    }
+    if (confidence <= 6) {
+      return 'Medium Confidence'
+    }
+    return 'High Confidence'
   }
 
   const handleStartRevision = () => {
@@ -279,15 +299,15 @@ function ProblemDetailPageContent() {
                 <span className="text-xs sm:text-sm text-blue-600 bg-blue-100 px-2 sm:px-3 py-1 rounded-full font-medium">
                   {problem.category}
                 </span>
-                <span className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium ${getDifficultyColor(problem.difficulty)}`}>
-                  {getDifficultyLabel(problem.difficulty)} ({problem.difficulty}/10)
+                <span className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium ${getConfidenceColor(problem.Confidence)}`}>
+                  {getConfidenceLabel(problem.Confidence)} ({problem.Confidence}/10)
                 </span>
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
                       className={`h-3 w-3 sm:h-4 sm:w-4 ${
-                        i < Math.floor(problem.difficulty / 2) 
+                        i < Math.floor(problem.Confidence / 2) 
                           ? 'text-yellow-400 fill-current' 
                           : 'text-gray-300'
                       }`}

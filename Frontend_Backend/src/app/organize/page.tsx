@@ -11,7 +11,7 @@ interface Problem {
   _id: string
   title: string
   category: string
-  difficulty: number
+  Confidence: number
   createdAt: string
   problemStatement?: string
   myCode?: string
@@ -21,13 +21,13 @@ interface Problem {
 interface Stats {
   totalProblems: number
   categories: number
-  averageDifficulty: number
+  averageConfidence: number
   recentActivity: number
   categoryStats: Record<string, number>
-  difficultyStats: {
-    easy: number
+  confidenceStats: {
+    low: number
     medium: number
-    hard: number
+    high: number
   }
 }
 
@@ -39,10 +39,10 @@ export default function OrganizePage() {
   const [stats, setStats] = useState<Stats>({
     totalProblems: 0,
     categories: 0,
-    averageDifficulty: 0,
+    averageConfidence: 0,
     recentActivity: 0,
     categoryStats: {},
-    difficultyStats: { easy: 0, medium: 0, hard: 0 }
+    confidenceStats: { low: 0, medium: 0, high: 0 }
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -157,14 +157,14 @@ export default function OrganizePage() {
     }
   }, [user])
 
-  const getDifficultyColor = (difficulty: number) => {
-    if (difficulty <= 3) {
-      return 'text-green-600 bg-green-100'
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence <= 3) {
+      return 'text-red-600 bg-red-100'
     }
-    if (difficulty <= 6) {
+    if (confidence <= 6) {
       return 'text-yellow-600 bg-yellow-100'
     }
-    return 'text-red-600 bg-red-100'
+    return 'text-green-600 bg-green-100'
   }
 
   const formatDate = (dateString: string) => {
@@ -279,7 +279,7 @@ export default function OrganizePage() {
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button 
-                onClick={() => router.push('')}
+                onClick={() => router.push('/main-revision')}
                 className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center sm:justify-start gap-3"
               >
                 <Brain size={20} className="sm:w-6 sm:h-6" />
@@ -406,8 +406,8 @@ export default function OrganizePage() {
                     <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 sm:px-3 py-1 rounded-full font-medium transition-colors">
                       {problem.category}
                     </span>
-                    <span className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium ${getDifficultyColor(problem.difficulty)}`}>
-                      {problem.difficulty}/10
+                    <span className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium ${getConfidenceColor(problem.Confidence)}`}>
+                      {problem.Confidence}/10
                     </span>
                   </div>
 

@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String
   },
   preferences: {
-    defaultDifficulty: {
+    defaultConfidence: {
       type: Number,
       default: 5
     },
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
-    averageDifficulty: {
+    averageConfidence: {
       type: Number,
       default: 0
     },
@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Only keep email index since clerkId already has unique: true
+
 userSchema.index({ email: 1 });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);

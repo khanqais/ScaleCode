@@ -4,13 +4,16 @@ import connectDB from '@/lib/db';
 import Problem from '@/lib/models/Problem';
 import User from '@/lib/models/User';
 
-// Helper function to ensure user exists
+
+
 async function ensureUserExists(userId: string) {
   try {
     let user = await User.findOne({ clerkId: userId });
     if (!user) {
-      console.log('👤 Creating new user for:', userId);
-      // Get user info from Clerk
+     
+      
+      
+      
       const client = await clerkClient();
       const clerkUser = await client.users.getUser(userId);
       
@@ -22,11 +25,10 @@ async function ensureUserExists(userId: string) {
         profileImage: clerkUser.imageUrl || ''
       });
       await user.save();
-      console.log('✅ New user created');
     }
     return user;
   } catch (error) {
-    console.error('❌ Error ensuring user exists:', error);
+    console.error(' Error ensuring user exists:', error);
     throw error;
   }
 }
@@ -36,17 +38,17 @@ async function updateUserStats(userId: string) {
     console.log('📊 Updating user stats for:', userId);
     const problems = await Problem.find({ userId });
     const totalProblems = problems.length;
-    const averageDifficulty = totalProblems > 0 
-      ? problems.reduce((sum: number, p: { difficulty: number }) => sum + p.difficulty, 0) / totalProblems 
+    const averageConfidence = totalProblems > 0 
+      ? problems.reduce((sum: number, p: { Confidence: number }) => sum + p.Confidence, 0) / totalProblems 
       : 0;
 
-    console.log(`📈 Calculated stats: ${totalProblems} problems, avg difficulty ${averageDifficulty}`);
+    console.log(`📈 Calculated stats: ${totalProblems} problems, avg confidence ${averageConfidence}`);
 
     await User.findOneAndUpdate(
       { clerkId: userId },
       {
         'stats.totalProblems': totalProblems,
-        'stats.averageDifficulty': Math.round(averageDifficulty * 10) / 10,
+        'stats.averageConfidence': Math.round(averageConfidence * 10) / 10,
         'stats.lastActive': new Date()
       }
     );
@@ -72,16 +74,28 @@ export async function POST(request: NextRequest) {
     console.log('🔍 Creating problem for user:', userId);
 
     const body = await request.json();
-    const { title, problemStatement, myCode, intuition, difficulty, category } = body;
+    console.log('📦 Received body:', JSON.stringify(body, null, 2));
+    
+    const { title, problemStatement, myCode, intuition, Confidence, category } = body;
 
-    console.log('📝 Problem data:', { title, category, difficulty });
+    console.log('📝 Problem data:', { title, category, Confidence, hasTitle: !!title, hasStatement: !!problemStatement, hasCode: !!myCode });
 
     // Validation
-    if (!title || !problemStatement || !myCode || !difficulty || !category) {
+    if (!title || !problemStatement || !myCode || !Confidence || !category) {
+      const missingFields = [];
+      if (!title) missingFields.push('title');
+      if (!problemStatement) missingFields.push('problemStatement');
+      if (!myCode) missingFields.push('myCode');
+      if (!Confidence) missingFields.push('Confidence');
+      if (!category) missingFields.push('category');
+      
+      console.error('❌ Missing fields:', missingFields);
+      
       return NextResponse.json({
         success: false,
         error: 'Missing required fields',
-        required: ['title', 'problemStatement', 'myCode', 'difficulty', 'category']
+        missingFields,
+        required: ['title', 'problemStatement', 'myCode', 'Confidence', 'category']
       }, { status: 400 });
     }
 
@@ -93,7 +107,7 @@ export async function POST(request: NextRequest) {
       problemStatement: problemStatement.trim(),
       myCode: myCode.trim(),
       intuition: intuition?.trim() || '',
-      difficulty: parseInt(difficulty),
+      Confidence: parseInt(Confidence),
       category,
     });
 
@@ -156,17 +170,15 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const category = searchParams.get('category');
-    const difficulty = searchParams.get('difficulty');
     const search = searchParams.get('search');
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const order = searchParams.get('order') || 'desc';
 
-    console.log('📋 Query params:', { page, limit, category, difficulty, search, sortBy, order });
+    console.log('📋 Query params:', { page, limit, category, search, sortBy, order });
 
     // Build filter query
     const filter: Record<string, unknown> = { userId };
     if (category) filter.category = category;
-    if (difficulty) filter.difficulty = parseInt(difficulty);
     if (search) {
       filter.$or = [
         { title: { $regex: search, $options: 'i' } },
@@ -248,9 +260,10 @@ export async function DELETE(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log('🗑️ Deleting problem:', problemId, 'for user:', userId);
+    
 
-    // Find and delete the problem, ensuring it belongs to the user
+    
+    
     const deletedProblem = await Problem.findOneAndDelete({
       _id: problemId,
       userId: userId
@@ -264,7 +277,8 @@ export async function DELETE(request: NextRequest) {
       }, { status: 404 });
     }
 
-    console.log('✅ Problem deleted:', deletedProblem.title);
+   
+    
 
     // Update user stats after deletion
     await updateUserStats(userId);

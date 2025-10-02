@@ -10,7 +10,7 @@ interface Problem {
   problemStatement?: string
   myCode?: string
   intuition?: string
-  difficulty: number
+  Confidence: number
   category: string
   isPublic?: boolean
   createdAt?: string
@@ -25,7 +25,7 @@ interface RevisionModalProps {
     _id: string
     title: string
     category: string
-    difficulty: number
+    Confidence: number
     problemStatement?: string
     myCode?: string
     intuition?: string
@@ -98,16 +98,16 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
-  const getDifficultyColor = (difficulty: number) => {
-    if (difficulty <= 3) return 'text-green-600 bg-green-100'
-    if (difficulty <= 6) return 'text-yellow-600 bg-yellow-100'
-    return 'text-red-600 bg-red-100'
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence <= 3) return 'text-red-600 bg-red-100'
+    if (confidence <= 6) return 'text-yellow-600 bg-yellow-100'
+    return 'text-green-600 bg-green-100'
   }
 
-  const getDifficultyLabel = (difficulty: number) => {
-    if (difficulty <= 3) return 'Easy'
-    if (difficulty <= 6) return 'Medium'
-    return 'Hard'
+  const getConfidenceLabel = (confidence: number) => {
+    if (confidence <= 3) return 'Low Confidence'
+    if (confidence <= 6) return 'Medium Confidence'
+    return 'High Confidence'
   }
 
   const handleSubmit = () => {
@@ -154,8 +154,8 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
               <span className="text-xs sm:text-sm text-blue-600 bg-blue-100 px-2 sm:px-3 py-1 rounded-full font-medium">
                 {problem.category}
               </span>
-              <span className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium ${getDifficultyColor(problem.difficulty)}`}>
-                {getDifficultyLabel(problem.difficulty)}
+              <span className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium ${getConfidenceColor(problem.Confidence)}`}>
+                {getConfidenceLabel(problem.Confidence)}
               </span>
             </div>
           </div>

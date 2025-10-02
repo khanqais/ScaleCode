@@ -7,7 +7,7 @@ interface ProblemLeanDoc {
   _id: unknown
   userId: string
   category: string
-  difficulty: number
+  Confidence: number
   createdAt: Date
   __v?: number
 }
@@ -32,8 +32,8 @@ export async function GET() {
     
     const categories = [...new Set(problems.map((p) => p.category))].length
     
-    const averageDifficulty = totalProblems > 0
-      ? problems.reduce((sum: number, p) => sum + p.difficulty, 0) / totalProblems
+    const averageConfidence = totalProblems > 0
+      ? problems.reduce((sum: number, p) => sum + p.Confidence, 0) / totalProblems
       : 0
 
     const weekAgo = new Date()
@@ -48,13 +48,13 @@ export async function GET() {
     const stats = {
       totalProblems,
       categories,
-      averageDifficulty: Math.round(averageDifficulty * 10) / 10,
+      averageConfidence: Math.round(averageConfidence * 10) / 10,
       recentActivity,
       categoryStats,
-      difficultyStats: {
-        easy: problems.filter((p) => p.difficulty <= 3).length,
-        medium: problems.filter((p) => p.difficulty >= 4 && p.difficulty <= 7).length,
-        hard: problems.filter((p) => p.difficulty >= 8).length
+      confidenceStats: {
+        low: problems.filter((p) => p.Confidence <= 3).length,
+        medium: problems.filter((p) => p.Confidence >= 4 && p.Confidence <= 7).length,
+        high: problems.filter((p) => p.Confidence >= 8).length
       }
     }
 

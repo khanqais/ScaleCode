@@ -12,7 +12,7 @@ interface Problem {
   _id: string
   title: string
   category: string
-  difficulty: number
+  Confidence: number
   createdAt: string
   problemStatement?: string
   myCode?: string
@@ -146,24 +146,24 @@ function ProblemsPageContent() {
     }
   }
 
-  const getDifficultyColor = (difficulty: number) => {
-    if (difficulty <= 3) {
-      return 'text-green-600'
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence <= 3) {
+      return 'text-red-600'
     }
-    if (difficulty <= 6) {
+    if (confidence <= 6) {
       return 'text-yellow-600'
     }
-    return 'text-red-600'
+    return 'text-green-600'
   }
 
-  const getDifficultyLabel = (difficulty: number) => {
-    if (difficulty <= 3) {
-      return 'Easy'
+  const getConfidenceLabel = (confidence: number) => {
+    if (confidence <= 3) {
+      return 'Low Confidence'
     }
-    if (difficulty <= 6) {
-      return 'Medium'
+    if (confidence <= 6) {
+      return 'Medium Confidence'
     }
-    return 'Hard'
+    return 'High Confidence'
   }
 
   const handleCategoryFilter = (category: string) => {
@@ -359,8 +359,8 @@ function ProblemsPageContent() {
                       >
                         {problem.category}
                       </span>
-                      <span className={`font-medium ${getDifficultyColor(problem.difficulty)}`}>
-                        {getDifficultyLabel(problem.difficulty)}
+                      <span className={`font-medium ${getConfidenceColor(problem.Confidence)}`}>
+                        {getConfidenceLabel(problem.Confidence)}
                       </span>
                     </div>
                   </div>
@@ -369,7 +369,7 @@ function ProblemsPageContent() {
                       <Star
                         key={i}
                         className={`h-4 w-4 ${
-                          i < Math.floor(problem.difficulty / 2) 
+                          i < Math.floor(problem.Confidence / 2) 
                             ? 'text-yellow-400 fill-current' 
                             : 'text-gray-300'
                         }`}
