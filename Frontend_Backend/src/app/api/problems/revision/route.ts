@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     const category = searchParams.get('category');
 
     // Fetch problems from database
-    let query: any = { userId };    
+    const query: Record<string, unknown> = { userId };    
     if (category && category !== 'all') {
       query.category = category;
     }

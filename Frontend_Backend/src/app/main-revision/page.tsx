@@ -254,10 +254,10 @@ const RevisionPage = () => {
             <div>
               <label className="block text-sm font-medium mb-2">Revision Mode</label>
               <div className="flex gap-2">
-                {['priority', 'urgent', 'needsRevision', 'all'].map((mode) => (
+                {(['priority', 'urgent', 'needsRevision', 'all'] as const).map((mode) => (
                   <Button
                     key={mode}
-                    onClick={() => setSelectedMode(mode as any)}
+                    onClick={() => setSelectedMode(mode)}
                     variant={selectedMode === mode ? 'default' : 'outline'}
                     size="sm"
                   >
