@@ -22,13 +22,13 @@ export async function GET(request: Request) {
       );
     }
 
-    // Get query parameters
+   
     const { searchParams } = new URL(request.url);
-    const mode = searchParams.get('mode') || 'priority'; // priority, all, urgent
+    const mode = searchParams.get('mode') || 'priority'; 
     const limit = parseInt(searchParams.get('limit') || '50');
     const category = searchParams.get('category');
 
-    // Fetch problems from database
+   
     const query: Record<string, unknown> = { userId };    
     if (category && category !== 'all') {
       query.category = category;

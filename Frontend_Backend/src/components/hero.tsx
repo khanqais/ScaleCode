@@ -54,7 +54,7 @@ const Hero = () => {
         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black dark:text-white mb-6 sm:mb-8 max-w-4xl leading-tight"
         variants={itemVariants}
       >
-        Organize your coding
+        Revise your coding
         <br className="hidden sm:block" />
         <span className="sm:hidden"> </span>solutions effectively.
       </motion.h1>
@@ -63,7 +63,7 @@ const Hero = () => {
         className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl leading-relaxed px-4"
         variants={itemVariants}
       >
-        Save and organize your LeetCode, HackerRank, and coding platform solutions. 
+        Save and Revise your LeetCode, HackerRank, and coding platform solutions. 
         Group them by topics, difficulty, or custom categories,
         <br className="hidden sm:block" />
         <span className="sm:hidden"> </span>Never lose track of your progress again.
