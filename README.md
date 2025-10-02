@@ -1,4 +1,4 @@
-# 🚀 ScaleCode - Intelligent DSA Revision Platform
+# 🚀 ZenCode - Intelligent DSA Revision Platform
 
 A modern, full-stack web application designed to **revolutionize how you revise Data Structures & Algorithms**. Unlike traditional problem trackers, ScaleCode uses an **intelligent spaced-repetition algorithm** to ensure you never forget what you've learned.
 
