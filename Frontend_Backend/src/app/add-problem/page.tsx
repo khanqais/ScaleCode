@@ -52,7 +52,9 @@ export default function AddProblemPage() {
   // Fetch current usage info on component mount
   useEffect(() => {
     const fetchUsageInfo = async () => {
-      if (!user) return
+      if (!user) {
+        return
+      }
       
       try {
         setLoadingUsage(true)

@@ -4,23 +4,23 @@ import connectDB from '@/lib/db';
 import Problem from '@/lib/models/Problem';
 import User from '@/lib/models/User';
 
-// Helper function to get user's subscription plan
+
 async function getUserPlan(userId: string) {
   try {
     const client = await clerkClient();
     const user = await client.users.getUser(userId);
     
-    // Check if user has active subscription from Clerk metadata
+    
     const subscriptionPlan = user.publicMetadata?.subscriptionPlan as string || 'free';
     
-    return subscriptionPlan; // Returns: 'free', 'pro', or 'pro_max'
+    return subscriptionPlan; 
   } catch (error) {
     console.error('❌ Error getting user plan:', error);
-    return 'free'; // Default to free if error
+    return 'free'; 
   }
 }
 
-// Helper function to get problem limit based on plan
+
 function getProblemLimit(plan: string): number {
   const limits: Record<string, number> = {
     'free': 50,
@@ -48,21 +48,21 @@ async function ensureUserExists(userId: string) {
     }
     return user;
   } catch (error) {
-    console.error('❌ Error ensuring user exists:', error);
+    console.error(' Error ensuring user exists:', error);
     throw error;
   }
 }
 
 async function updateUserStats(userId: string) {
   try {
-    console.log('📊 Updating user stats for:', userId);
+    
     const problems = await Problem.find({ userId });
     const totalProblems = problems.length;
     const averageConfidence = totalProblems > 0 
       ? problems.reduce((sum: number, p: { Confidence: number }) => sum + p.Confidence, 0) / totalProblems 
       : 0;
 
-    console.log(`📈 Calculated stats: ${totalProblems} problems, avg confidence ${averageConfidence}`);
+    
 
     await User.findOneAndUpdate(
       { clerkId: userId },
@@ -73,7 +73,7 @@ async function updateUserStats(userId: string) {
       }
     );
 
-    console.log('✅ User stats updated successfully');
+   
   } catch (error) {
     console.error('❌ Error updating user stats:', error);
   }
@@ -91,16 +91,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('🔍 Creating problem for user:', userId);
-
-    // CHECK PROBLEM LIMIT BEFORE ALLOWING CREATION
+   
     const userPlan = await getUserPlan(userId);
     const problemLimit = getProblemLimit(userPlan);
     const currentProblemCount = await Problem.countDocuments({ userId });
 
-    console.log(`📊 Plan: ${userPlan}, Limit: ${problemLimit}, Current: ${currentProblemCount}`);
-
-    // Block if limit reached
+    
     if (currentProblemCount >= problemLimit) {
       return NextResponse.json({
         success: false,
@@ -114,13 +110,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    console.log('📦 Received body:', JSON.stringify(body, null, 2));
+    
     
     const { title, problemStatement, myCode, intuition, Confidence, category } = body;
 
-    console.log('📝 Problem data:', { title, category, Confidence, hasTitle: !!title, hasStatement: !!problemStatement, hasCode: !!myCode });
-
-    // Validation
+    
     if (!title || !problemStatement || !myCode || !Confidence || !category) {
       const missingFields = [];
       if (!title) missingFields.push('title');
@@ -129,7 +123,7 @@ export async function POST(request: NextRequest) {
       if (!Confidence) missingFields.push('Confidence');
       if (!category) missingFields.push('category');
       
-      console.error('❌ Missing fields:', missingFields);
+      console.error(' Missing fields:', missingFields);
       
       return NextResponse.json({
         success: false,
@@ -151,18 +145,18 @@ export async function POST(request: NextRequest) {
       category,
     });
 
-    console.log('💾 Saving problem to database...');
+    
     const savedProblem = await problem.save();
-    console.log('✅ Problem saved with ID:', savedProblem._id);
+    
 
-    // Update user stats AFTER saving problem
+    
     await updateUserStats(userId);
 
     const response = NextResponse.json({
       success: true,
       message: 'Problem created successfully',
       data: savedProblem,
-      // Include usage info in response
+     
       usage: {
         currentCount: currentProblemCount + 1,
         limit: problemLimit,
@@ -171,7 +165,7 @@ export async function POST(request: NextRequest) {
       }
     }, { status: 201 });
 
-    // DISABLE CACHING
+    
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
@@ -181,7 +175,7 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     console.error('❌ Create problem error:', error);
     
-    // Handle specific validation errors
+    
     if (error instanceof Error && error.name === 'ValidationError') {
       return NextResponse.json({
         success: false,
@@ -199,7 +193,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// ... rest of GET and DELETE methods remain the same
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -212,7 +206,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log('🔍 Fetching problems for user:', userId);
+    
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -222,11 +216,11 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const order = searchParams.get('order') || 'desc';
 
-    console.log('📋 Query params:', { page, limit, category, search, sortBy, order });
-
-    // Build filter query
+    
     const filter: Record<string, unknown> = { userId };
-    if (category) filter.category = category;
+    if (category) {
+      filter.category = category;
+    }
     if (search) {
       filter.$or = [
         { title: { $regex: search, $options: 'i' } },
@@ -235,11 +229,11 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Build sort object
+    
     const sortOptions: Record<string, 1 | -1> = {};
     sortOptions[sortBy] = order === 'desc' ? -1 : 1;
 
-    // Execute query with pagination
+    
     const skip = (page - 1) * limit;
     const [problems, total] = await Promise.all([
       Problem.find(filter)
@@ -267,7 +261,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // DISABLE CACHING
+    
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
@@ -312,14 +306,14 @@ export async function DELETE(request: NextRequest) {
     });
 
     if (!deletedProblem) {
-      console.log('❌ Problem not found for deletion:', problemId);
+      console.log(' Problem not found for deletion:', problemId);
       return NextResponse.json({
         success: false,
         error: 'Problem not found or you do not have permission to delete it'
       }, { status: 404 });
     }
 
-    // Update user stats after deletion
+   
     await updateUserStats(userId);
 
     const response = NextResponse.json({
@@ -328,7 +322,7 @@ export async function DELETE(request: NextRequest) {
       data: deletedProblem
     });
 
-    // DISABLE CACHING
+  
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
@@ -336,7 +330,7 @@ export async function DELETE(request: NextRequest) {
     return response;
 
   } catch (error: unknown) {
-    console.error('❌ Delete problem error:', error);
+    console.error('Delete problem error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to delete problem',
