@@ -40,11 +40,11 @@ const Navbar = () => {
       <div className="hidden md:flex items-center space-x-8">
         <motion.div whileHover={{ scale: 1.05 }}>
           <Link 
-            href="/" 
+            href="/pricing" 
             className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors font-medium"
           >
            <Button
-           onClick={()=>alert('Not available')}
+           
            >
             Pricing
            </Button>
@@ -60,9 +60,19 @@ const Navbar = () => {
             <UserButton 
               appearance={{
                 elements: {
-                  avatarBox: "w-10 h-10"
+                  avatarBox: "w-10 h-10",
+                  userButtonPopoverCard: "bg-white dark:bg-gray-900",
+                  userButtonPopoverMain: "bg-white dark:bg-gray-900",
+                  userButtonPopoverFooter: "hidden",
+                  userButtonPopoverActionButton: "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800",
+                  userButtonPopoverActionButtonText: "text-black dark:text-white",
+                  userButtonPopoverActionButtonIcon: "text-black dark:text-white",
+                  userPreviewTextContainer: "text-black dark:text-white",
+                  userPreviewMainIdentifier: "text-black dark:text-white",
+                  userPreviewSecondaryIdentifier: "text-gray-600 dark:text-gray-400",
                 }
               }}
+              afterSignOutUrl="/"
             />
           </div>
         ) : (
@@ -83,9 +93,19 @@ const Navbar = () => {
           <UserButton 
             appearance={{
               elements: {
-                avatarBox: "w-8 h-8"
+                avatarBox: "w-8 h-8",
+                userButtonPopoverCard: "bg-white dark:bg-gray-900",
+                userButtonPopoverMain: "bg-white dark:bg-gray-900",
+                userButtonPopoverFooter: "hidden",
+                userButtonPopoverActionButton: "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800",
+                userButtonPopoverActionButtonText: "text-black dark:text-white",
+                userButtonPopoverActionButtonIcon: "text-black dark:text-white",
+                userPreviewTextContainer: "text-black dark:text-white",
+                userPreviewMainIdentifier: "text-black dark:text-white",
+                userPreviewSecondaryIdentifier: "text-gray-600 dark:text-gray-400",
               }
             }}
+            afterSignOutUrl="/"
           />
         ) : (
           <SignInButton mode="modal">

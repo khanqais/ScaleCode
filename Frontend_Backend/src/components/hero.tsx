@@ -86,7 +86,7 @@ const Hero = () => {
     </Button>
   </motion.div>
 </Link>
-        <Link href="/">
+        <Link href="/pricing">
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -94,7 +94,7 @@ const Hero = () => {
           >
             <Button 
               variant="ghost" 
-              onClick={()=>alert('Not available')}
+              
               size="lg" 
               className="text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300 px-8 py-6 text-lg font-medium group transition-colors"
             >

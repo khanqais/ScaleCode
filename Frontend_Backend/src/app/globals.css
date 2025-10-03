@@ -197,6 +197,12 @@
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
+/* Ensure Clerk elements are never behind page content */
+[class*="cl-"],
+[data-clerk] {
+  isolation: auto !important;
+}
+
 body {
   font-family: var(--font-sans);
 }
@@ -209,4 +215,141 @@ input, textarea, select {
 /* Button base styles */
 button {
   @apply transition-colors duration-300;
+}
+
+/* Clerk Pricing Table and Checkout Modal Styles */
+/* Ensure the pricing table cards are properly styled */
+.cl-pricingTable {
+  @apply gap-6;
+}
+
+/* Fix z-index for Clerk modals to prevent overlapping - COMPREHENSIVE FIX */
+/* Backdrop for ALL modals */
+.cl-modalBackdrop {
+  z-index: 99999 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  backdrop-filter: blur(8px) !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Modal content wrapper - this contains the actual modal */
+.cl-modalContent {
+  z-index: 100000 !important;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+/* SignIn/SignUp specific styles - ensure they appear correctly */
+.cl-rootBox {
+  z-index: 100001 !important;
+  position: relative !important;
+}
+
+.cl-card {
+  z-index: inherit !important;
+  position: relative !important;
+  background: white !important;
+  border-radius: 8px !important;
+}
+
+.dark .cl-card {
+  background: #1a1a1a !important;
+}
+
+/* Ensure the checkout modal and portal appears above everything */
+[data-clerk-portal],
+#clerk-portal,
+.clerk-portal {
+  z-index: 100000 !important;
+  position: fixed !important;
+}
+
+/* Override any iframe or embedded content z-index */
+iframe[src*="clerk"],
+iframe[src*="stripe"] {
+  z-index: 100000 !important;
+}
+
+/* Fix Clerk UserButton popover - SEPARATE FROM MODALS */
+.cl-userButtonPopoverCard {
+  z-index: 100000 !important;
+  position: absolute !important;
+  background: white !important;
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  color: black !important;
+}
+
+.dark .cl-userButtonPopoverCard {
+  background: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+/* UserButton text elements */
+.cl-userButtonPopoverCard *,
+.cl-userButtonPopoverMain *,
+.cl-userPreviewTextContainer *,
+.cl-userButtonPopoverActionButtonText,
+.cl-userButtonPopoverActionButton {
+  color: black !important;
+}
+
+.dark .cl-userButtonPopoverCard *,
+.dark .cl-userButtonPopoverMain *,
+.dark .cl-userPreviewTextContainer *,
+.dark .cl-userButtonPopoverActionButtonText,
+.dark .cl-userButtonPopoverActionButton {
+  color: white !important;
+}
+
+/* UserButton action buttons hover state */
+.cl-userButtonPopoverActionButton:hover {
+  background: #f5f5f5 !important;
+}
+
+.dark .cl-userButtonPopoverActionButton:hover {
+  background: #333333 !important;
+}
+
+/* UserButton backdrop - no blur needed */
+.cl-userButtonPopoverBackdrop {
+  backdrop-filter: none !important;
+  background: transparent !important;
+  z-index: 99998 !important;
+}
+
+/* Fix UserButton popover positioning */
+.cl-userButtonPopover {
+  z-index: 100000 !important;
+}
+
+.cl-userButtonPopoverMain {
+  background: white !important;
+  border: 1px solid #e5e5e5 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark .cl-userButtonPopoverMain {
+  background: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Style the pricing cards */
+.cl-pricingCard {
+  @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105;
+}
+
+/* Style the subscribe buttons */
+.cl-pricingCardButton {
+  @apply bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300;
 }

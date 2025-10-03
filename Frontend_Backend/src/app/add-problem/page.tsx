@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle, Crown, TrendingUp } from 'lucide-react'
 
 export default function AddProblemPage() {
   
@@ -12,6 +13,20 @@ export default function AddProblemPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [limitReached, setLimitReached] = useState(false)
+  const [limitInfo, setLimitInfo] = useState<{
+    currentCount: number;
+    limit: number;
+    currentPlan: string;
+  } | null>(null)
+  const [usageInfo, setUsageInfo] = useState<{
+    currentCount: number;
+    limit: number;
+    plan: string;
+    remaining: number;
+  } | null>(null)
+  const [loadingUsage, setLoadingUsage] = useState(true)
+  
   const [formData, setFormData] = useState({
     title: '',
     problemStatement: '',
@@ -22,94 +37,73 @@ export default function AddProblemPage() {
   })
 
   const categories = [
-  // Step 1: Basics
-  'Basic Maths',
-  'Basic Recursion',
-  'Basic Hashing',
-  
-  // Step 2: Sorting
-  'Sorting Algorithms',
-  
-  // Step 3: Arrays
-  'Arrays',
-  
-  // Step 4: Binary Search
-  'Binary Search',
-  
-  // Step 5: Strings
-  'Strings',
-  
-  // Step 6: Linked List
-  'Linked List',
-  'Doubly Linked List',
-  
-  // Step 7: Recursion Patterns
-  'Recursion',
-  'Subsequences',
-  'Backtracking',
-  
-  // Step 8: Bit Manipulation
-  'Bit Manipulation',
-  
-  // Step 9: Stack and Queues
-  'Stack',
-  'Queue',
-  'Monotonic Stack',
-  
-  // Step 10: Sliding Window & Two Pointer
-  'Sliding Window',
-  'Two Pointers',
-  
-  // Step 11: Heaps
-  'Heap',
-  'Priority Queue',
-  
-  // Step 12: Greedy
-  'Greedy Algorithms',
-  
-  // Step 13: Binary Trees
-  'Binary Tree',
-  'Tree Traversal',
-  
-  // Step 14: Binary Search Trees
-  'Binary Search Tree',
-  
-  // Step 15: Graphs
-  'Graph',
-  'BFS',
-  'DFS',
-  'Shortest Path',
-  'Minimum Spanning Tree',
-  'Topological Sort',
-  
-  // Step 16: Dynamic Programming
-  'Dynamic Programming',
-  'DP on Arrays',
-  'DP on Grids',
-  'DP on Strings',
-  'DP on Trees',
-  'DP on Subsequences',
-  
-  // Step 17: Tries
-  'Trie',
-  
-  // Additional Important Categories
-  'Mathematical',
-  'Geometry',
-  'Number Theory',
-  'Combinatorics',
-  'Game Theory',
-  'Matrix',
-  'Design',
-  'System Design',
-  
- 
-  
-  'Interview Questions',
-  'Contest Problems',
-  'Mock Interview',
-]
+    'Basic Maths', 'Basic Recursion', 'Basic Hashing', 'Sorting Algorithms', 'Arrays',
+    'Binary Search', 'Strings', 'Linked List', 'Doubly Linked List', 'Recursion',
+    'Subsequences', 'Backtracking', 'Bit Manipulation', 'Stack', 'Queue',
+    'Monotonic Stack', 'Sliding Window', 'Two Pointers', 'Heap', 'Priority Queue',
+    'Greedy Algorithms', 'Binary Tree', 'Tree Traversal', 'Binary Search Tree',
+    'Graph', 'BFS', 'DFS', 'Shortest Path', 'Minimum Spanning Tree', 'Topological Sort',
+    'Dynamic Programming', 'DP on Arrays', 'DP on Grids', 'DP on Strings', 'DP on Trees',
+    'DP on Subsequences', 'Trie', 'Mathematical', 'Geometry', 'Number Theory',
+    'Combinatorics', 'Game Theory', 'Matrix', 'Design', 'System Design',
+    'Interview Questions', 'Contest Problems', 'Mock Interview',
+  ]
 
+  // Fetch current usage info on component mount
+  useEffect(() => {
+    const fetchUsageInfo = async () => {
+      if (!user) return
+      
+      try {
+        setLoadingUsage(true)
+        const response = await fetch('/api/problems', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        
+        if (response.ok) {
+          const result = await response.json()
+          if (result.success && result.data.problems) {
+            const currentCount = result.data.problems.length
+            
+            // Fetch user plan to calculate limit
+            const planResponse = await fetch('/api/subscription/status')
+            const planData = await planResponse.json()
+            
+            let plan = 'free'
+            let limit = 50
+            
+            if (planData.success && planData.subscription) {
+              plan = planData.subscription.plan || 'free'
+            }
+            
+            // Set limits based on plan
+            const limits: Record<string, number> = {
+              'free': 50,
+              'pro': 500,
+              'pro_max': 2000
+            }
+            limit = limits[plan] || 50
+            
+            setUsageInfo({
+              currentCount,
+              limit,
+              plan,
+              remaining: limit - currentCount
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching usage info:', error)
+      } finally {
+        setLoadingUsage(false)
+      }
+    }
+    
+    fetchUsageInfo()
+  }, [user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -119,6 +113,7 @@ export default function AddProblemPage() {
 
     setLoading(true)
     setError('')
+    setLimitReached(false)
     
     try {
       const problemData = {
@@ -143,14 +138,33 @@ export default function AddProblemPage() {
       const result = await response.json()
       console.log('API Response:', result)
 
-if (response.ok && result.success) {
-  console.log('Problem created successfully!')
-  setSuccess(true)
-  setTimeout(() => {
-    router.push(`/organize?refresh=${Date.now()}`)
-  }, 1500)
-}
- else {
+      if (response.ok && result.success) {
+        console.log('Problem created successfully!')
+        setSuccess(true)
+        
+        // Update usage info if available in response
+        if (result.usage) {
+          setUsageInfo({
+            currentCount: result.usage.currentCount,
+            limit: result.usage.limit,
+            plan: result.usage.plan,
+            remaining: result.usage.remaining
+          })
+        }
+        
+        setTimeout(() => {
+          router.push(`/organize?refresh=${Date.now()}`)
+        }, 1500)
+      } else if (result.limitReached) {
+        // Handle limit reached
+        setLimitReached(true)
+        setLimitInfo({
+          currentCount: result.currentCount,
+          limit: result.limit,
+          currentPlan: result.currentPlan
+        })
+        setError(result.message)
+      } else {
         setError(result.error || 'Failed to save problem')
         console.error('API Error:', result)
       }
@@ -161,6 +175,39 @@ if (response.ok && result.success) {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Limit Reached Modal
+  if (limitReached && limitInfo) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center transition-colors p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-xl p-8 shadow-lg max-w-md w-full text-center transition-colors">
+          <Crown className="mx-auto text-yellow-500 mb-4" size={64} />
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Upgrade to Continue</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            You've reached your <span className="font-semibold capitalize">{limitInfo.currentPlan}</span> plan limit of <span className="font-bold">{limitInfo.limit}</span> problems.
+          </p>
+          <p className="text-gray-700 dark:text-gray-300 mb-6">
+            Upgrade to Pro or Pro Max to add more problems and unlock advanced features!
+          </p>
+          
+          <div className="space-y-3">
+            <Link
+              href="/pricing"
+              className="block w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
+            >
+              View Pricing Plans
+            </Link>
+            <button
+              onClick={() => router.back()}
+              className="block w-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (success) {
@@ -187,6 +234,84 @@ if (response.ok && result.success) {
           </button>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Add New Problem</h1>
         </div>
+
+        {/* Usage Info Banner */}
+        {usageInfo && !loadingUsage && (
+          <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 shadow-sm border border-blue-100 dark:border-gray-600">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                  <TrendingUp className="text-blue-600 dark:text-blue-400" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Your Progress
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="capitalize font-medium">{usageInfo.plan}</span> Plan
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                    {usageInfo.currentCount}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Problems Created</p>
+                </div>
+                
+                <div className="h-12 w-px bg-gray-300 dark:bg-gray-600"></div>
+                
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                    {usageInfo.remaining}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Remaining</p>
+                </div>
+                
+                <div className="h-12 w-px bg-gray-300 dark:bg-gray-600"></div>
+                
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+                    {usageInfo.limit}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Limit</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="mt-4">
+              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+                <span>Usage</span>
+                <span>{Math.round((usageInfo.currentCount / usageInfo.limit) * 100)}%</span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                <div 
+                  className={`h-2.5 rounded-full transition-all ${
+                    usageInfo.remaining <= 5 
+                      ? 'bg-red-500' 
+                      : usageInfo.remaining <= 20 
+                      ? 'bg-yellow-500' 
+                      : 'bg-green-500'
+                  }`}
+                  style={{ width: `${Math.min((usageInfo.currentCount / usageInfo.limit) * 100, 100)}%` }}
+                ></div>
+              </div>
+              
+              {usageInfo.remaining <= 5 && usageInfo.plan === 'free' && (
+                <p className="mt-2 text-sm text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                  <AlertCircle size={16} />
+                  Running low on problems! Consider upgrading to{' '}
+                  <Link href="/pricing" className="underline font-semibold hover:text-orange-700">
+                    Pro or Pro Max
+                  </Link>
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg flex items-center gap-2">

@@ -4,16 +4,36 @@ import connectDB from '@/lib/db';
 import Problem from '@/lib/models/Problem';
 import User from '@/lib/models/User';
 
+// Helper function to get user's subscription plan
+async function getUserPlan(userId: string) {
+  try {
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    
+    // Check if user has active subscription from Clerk metadata
+    const subscriptionPlan = user.publicMetadata?.subscriptionPlan as string || 'free';
+    
+    return subscriptionPlan; // Returns: 'free', 'pro', or 'pro_max'
+  } catch (error) {
+    console.error('❌ Error getting user plan:', error);
+    return 'free'; // Default to free if error
+  }
+}
 
+// Helper function to get problem limit based on plan
+function getProblemLimit(plan: string): number {
+  const limits: Record<string, number> = {
+    'free': 50,
+    'pro': 500,
+    'pro_max': 2000
+  };
+  return limits[plan] || 50;
+}
 
 async function ensureUserExists(userId: string) {
   try {
     let user = await User.findOne({ clerkId: userId });
     if (!user) {
-     
-      
-      
-      
       const client = await clerkClient();
       const clerkUser = await client.users.getUser(userId);
       
@@ -28,7 +48,7 @@ async function ensureUserExists(userId: string) {
     }
     return user;
   } catch (error) {
-    console.error(' Error ensuring user exists:', error);
+    console.error('❌ Error ensuring user exists:', error);
     throw error;
   }
 }
@@ -72,6 +92,26 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('🔍 Creating problem for user:', userId);
+
+    // CHECK PROBLEM LIMIT BEFORE ALLOWING CREATION
+    const userPlan = await getUserPlan(userId);
+    const problemLimit = getProblemLimit(userPlan);
+    const currentProblemCount = await Problem.countDocuments({ userId });
+
+    console.log(`📊 Plan: ${userPlan}, Limit: ${problemLimit}, Current: ${currentProblemCount}`);
+
+    // Block if limit reached
+    if (currentProblemCount >= problemLimit) {
+      return NextResponse.json({
+        success: false,
+        error: 'Problem limit reached',
+        message: `You've reached your ${userPlan} plan limit of ${problemLimit} problems. Please upgrade to add more.`,
+        limitReached: true,
+        currentPlan: userPlan,
+        currentCount: currentProblemCount,
+        limit: problemLimit
+      }, { status: 403 });
+    }
 
     const body = await request.json();
     console.log('📦 Received body:', JSON.stringify(body, null, 2));
@@ -121,7 +161,14 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({
       success: true,
       message: 'Problem created successfully',
-      data: savedProblem
+      data: savedProblem,
+      // Include usage info in response
+      usage: {
+        currentCount: currentProblemCount + 1,
+        limit: problemLimit,
+        plan: userPlan,
+        remaining: problemLimit - currentProblemCount - 1
+      }
     }, { status: 201 });
 
     // DISABLE CACHING
@@ -152,6 +199,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// ... rest of GET and DELETE methods remain the same
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -203,8 +251,6 @@ export async function GET(request: NextRequest) {
     ]);
 
     const totalPages = Math.ceil(total / limit);
-
-    
 
     const response = NextResponse.json({
       success: true,
@@ -260,25 +306,18 @@ export async function DELETE(request: NextRequest) {
       }, { status: 400 });
     }
 
-    
-
-    
-    
     const deletedProblem = await Problem.findOneAndDelete({
       _id: problemId,
       userId: userId
     });
 
     if (!deletedProblem) {
-      console.log(' Problem not found for deletion:', problemId);
+      console.log('❌ Problem not found for deletion:', problemId);
       return NextResponse.json({
         success: false,
         error: 'Problem not found or you do not have permission to delete it'
       }, { status: 404 });
     }
-
-   
-    
 
     // Update user stats after deletion
     await updateUserStats(userId);

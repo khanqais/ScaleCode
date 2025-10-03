@@ -21,19 +21,21 @@ export default function RootLayout({
       appearance={{
         elements: {
           formButtonPrimary: "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200",
+          card: "bg-white dark:bg-gray-900",
+          rootBox: "bg-transparent",
+          modalBackdrop: "backdrop-blur-sm bg-black/60",
+          modalContent: "bg-transparent",
         },
       }}
     >
       <html lang="en">
         <body className="bg-white dark:bg-black text-black dark:text-white min-h-screen transition-colors">
           <ThemeProvider>
-            <div className="min-h-screen w-full h-full relative">
-              <div className="relative z-10">
-                <PageTransition>
-                  {children}
-                  <Footer/>
-                </PageTransition>
-              </div>
+            <div className="min-h-screen w-full h-full">
+              <PageTransition>
+                {children}
+                <Footer/>
+              </PageTransition>
             </div>
           </ThemeProvider>
         </body>
