@@ -1,11 +1,11 @@
 ﻿'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import RevisionModal from '@/components/RevisionModal'
-import { Plus, Folder as FolderIcon, FileCode, Brain, Star, TrendingUp, Code, Calendar, AlertCircle, RefreshCw, Play } from 'lucide-react'
+import { Plus, Folder as FolderIcon, FileCode, Brain, TrendingUp, Code, Calendar, AlertCircle, RefreshCw, Play } from 'lucide-react'
 
 interface Problem {
   _id: string
@@ -90,7 +90,7 @@ export default function OrganizePage() {
     }
   }
 
-  const fetchAllData = async () => {
+  const fetchAllData = useCallback(async () => {
     if (!user) return
     
     setLoading(true)
@@ -99,7 +99,7 @@ export default function OrganizePage() {
     await Promise.all([fetchProblems(), fetchStats()])
     
     setLoading(false)
-  }
+  }, [user])
 
   const fetchProblemDetails = async (problemId: string) => {
     try {
@@ -145,7 +145,7 @@ export default function OrganizePage() {
       console.log(' User available, fetching data...')
       fetchAllData()
     }
-  }, [user, router])
+  }, [user, router, fetchAllData])
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
@@ -155,7 +155,7 @@ export default function OrganizePage() {
       fetchAllData()
       window.history.replaceState({}, '', '/organize')
     }
-  }, [user])
+  }, [user, fetchAllData])
 
   const getConfidenceColor = (confidence: number) => {
     if (confidence <= 3) {

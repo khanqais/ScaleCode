@@ -1,10 +1,9 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import type { ProblemWithScore } from '@/utils/revisionAlgorithm'
-import { useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 
 interface GroupedProblems {
@@ -41,7 +40,7 @@ const RevisionPage = () => {
   const [expandedGroup, setExpandedGroup] = useState<string>('urgent')
   const router = useRouter()
 
-  const fetchRevisionProblems = async () => {
+  const fetchRevisionProblems = useCallback(async () => {
     setLoading(true)
     try {
       const response = await axios.get('/api/problems/revision', {
@@ -60,11 +59,11 @@ const RevisionPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedMode, selectedCategory])
 
   useEffect(() => {
     fetchRevisionProblems()
-  }, [selectedMode, selectedCategory])
+  }, [fetchRevisionProblems])
 
   const getConfidenceColor = (confidence: number) => {
     if (confidence < 4) return 'text-red-500'

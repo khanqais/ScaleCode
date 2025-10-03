@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
-import { useUser, useAuth } from '@clerk/nextjs'
+import { useState, useEffect, Suspense, useCallback } from 'react'
+import { useUser } from '@clerk/nextjs'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
@@ -53,7 +53,6 @@ export default function ProblemDetailPage() {
 
 function ProblemDetailPageContent() {
   const { user } = useUser()
-  const { getToken } = useAuth()
   const router = useRouter()
   const params = useParams()
   
@@ -68,22 +67,15 @@ function ProblemDetailPageContent() {
   
   const [showRevisionModal, setShowRevisionModal] = useState(false)
 
-  useEffect(() => {
-    if (user && params.id) {
-      fetchProblem()
-    }
-  }, [user, params.id])
-
-  const fetchProblem = async () => {
+  const fetchProblem = useCallback(async () => {
     try {
       setLoading(true)
       setError('')
-      const token = await getToken()
       
       const response = await fetch(`/api/problems/${params.id}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       })
 
@@ -109,7 +101,13 @@ function ProblemDetailPageContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id])
+
+  useEffect(() => {
+    if (user && params.id) {
+      fetchProblem()
+    }
+  }, [user, params.id, fetchProblem])
 
   const handleCopyCode = async () => {
     if (!problem?.myCode) return
@@ -128,12 +126,11 @@ function ProblemDetailPageContent() {
     
     try {
       setDeleting(true)
-      const token = await getToken()
       
       const response = await fetch(`/api/problems/${problem._id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       })
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, Suspense, useMemo } from 'react'
-import { useUser, useAuth } from '@clerk/nextjs'
+import { useState, useEffect, Suspense, useMemo, useCallback } from 'react'
+import { useUser } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
@@ -21,7 +21,6 @@ interface Problem {
 
 function ProblemsPageContent() {
   const { user } = useUser()
-  const { getToken } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -38,7 +37,7 @@ function ProblemsPageContent() {
   const [searchTerm, setSearchTerm] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const fetchProblems = async () => {
+  const fetchProblems = useCallback(async () => {
     if (!user) return
     
     try {
@@ -68,13 +67,13 @@ function ProblemsPageContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user])
 
   useEffect(() => {
     if (user) {
       fetchProblems()
     }
-  }, [user])
+  }, [user, fetchProblems])
 
   const availableCategories = [...new Set(allProblems.map((p: Problem) => p.category))] as string[]
 

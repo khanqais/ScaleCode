@@ -185,7 +185,7 @@ export default function AddProblemPage() {
           <Crown className="mx-auto text-yellow-500 mb-4" size={64} />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Upgrade to Continue</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            You've reached your <span className="font-semibold capitalize">{limitInfo.currentPlan}</span> plan limit of <span className="font-bold">{limitInfo.limit}</span> problems.
+            You&apos;ve reached your <span className="font-semibold capitalize">{limitInfo.currentPlan}</span> plan limit of <span className="font-bold">{limitInfo.limit}</span> problems.
           </p>
           <p className="text-gray-700 dark:text-gray-300 mb-6">
             Upgrade to Pro or Pro Max to add more problems and unlock advanced features!

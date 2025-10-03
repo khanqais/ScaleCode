@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, Check, Eye, EyeOff } from 'lucide-react'
 import axios from 'axios'
@@ -65,15 +65,7 @@ export default function RevisionPage() {
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
 
-  useEffect(() => {
-    if (problemId) {
-      fetchProblem()
-    }
-  }, [problemId])
-
-
-
-  const fetchProblem = async () => {
+  const fetchProblem = useCallback(async () => {
     try {
       const response = await axios.get(`/api/problems/${problemId}`)
       if (response.data.success) {
@@ -85,7 +77,13 @@ export default function RevisionPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [problemId])
+
+  useEffect(() => {
+    if (problemId) {
+      fetchProblem()
+    }
+  }, [problemId, fetchProblem])
 
   const handleComplete = async () => {
     if (!problemId) return
