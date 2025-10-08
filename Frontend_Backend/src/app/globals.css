@@ -353,3 +353,67 @@ iframe[src*="stripe"] {
 .cl-pricingCardButton {
   @apply bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300;
 }
+
+/* Fix Clerk social button text color in dark mode */
+.cl-socialButtonsBlockButton,
+.cl-socialButtonsBlockButton *,
+.cl-socialButtonsBlockButton span {
+  color: white !important;
+}
+
+.cl-socialButtonsIconButton {
+  color: white !important;
+}
+
+/* Clerk Modal Styling for Dark Mode */
+.cl-modalContent {
+  background: #1f2937 !important;
+  border: 1px solid #374151 !important;
+}
+
+.cl-card {
+  background: #1f2937 !important;
+}
+
+.cl-headerTitle,
+.cl-headerSubtitle,
+.cl-socialButtonsBlockButtonText,
+.cl-formFieldLabel,
+.cl-identityPreviewText,
+.cl-formFieldLabelRow__identifier {
+  color: white !important;
+}
+
+.cl-formFieldInput,
+.cl-formFieldInput input {
+  background: #111827 !important;
+  border-color: #4b5563 !important;
+  color: white !important;
+}
+
+.cl-formFieldInput:focus,
+.cl-formFieldInput input:focus {
+  border-color: #14b8a6 !important;
+  outline-color: #14b8a6 !important;
+}
+
+.cl-footerActionLink {
+  color: #5eead4 !important;
+}
+
+.cl-dividerLine {
+  background: #4b5563 !important;
+}
+
+.cl-dividerText {
+  color: #9ca3af !important;
+}
+
+.cl-formButtonPrimary {
+  background: #0d9488 !important;
+  color: white !important;
+}
+
+.cl-formButtonPrimary:hover {
+  background: #0f766e !important;
+}
