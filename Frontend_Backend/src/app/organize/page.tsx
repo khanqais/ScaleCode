@@ -51,7 +51,7 @@ export default function OrganizePage() {
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null)
   const [loadingProblem, setLoadingProblem] = useState(false)
 
-  const fetchProblems = async () => {
+  const fetchProblems = useCallback(async () => {
     if (!user) {
        return
     }
@@ -69,9 +69,9 @@ export default function OrganizePage() {
       console.error(' Error fetching problems:', error)
       setError('Failed to fetch problems')
     }
-  }
+  }, [user])
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     if (!user) return
     
     try {
@@ -88,7 +88,7 @@ export default function OrganizePage() {
       console.error(' Error fetching stats:', error)
       setError('Failed to fetch stats')
     }
-  }
+  }, [user])
 
   const fetchAllData = useCallback(async () => {
     if (!user) return

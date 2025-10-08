@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
 
     // Verify webhook signature (Clerk uses Svix for signing)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let evt: any;
     
     if (svix_id && svix_timestamp && svix_signature) {
