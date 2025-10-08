@@ -99,7 +99,7 @@ export default function OrganizePage() {
     await Promise.all([fetchProblems(), fetchStats()])
     
     setLoading(false)
-  }, [user])
+  }, [user, fetchProblems, fetchStats])
 
   const fetchProblemDetails = async (problemId: string) => {
     try {

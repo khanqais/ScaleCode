@@ -172,18 +172,6 @@ function ProblemDetailPageContent() {
     setShowRevisionModal(true)
   }
 
-  const getDifficultyColor = (difficulty: number) => {
-    if (difficulty <= 3) return 'text-green-600 bg-green-100'
-    if (difficulty <= 6) return 'text-yellow-600 bg-yellow-100'
-    return 'text-red-600 bg-red-100'
-  }
-
-  const getDifficultyLabel = (difficulty: number) => {
-    if (difficulty <= 3) return 'Easy'
-    if (difficulty <= 6) return 'Medium'
-    return 'Hard'
-  }
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',

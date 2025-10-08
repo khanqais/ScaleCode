@@ -112,7 +112,7 @@ export default function PlanUsageCard({ currentCount, limit, plan }: PlanUsageCa
         {isNearLimit && !isAtLimit && (
           <div className="mt-4 p-3 bg-orange-100 dark:bg-orange-900/30 border border-orange-300 dark:border-orange-700 rounded-lg">
             <p className="text-sm text-orange-800 dark:text-orange-200">
-              ⚠️ You're running low on problems. Consider upgrading your plan!
+              ⚠️ You&apos;re running low on problems. Consider upgrading your plan!
             </p>
           </div>
         )}
@@ -120,7 +120,7 @@ export default function PlanUsageCard({ currentCount, limit, plan }: PlanUsageCa
         {isAtLimit && (
           <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
             <p className="text-sm text-red-800 dark:text-red-200 mb-2">
-              🚫 You've reached your problem limit.
+              🚫 You&apos;ve reached your problem limit.
             </p>
             {plan === 'free' && (
               <Link 

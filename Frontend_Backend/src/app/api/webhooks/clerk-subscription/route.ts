@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       console.log(`Processing subscription: user_id=${user_id}, status=${status}`);
 
       // Find the active subscription item
-      const activeItem = data.items?.find((item: any) => item.status === 'active');
+      const activeItem = data.items?.find((item: { status: string }) => item.status === 'active');
       const planSlug = activeItem?.plan?.slug || 'free';
       
       console.log(`Active plan slug: ${planSlug}`);
