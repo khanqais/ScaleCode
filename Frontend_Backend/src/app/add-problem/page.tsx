@@ -83,11 +83,11 @@ export default function AddProblemPage() {
             
             // Set limits based on plan
             const limits: Record<string, number> = {
-              'free': 50,
-              'pro': 500,
-              'pro_max': 2000
+              'free': 100,
+              'pro': 2000,
+              'pro_max': 4000
             }
-            limit = limits[plan] || 50
+            limit = limits[plan] || 100
             
             setUsageInfo({
               currentCount,

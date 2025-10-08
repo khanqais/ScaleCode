@@ -30,7 +30,6 @@ export async function GET(req: NextRequest) {
 
     // Get subscription plan from user's public metadata
     const subscriptionPlan = user.publicMetadata?.subscriptionPlan as string || 'free';
-    const stripeCustomerId = user.publicMetadata?.stripeCustomerId as string || null;
     const subscriptionStatus = user.publicMetadata?.subscriptionStatus as string || 'inactive';
 
     // Return subscription information
@@ -39,7 +38,6 @@ export async function GET(req: NextRequest) {
       subscription: {
         plan: subscriptionPlan,
         status: subscriptionStatus,
-        stripeCustomerId: stripeCustomerId,
         features: getPlanFeatures(subscriptionPlan)
       }
     });
@@ -61,17 +59,17 @@ export async function GET(req: NextRequest) {
 function getPlanFeatures(plan: string) {
   const features: Record<string, { problemLimit: number, features: string[] }> = {
     'free': {
-      problemLimit: 50,
+      problemLimit: 100,
       features: [
-        'Up to 50 problems',
+        'Up to 100 problems',
         'Basic organization',
         'Revision tracking'
       ]
     },
     'pro': {
-      problemLimit: 500,
+      problemLimit: 2000,
       features: [
-        'Up to 500 problems',
+        'Up to 2000 problems',
         'Advanced organization',
         'Priority support',
         'Revision tracking',
@@ -79,9 +77,9 @@ function getPlanFeatures(plan: string) {
       ]
     },
     'pro_max': {
-      problemLimit: 2000,
+      problemLimit: 4000,
       features: [
-        'Up to 2000 problems',
+        'Up to 4000 problems',
         'Unlimited organization',
         'Priority support',
         'Advanced analytics',

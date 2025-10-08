@@ -10,9 +10,10 @@ async function getUserPlan(userId: string) {
     const client = await clerkClient();
     const user = await client.users.getUser(userId);
     
-    
+    // Get subscription plan from publicMetadata
     const subscriptionPlan = user.publicMetadata?.subscriptionPlan as string || 'free';
     
+    console.log('📊 User plan:', subscriptionPlan);
     return subscriptionPlan; 
   } catch (error) {
     console.error('❌ Error getting user plan:', error);
@@ -20,14 +21,17 @@ async function getUserPlan(userId: string) {
   }
 }
 
-
+// Get problem limit based on plan - Updated to match your Clerk features
 function getProblemLimit(plan: string): number {
   const limits: Record<string, number> = {
-    'free': 50,
-    'pro': 500,
-    'pro_max': 2000
+    'free': 100,           // problem_limit feature
+    'pro': 2000,           // problem_limit_pro feature
+    'pro_max': 4000        // problem_limit_max feature
   };
-  return limits[plan] || 50;
+  
+  const limit = limits[plan] || 100;
+  console.log(`🔢 Plan "${plan}" has limit: ${limit}`);
+  return limit;
 }
 
 async function ensureUserExists(userId: string) {
@@ -91,13 +95,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-   
+    // Get user's current plan and calculate limit
     const userPlan = await getUserPlan(userId);
     const problemLimit = getProblemLimit(userPlan);
     const currentProblemCount = await Problem.countDocuments({ userId });
 
+    console.log(`✅ User ${userId} - Plan: ${userPlan}, Current: ${currentProblemCount}/${problemLimit}`);
     
+    // Check if user has reached their limit
     if (currentProblemCount >= problemLimit) {
+      console.log(`🚫 Limit reached for user ${userId}`);
       return NextResponse.json({
         success: false,
         error: 'Problem limit reached',
