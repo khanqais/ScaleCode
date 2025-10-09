@@ -335,7 +335,7 @@ export default function AddProblemPage() {
               <span className="font-semibold text-yellow-700 dark:text-yellow-300">Limit Reached</span>
             </div>
             <p className="text-yellow-700 dark:text-yellow-300 text-sm mb-3">
-              You've reached your <span className="font-semibold capitalize">{usageInfo.plan}</span> plan limit of {usageInfo.limit} problems.
+              You&apos;ve reached your <span className="font-semibold capitalize">{usageInfo.plan}</span> plan limit of {usageInfo.limit} problems.
               To continue adding problems, please upgrade your plan.
             </p>
             <Link
