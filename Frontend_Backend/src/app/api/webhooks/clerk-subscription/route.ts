@@ -16,7 +16,17 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
 
     
-    let evt: any;
+    let evt: {
+      type: string;
+      data: {
+        payer?: { user_id: string };
+        status: string;
+        items?: Array<{
+          status: string;
+          plan?: { slug: string };
+        }>;
+      };
+    };
     
     if (svix_id && svix_timestamp && svix_signature) {
       try {
@@ -25,8 +35,8 @@ export async function POST(req: NextRequest) {
           'svix-id': svix_id,
           'svix-timestamp': svix_timestamp,
           'svix-signature': svix_signature,
-        });
-      } catch (err) {
+        }) as typeof evt;
+      } catch {
         return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
       }
     } else {
