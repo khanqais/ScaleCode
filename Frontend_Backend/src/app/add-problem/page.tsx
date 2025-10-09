@@ -479,15 +479,15 @@ export default function AddProblemPage() {
             </button>
             <button
               type="submit"
-              disabled={loading || (usageInfo && usageInfo.remaining <= 0)}
+              disabled={loading || (usageInfo?.remaining !== undefined && usageInfo.remaining <= 0)}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                usageInfo && usageInfo.remaining <= 0
+                usageInfo?.remaining !== undefined && usageInfo.remaining <= 0
                   ? 'bg-gray-400 text-gray-700'
                   : 'bg-blue-600 text-white hover:bg-blue-700'
               }`}
             >
               <Save size={20} />
-              {loading ? 'Saving...' : usageInfo && usageInfo.remaining <= 0 ? 'Limit Reached' : 'Save Problem'}
+              {loading ? 'Saving...' : usageInfo?.remaining !== undefined && usageInfo.remaining <= 0 ? 'Limit Reached' : 'Save Problem'}
             </button>
           </div>
         </form>
