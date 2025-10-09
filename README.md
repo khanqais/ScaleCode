@@ -1,12 +1,12 @@
 # 🚀 AlgoGrid - Intelligent DSA Revision Platform
 
-A modern, full-stack web application designed to **revolutionize how you revise Data Structures & Algorithms**. Unlike traditional problem trackers, ScaleCode uses an **intelligent spaced-repetition algorithm** to ensure you never forget what you've learned.
+A modern, full-stack web application designed to **revolutionize how you revise Data Structures & Algorithms**. Unlike traditional problem trackers, AlgoGrid uses an **intelligent spaced-repetition algorithm** to ensure you never forget what you've learned.
 
 **🌐 Live Demo:** [https://scale-code.vercel.app/](https://scale-code.vercel.app/)
 
 ## 🎯 The Problem We Solve
 
-You solve hundreds of DSA problems, but **retention is the real challenge**. Most developers forget solutions within weeks. ScaleCode ensures **lasting mastery** through:
+You solve hundreds of DSA problems, but **retention is the real challenge**. Most developers forget solutions within weeks. AlgoGrid ensures **lasting mastery** through:
 
 ✅ **Automatic confidence decay** - Your confidence drops 10% every 2 weeks without revision  
 ✅ **Smart priority scoring** - AI-driven algorithm determines which problems need attention  
@@ -192,7 +192,7 @@ Visit `http://localhost:3000` to see the application.
 ## 🎨 Features in Detail
 
 ### Intelligent Revision Algorithm
-The core of ScaleCode is its **spaced-repetition algorithm**:
+The core of AlgoGrid is its **spaced-repetition algorithm**:
 
 #### Confidence Decay
 ```
@@ -232,7 +232,7 @@ Based on **Striver's A2Z DSA Course**, including:
 - **Specialized**: Bit Manipulation, Tries, Segment Trees, System Design
 
 ### Why Confidence Over Difficulty?
-Traditional platforms rate problem difficulty as a static value. ScaleCode is **personal**:
+Traditional platforms rate problem difficulty as a static value. AlgoGrid is **personal**:
 - **Subjective Understanding**: What's hard for others might be easy for you
 - **Dynamic Learning**: Your confidence changes as you learn
 - **Decay Tracking**: Ensures you don't fool yourself into thinking you remember something you don't
@@ -317,7 +317,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🌟 Why ScaleCode?
+## 🌟 Why AlgoGrid?
 
 **"The best time to revise a problem was 2 weeks ago. The second best time is now."**
 
