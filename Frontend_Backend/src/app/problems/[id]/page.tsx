@@ -24,29 +24,29 @@ import {
   MoreVertical
 } from 'lucide-react'
 
-// Import syntax highlighter
+
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-// Syntax highlighting component  
+  
 function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string }) {
   const [copied, setCopied] = useState(false)
 
-  // Detect language based on code content
+
   const detectLanguage = (code: string): string => {
-    // C++ indicators
+    
     if (code.includes('#include') || code.includes('vector<') || code.includes('std::') || code.includes('cout') || code.includes('cin')) {
       return 'cpp'
     }
-    // Java indicators  
+
     if (code.includes('public class') || code.includes('System.out') || code.includes('ArrayList') || code.includes('import java')) {
       return 'java'
     }
-    // Python indicators
+
     if (code.includes('def ') || code.includes('import ') || code.includes('print(') || code.includes('if __name__')) {
       return 'python'
     }
-    // JavaScript indicators
+
     if (code.includes('function') || code.includes('const ') || code.includes('let ') || code.includes('console.log')) {
       return 'javascript'
     }
