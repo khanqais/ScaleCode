@@ -267,16 +267,6 @@ Set production values for:
    - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk publishable key
    - Clerk webhook secret for user synchronization
 
-## 📖 Documentation
-
-For a complete deep-dive into the revision algorithm, see [REVISION_SYSTEM_COMPLETE_GUIDE.md](REVISION_SYSTEM_COMPLETE_GUIDE.md)
-
-The guide includes:
-- Mathematical formulas and examples
-- System architecture
-- API endpoint documentation
-- Implementation details
-- Configuration options
 
 ## 🎯 Use Cases
 
