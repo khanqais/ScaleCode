@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Invalid plan. Must be: free, pro, or pro_max' 
+          error: 'Invalid plan. Must be: free, pro, or pro_max (advanced maps to pro_max)' 
         },
         { status: 400 }
       );

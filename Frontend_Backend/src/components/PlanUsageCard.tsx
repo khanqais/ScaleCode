@@ -33,7 +33,7 @@ export default function PlanUsageCard({ currentCount, limit, plan }: PlanUsageCa
       progressColor: 'bg-teal-500'
     },
     pro_max: {
-      name: 'Pro Max',
+      name: 'Advanced',
       icon: Crown,
       color: 'text-purple-600 dark:text-purple-400',
       bgColor: 'bg-purple-50 dark:bg-purple-900/20',

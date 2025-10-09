@@ -70,7 +70,7 @@ export default function AddProblemPage() {
           if (result.success && result.data.problems) {
             const currentCount = result.data.problems.length
             
-            // Fetch user plan to calculate limit
+            
             const planResponse = await fetch('/api/subscription/status')
             const planData = await planResponse.json()
             

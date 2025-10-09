@@ -2,31 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { clerkClient } from '@clerk/nextjs/server';
 import { Webhook } from 'svix';
 
-// This webhook handles Clerk subscription events
 export async function POST(req: NextRequest) {
   const client = await clerkClient();
   try {
-    // Get the webhook secret from environment
     const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
     if (!webhookSecret) {
-      console.error('CLERK_WEBHOOK_SECRET not set');
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
     }
 
-    // Get headers for verification
     const svix_id = req.headers.get('svix-id');
     const svix_timestamp = req.headers.get('svix-timestamp');
     const svix_signature = req.headers.get('svix-signature');
-
-    // Get the body
     const body = await req.text();
 
-    // Verify webhook signature (Clerk uses Svix for signing)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
     let evt: any;
     
     if (svix_id && svix_timestamp && svix_signature) {
-      // Verify with Svix if headers are present
       try {
         const wh = new Webhook(webhookSecret);
         evt = wh.verify(body, {
@@ -35,56 +27,50 @@ export async function POST(req: NextRequest) {
           'svix-signature': svix_signature,
         });
       } catch (err) {
-        console.error('Webhook signature verification failed:', err);
         return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
       }
     } else {
-      // Parse body directly if no Svix headers (for testing)
-      console.warn('No Svix headers found - parsing body directly (only for testing!)');
       evt = JSON.parse(body);
     }
 
-    // Handle the webhook event
     const eventType = evt.type;
-    console.log('Received webhook event:', eventType);
-    console.log('Event data:', JSON.stringify(evt.data, null, 2));
 
-    // Handle subscription events
     if (eventType === 'subscription.created' || eventType === 'subscription.updated') {
-      const data = evt.data;
-      const user_id = data.payer?.user_id;
-      const status = data.status;
+      const { data } = evt;
+      const { user_id } = data.payer || {};
+      const { status } = data;
       
       if (!user_id) {
-        console.error('No user_id found in webhook data');
         return NextResponse.json({ error: 'No user_id in webhook' }, { status: 400 });
       }
 
-      console.log(`Processing subscription: user_id=${user_id}, status=${status}`);
-
-      // Find the active subscription item
-      const activeItem = data.items?.find((item: { status: string }) => item.status === 'active');
-      const planSlug = activeItem?.plan?.slug || 'free';
+      const activeItem = data.items?.find((item: { status: string }) => 
+        item.status === 'active' || item.status === 'upcoming'
+      ) || data.items?.find((item: { status: string }) => 
+        item.status !== 'ended' && item.status !== 'canceled' && item.status !== 'abandoned'
+      ) || data.items?.[0];
       
-      console.log(`Active plan slug: ${planSlug}`);
+      const planSlug = activeItem?.plan?.slug || 'free';
+      const normalizedSlug = String(planSlug).toLowerCase().trim();
 
-      // Map plan slug to our plan names
       let subscriptionPlan = 'free';
-      if (planSlug.includes('pro_max') || planSlug.includes('promax')) {
+      
+      if (normalizedSlug === 'advanced' || normalizedSlug.includes('advanced')) {
         subscriptionPlan = 'pro_max';
-      } else if (planSlug.includes('pro')) {
+      } else if (normalizedSlug === 'pro_max' || normalizedSlug.includes('pro_max')) {
+        subscriptionPlan = 'pro_max';
+      } else if (normalizedSlug === 'pro' || (normalizedSlug.includes('pro') && !normalizedSlug.includes('max') && !normalizedSlug.includes('advanced'))) {
         subscriptionPlan = 'pro';
+      } else if (normalizedSlug === 'free') {
+        subscriptionPlan = 'free';
       }
 
-      // Update user metadata
       await client.users.updateUser(user_id, {
         publicMetadata: {
           subscriptionPlan,
           subscriptionStatus: status,
         },
       });
-
-      console.log(`✅ Updated user ${user_id}: plan=${subscriptionPlan}, status=${status}`);
       
       return NextResponse.json({ 
         success: true, 
@@ -92,13 +78,11 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Handle subscription cancellation
     if (eventType === 'subscription.deleted' || eventType === 'subscription.canceled') {
-      const data = evt.data;
-      const user_id = data.payer?.user_id;
+      const { data } = evt;
+      const { user_id } = data.payer || {};
 
       if (!user_id) {
-        console.error('No user_id found in cancellation webhook');
         return NextResponse.json({ error: 'No user_id in webhook' }, { status: 400 });
       }
 
@@ -108,8 +92,6 @@ export async function POST(req: NextRequest) {
           subscriptionStatus: 'canceled',
         },
       });
-
-      console.log(`✅ Canceled subscription for user ${user_id}`);
       
       return NextResponse.json({ 
         success: true, 
@@ -119,7 +101,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: 'Event received but not processed' });
   } catch (error) {
-    console.error('❌ Webhook error:', error);
     return NextResponse.json({ 
       error: 'Webhook processing failed', 
       details: error instanceof Error ? error.message : 'Unknown error' 

@@ -8,6 +8,7 @@ import CallToAction from '@/components/call-to-action'
 const page = () => {
   return (
     <div className="min-h-screen">
+      
       <Navbar />
       <Hero />
       <Features />
