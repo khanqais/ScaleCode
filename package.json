@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "@types/prismjs": "^1.26.5",
-    "prismjs": "^1.30.0"
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "prismjs": "^1.30.0",
+    "react-syntax-highlighter": "^15.6.6"
   }
 }

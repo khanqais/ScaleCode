@@ -13,6 +13,7 @@
     "@clerk/nextjs": "^6.32.0",
     "@radix-ui/react-slot": "^1.2.3",
     "@types/mongoose": "^5.11.96",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "axios": "^1.12.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -23,6 +24,7 @@
     "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-syntax-highlighter": "^15.6.6",
     "svix": "^1.76.1",
     "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1"
