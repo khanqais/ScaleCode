@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [isDark, setIsDark] = useState(() => {
-    // Initialize with correct theme state
+   
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark')
     }
@@ -25,7 +25,7 @@ export default function LoginPage() {
     
     checkDarkMode()
     
-    // Watch for theme changes
+   
     const observer = new MutationObserver(checkDarkMode)
     observer.observe(document.documentElement, {
       attributes: true,
@@ -35,7 +35,7 @@ export default function LoginPage() {
     return () => observer.disconnect()
   }, [])
 
-  // Don't render until mounted to avoid hydration mismatch
+ 
   if (!mounted) {
     return null
   }

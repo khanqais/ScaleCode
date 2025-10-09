@@ -81,7 +81,7 @@ export default function AddProblemPage() {
               plan = planData.subscription.plan || 'free'
             }
             
-            // Set limits based on plan
+            
             const limits: Record<string, number> = {
               'free': 100,
               'pro': 2000,
@@ -110,6 +110,18 @@ export default function AddProblemPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) {
+      return
+    }
+
+    // Check if limit is reached before attempting to submit
+    if (usageInfo && usageInfo.remaining <= 0) {
+      setLimitReached(true)
+      setLimitInfo({
+        currentCount: usageInfo.currentCount,
+        limit: usageInfo.limit,
+        currentPlan: usageInfo.plan
+      })
+      setError(`You've reached your ${usageInfo.plan} plan limit of ${usageInfo.limit} problems. Please upgrade to continue.`)
       return
     }
 
@@ -315,6 +327,27 @@ export default function AddProblemPage() {
           </div>
         )}
 
+        {/* Limit Reached Warning */}
+        {usageInfo && usageInfo.remaining <= 0 && (
+          <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Crown className="text-yellow-500" size={20} />
+              <span className="font-semibold text-yellow-700 dark:text-yellow-300">Limit Reached</span>
+            </div>
+            <p className="text-yellow-700 dark:text-yellow-300 text-sm mb-3">
+              You've reached your <span className="font-semibold capitalize">{usageInfo.plan}</span> plan limit of {usageInfo.limit} problems.
+              To continue adding problems, please upgrade your plan.
+            </p>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm font-medium"
+            >
+              <Crown size={16} />
+              Upgrade Now
+            </Link>
+          </div>
+        )}
+
         {error && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg flex items-center gap-2">
             <AlertCircle className="text-red-500 dark:text-red-400" size={20} />
@@ -361,25 +394,34 @@ export default function AddProblemPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Your Confidence (1-10)
-              </label>
-              <input
-                type="range"
-                min="1"
-                max="10"
-                value={formData.Confidence}
-                onChange={(e) => setFormData({...formData, Confidence: parseInt(e.target.value)})}
-                className="w-full h-2 bg-blue-200 dark:bg-blue-600 rounded-lg appearance-none cursor-pointer"
-              />
-              <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-1">
-                <span>Low (1)</span>
-                <span className="font-medium text-blue-600 dark:text-blue-400">{formData.Confidence}</span>
-                <span>High (10)</span>
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Confidence Level
+                </label>
+                <div className="flex items-center gap-2 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-semibold">
+                  {formData.Confidence}/10
+                </div>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                How confident are you in solving this problem again?
-              </p>
+              
+              <div className="relative mb-3">
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={formData.Confidence}
+                  onChange={(e) => setFormData({...formData, Confidence: parseInt(e.target.value)})}
+                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  style={{
+                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(formData.Confidence / 10) * 100}%, #e5e7eb ${(formData.Confidence / 10) * 100}%, #e5e7eb 100%)`
+                  }}
+                />
+              </div>
+              
+              <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                <span>Low</span>
+                <span>Medium</span>
+                <span>High</span>
+              </div>
             </div>
 
             <div>
@@ -437,11 +479,15 @@ export default function AddProblemPage() {
             </button>
             <button
               type="submit"
-              disabled={loading}
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              disabled={loading || (usageInfo && usageInfo.remaining <= 0)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                usageInfo && usageInfo.remaining <= 0
+                  ? 'bg-gray-400 text-gray-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
             >
               <Save size={20} />
-              {loading ? 'Saving...' : 'Save Problem'}
+              {loading ? 'Saving...' : usageInfo && usageInfo.remaining <= 0 ? 'Limit Reached' : 'Save Problem'}
             </button>
           </div>
         </form>

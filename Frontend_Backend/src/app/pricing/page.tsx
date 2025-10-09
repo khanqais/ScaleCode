@@ -8,7 +8,7 @@ const page = () => {
       <Navbar/>
       <main className="container mx-auto px-4 py-3 md:py-16 max-w-7xl">
         
-        {/* Header Section */}
+        
         <div className="text-center mb-12 md:mb-16">
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-black dark:text-white">
