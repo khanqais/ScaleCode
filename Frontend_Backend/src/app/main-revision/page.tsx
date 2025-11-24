@@ -5,6 +5,8 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import type { ProblemWithScore } from '@/utils/revisionAlgorithm'
 import Link from 'next/link'
+import Navbar from '@/components/navbar'
+import { useUser } from '@clerk/nextjs'
 
 interface GroupedProblems {
   urgent: ProblemWithScore[]
@@ -33,6 +35,7 @@ interface RevisionData {
 }
 
 const RevisionPage = () => {
+  const { user } = useUser()
   const [loading, setLoading] = useState(false)
   const [revisionData, setRevisionData] = useState<RevisionData | null>(null)
   const [selectedMode, setSelectedMode] = useState<'priority' | 'urgent' | 'all' | 'needsRevision'>('all')
@@ -95,48 +98,48 @@ const RevisionPage = () => {
     <div
       key={problem._id}
       onClick={() => handleProblemClick(problem._id)}
-      className={`p-4 rounded-lg border cursor-pointer transition-all hover:shadow-md ${getConfidenceBg(problem.adjustedConfidence)} border-gray-200 dark:border-gray-700`}
+      className={`p-4 sm:p-5 rounded-xl border cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 ${getConfidenceBg(problem.adjustedConfidence)} border-gray-200 dark:border-gray-700`}
     >
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="font-semibold text-lg flex-1">{problem.title}</h3>
-        <div className={`text-2xl font-bold ${getConfidenceColor(problem.adjustedConfidence)}`}>
+      <div className="flex justify-between items-start mb-3">
+        <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white flex-1 line-clamp-2 transition-colors">{problem.title}</h3>
+        <div className={`text-2xl font-bold ${getConfidenceColor(problem.adjustedConfidence)} ml-2`}>
           {problem.adjustedConfidence.toFixed(1)}
         </div>
       </div>
       
-      <div className="space-y-2 text-sm">
+      <div className="space-y-2 text-xs sm:text-sm">
         <div className="flex justify-between items-center">
-          <span className="text-gray-600 dark:text-gray-400">Category:</span>
-          <span className="font-medium">{problem.category}</span>
+          <span className="text-gray-600 dark:text-gray-400 transition-colors">Category:</span>
+          <span className="font-medium text-gray-900 dark:text-white transition-colors">{problem.category}</span>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-gray-600 dark:text-gray-400">Last Revised:</span>
-          <span className="font-medium">{formatDays(problem.daysSinceRevision)}</span>
+          <span className="text-gray-600 dark:text-gray-400 transition-colors">Last Revised:</span>
+          <span className="font-medium text-gray-900 dark:text-white transition-colors">{formatDays(problem.daysSinceRevision)}</span>
         </div>
         
         {problem.confidenceDecay > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-gray-600 dark:text-gray-400">Confidence Decay:</span>
-            <span className="font-medium text-red-500">-{(problem.confidenceDecay * 100).toFixed(0)}%</span>
+            <span className="text-gray-600 dark:text-gray-400 transition-colors">Confidence Decay:</span>
+            <span className="font-medium text-red-500 dark:text-red-400">-{(problem.confidenceDecay * 100).toFixed(0)}%</span>
           </div>
         )}
         
         <div className="flex justify-between items-center">
-          <span className="text-gray-600 dark:text-gray-400">Original:</span>
-          <span className="font-medium">{problem.Confidence}/10</span>
+          <span className="text-gray-600 dark:text-gray-400 transition-colors">Original:</span>
+          <span className="font-medium text-gray-900 dark:text-white transition-colors">{problem.Confidence}/10</span>
         </div>
 
         {problem.revisionCount !== undefined && problem.revisionCount > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-gray-600 dark:text-gray-400">Revisions:</span>
-            <span className="font-medium">{problem.revisionCount}</span>
+            <span className="text-gray-600 dark:text-gray-400 transition-colors">Revisions:</span>
+            <span className="font-medium text-gray-900 dark:text-white transition-colors">{problem.revisionCount}</span>
           </div>
         )}
       </div>
 
       <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-        <div className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="text-xs text-gray-500 dark:text-gray-400 transition-colors">
           Priority Score: {problem.priorityScore.toFixed(2)}
         </div>
       </div>
@@ -152,15 +155,15 @@ const RevisionPage = () => {
       <div className="mb-6">
         <button
           onClick={() => setExpandedGroup(isExpanded ? '' : groupKey)}
-          className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg mb-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="w-full flex items-center justify-between p-4 sm:p-5 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 mb-3 hover:shadow-md transition-all"
         >
           <div className="flex items-center gap-3">
             <div className={`w-3 h-3 rounded-full ${color}`}></div>
-            <h2 className="text-xl font-bold">{title}</h2>
-            <span className="text-sm text-gray-500">({problems.length})</span>
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 dark:text-white transition-colors">{title}</h2>
+            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 transition-colors">({problems.length})</span>
           </div>
           <svg
-            className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            className={`w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -170,7 +173,7 @@ const RevisionPage = () => {
         </button>
 
         {isExpanded && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {problems.map(problem => renderProblemCard(problem))}
           </div>
         )}
@@ -178,87 +181,97 @@ const RevisionPage = () => {
     )
   }
 
-  return (
-    
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-     
-      <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <Link href="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                AlgoGrid
-              </Link>
-              <div className="hidden md:flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-                <span className="text-sm">Revision Dashboard</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Link href="/problems">
-                <Button variant="ghost" size="sm">
-                  All Problems
-                </Button>
-              </Link>
-              <Link href="/add-problem">
-                <Button variant="default" size="sm">
-                  + Add Problem
-                </Button>
-              </Link>
-            </div>
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8">
+          <div className="max-w-md mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors">
+              Please sign in to access revisions
+            </h2>
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 transition-colors">
+              You need to be signed in to view your revision dashboard.
+            </p>
           </div>
         </div>
-      </nav>
+      </div>
+    )
+  }
 
-      <div className="max-w-7xl mx-auto p-6">
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+      <Navbar />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Smart Revision System</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
+            Smart Revision System
+          </h1>
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-400 transition-colors">
             Problems prioritized by confidence decay and last revision time
           </p>
         </div>
 
         
         {revisionData && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="p-6 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg shadow-lg">
-              <div className="text-3xl font-bold">{revisionData.stats.urgent}</div>
-              <div className="text-sm opacity-90">Urgent (Confidence &lt; 4)</div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 transition-colors">Urgent</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-red-600 dark:text-red-400 transition-colors">{revisionData.stats.urgent}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Confidence &lt; 4</p>
+                </div>
+              </div>
             </div>
             
-            <div className="p-6 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-lg shadow-lg">
-              <div className="text-3xl font-bold">{revisionData.stats.high}</div>
-              <div className="text-sm opacity-90">High Priority (4-6)</div>
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 transition-colors">High Priority</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-600 dark:text-orange-400 transition-colors">{revisionData.stats.high}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Confidence 4-6</p>
+                </div>
+              </div>
             </div>
-            
-            {/* <div className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg shadow-lg">
-              <div className="text-3xl font-bold">{revisionData.stats.avgConfidence}</div>
-              <div className="text-sm opacity-90">Avg Confidence</div>
-            </div> */}
-            
-            {/* <div className="p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg shadow-lg">
-              <div className="text-3xl font-bold">{revisionData.stats.avgDaysSinceRevision}</div>
-              <div className="text-sm opacity-90">Avg Days Since Revision</div>
-            </div> */}
+
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 transition-colors">Medium Priority</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-600 dark:text-yellow-400 transition-colors">{revisionData.stats.medium}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Confidence 6-8</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 transition-colors">Low Priority</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600 dark:text-green-400 transition-colors">{revisionData.stats.low}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Confidence &gt; 8</p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         
-        <div className="mb-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <div className="flex flex-wrap gap-4">
+        <div className="mb-6 p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+          <div className="flex flex-col gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Revision Mode</label>
-              <div className="flex gap-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2 transition-colors">Revision Mode</label>
+              <div className="flex flex-wrap gap-2">
                 {(['priority', 'urgent', 'needsRevision', 'all'] as const).map((mode) => (
                   <Button
                     key={mode}
                     onClick={() => setSelectedMode(mode)}
                     variant={selectedMode === mode ? 'default' : 'outline'}
                     size="sm"
+                    className="text-xs sm:text-sm"
                   >
                     {mode.charAt(0).toUpperCase() + mode.slice(1)}
                   </Button>
@@ -266,38 +279,40 @@ const RevisionPage = () => {
               </div>
             </div>
 
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-2">Filter by Category</label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full p-2 border rounded-md bg-white dark:bg-gray-700 dark:border-gray-600"
-              >
-                <option value="all">All Categories</option>
-                <option value="Arrays">Arrays</option>
-                <option value="Dynamic Programming">Dynamic Programming</option>
-                <option value="Graph">Graph</option>
-                <option value="Binary Tree">Binary Tree</option>
-                <option value="Linked List">Linked List</option>
-                <option value="Strings">Strings</option>
-                <option value="Stack">Stack</option>
-                <option value="Queue">Queue</option>
-              </select>
-            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2 transition-colors">Filter by Category</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full p-2 border rounded-lg bg-white dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-white transition-colors"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="Arrays">Arrays</option>
+                  <option value="Dynamic Programming">Dynamic Programming</option>
+                  <option value="Graph">Graph</option>
+                  <option value="Binary Tree">Binary Tree</option>
+                  <option value="Linked List">Linked List</option>
+                  <option value="Strings">Strings</option>
+                  <option value="Stack">Stack</option>
+                  <option value="Queue">Queue</option>
+                </select>
+              </div>
 
-            <div className="flex items-end">
-              <Button onClick={fetchRevisionProblems} disabled={loading}>
-                {loading ? 'Loading...' : 'Refresh'}
-              </Button>
+              <div className="flex items-end">
+                <Button onClick={fetchRevisionProblems} disabled={loading} className="w-full sm:w-auto">
+                  {loading ? 'Loading...' : 'Refresh'}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
         
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading revision problems...</p>
+          <div className="text-center py-12 sm:py-20">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+            <p className="mt-4 text-base sm:text-lg text-gray-600 dark:text-gray-400 transition-colors">Loading revision problems...</p>
           </div>
         ) : revisionData && revisionData.grouped ? (
           <div>
@@ -307,8 +322,8 @@ const RevisionPage = () => {
             {renderGroup('✅ Low Priority', revisionData.grouped.low, 'low', 'bg-green-500')}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-xl text-gray-600 dark:text-gray-400">No problems found for revision</p>
+          <div className="text-center py-12 sm:py-20">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-4 transition-colors">No problems found for revision</p>
             <Button onClick={() => router.push('/add-problem')} className="mt-4">
               Add Your First Problem
             </Button>

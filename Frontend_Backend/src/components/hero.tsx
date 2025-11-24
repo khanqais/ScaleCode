@@ -56,7 +56,7 @@ const Hero = () => {
       >
         Revise your coding
         <br className="hidden sm:block" />
-        <span className="sm:hidden"> </span>solutions effectively.
+        <span className="sm:hidden"> </span>solutions effectively
       </motion.h1>
 
       <motion.p 
