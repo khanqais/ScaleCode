@@ -346,22 +346,55 @@ export default function OrganizePage() {
 
           {stats.totalProblems > 0 && Object.keys(stats.categoryStats).length > 0 && (
             <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6 sm:mb-8 transition-colors">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 sm:mb-4 transition-colors">Category Breakdown</h3>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4 transition-colors">Click on any category to view filtered problems</p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
-                {Object.entries(stats.categoryStats).map(([category, count]) => (
-                  <div 
-                    key={category} 
-                    className="text-center p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 cursor-pointer transform hover:scale-105 shadow-sm hover:shadow-md"
-                    onClick={() => router.push(`/problems?category=${encodeURIComponent(category)}`)}
-                  >
-                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white transition-colors">{count}</div>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 sm:mb-2 line-clamp-2 transition-colors">{category}</div>
-                    <div className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
-                      View Problems →
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white transition-colors">Category Breakdown</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 transition-colors">Click on any category to view filtered problems</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {Object.entries(stats.categoryStats)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([category, count], index) => {
+                    const percentage = (count / stats.totalProblems) * 100
+                    const colors = [
+                      { bg: 'bg-blue-500', ring: 'ring-blue-500/20', text: 'text-blue-600 dark:text-blue-400', glow: 'shadow-blue-500/20' },
+                      { bg: 'bg-purple-500', ring: 'ring-purple-500/20', text: 'text-purple-600 dark:text-purple-400', glow: 'shadow-purple-500/20' },
+                      { bg: 'bg-green-500', ring: 'ring-green-500/20', text: 'text-green-600 dark:text-green-400', glow: 'shadow-green-500/20' },
+                      { bg: 'bg-orange-500', ring: 'ring-orange-500/20', text: 'text-orange-600 dark:text-orange-400', glow: 'shadow-orange-500/20' },
+                      { bg: 'bg-pink-500', ring: 'ring-pink-500/20', text: 'text-pink-600 dark:text-pink-400', glow: 'shadow-pink-500/20' },
+                      { bg: 'bg-indigo-500', ring: 'ring-indigo-500/20', text: 'text-indigo-600 dark:text-indigo-400', glow: 'shadow-indigo-500/20' },
+                    ]
+                    const color = colors[index % colors.length]
+                    
+                    return (
+                      <div
+                        key={category}
+                        onClick={() => router.push(`/problems?category=${encodeURIComponent(category)}`)}
+                        className="group relative bg-white dark:bg-gray-900 rounded-xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className={`w-10 h-10 rounded-lg ${color.bg} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center`}>
+                            <FolderIcon className={`w-5 h-5 ${color.text}`} />
+                          </div>
+                        </div>
+                        
+                        <h4 className="font-semibold text-base text-gray-900 dark:text-white mb-3 line-clamp-2 transition-colors">
+                          {category}
+                        </h4>
+                        
+                        <div className="flex items-baseline gap-2">
+                          <span className={`text-3xl font-bold ${color.text} transition-colors`}>
+                            {count}
+                          </span>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {count === 1 ? 'problem' : 'problems'}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
               </div>
             </div>
           )}

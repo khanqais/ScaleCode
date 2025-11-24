@@ -102,7 +102,7 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
 
   return (
     <div className="code-block-container bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-700 transition-all duration-300">
-      {/* Enhanced Terminal-style header */}
+      
       <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-750 border-b border-gray-600">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
         </div>
       </div>
       
-      {/* Code content with react-syntax-highlighter */}
+      
       <div className="relative">
         <SyntaxHighlighter
           language={detectedLanguage}
@@ -161,7 +161,7 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
           {code}
         </SyntaxHighlighter>
         
-        {/* Bottom gradient for better visual separation */}
+        
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-green-500/20"></div>
       </div>
     </div>
