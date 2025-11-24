@@ -17,6 +17,7 @@ interface Problem {
   problemStatement?: string
   myCode?: string
   intuition?: string
+  tags?: string[]
 }
 
 function ProblemsPageContent() {
@@ -377,11 +378,23 @@ function ProblemsPageContent() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-3 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 transition-colors">
                     <Calendar className="h-4 w-4" />
                     {new Date(problem.createdAt).toLocaleDateString()}
                   </div>
+                  {problem.tags && problem.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {problem.tags.map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-xs"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between gap-2">

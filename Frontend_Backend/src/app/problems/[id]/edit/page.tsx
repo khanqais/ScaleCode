@@ -17,6 +17,7 @@ interface Problem {
   intuition: string
   createdAt: string
   updatedAt: string
+  tags?: string[]
 }
 
 const categories = [
@@ -124,8 +125,10 @@ export default function EditProblemPage() {
     Confidence: 1,
     problemStatement: '',
     myCode: '',
-    intuition: ''
+    intuition: '',
+    tags: [] as string[]
   })
+  const [tagInput, setTagInput] = useState('')
 
   // Fetch problem data
   useEffect(() => {
@@ -163,7 +166,8 @@ export default function EditProblemPage() {
             Confidence: problemData.Confidence || 1,
             problemStatement: problemData.problemStatement || '',
             myCode: problemData.myCode || '',
-            intuition: problemData.intuition || ''
+            intuition: problemData.intuition || '',
+            tags: problemData.tags || []
           })
         } else {
           setError(result.error || 'Failed to fetch problem')
@@ -179,7 +183,7 @@ export default function EditProblemPage() {
     fetchProblem()
   }, [user, isLoaded, params.id])
 
-  const handleInputChange = (field: string, value: string | number) => {
+  const handleInputChange = (field: string, value: string | number | string[]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -386,6 +390,69 @@ export default function EditProblemPage() {
                 <span>10</span>
               </div>
             </div>
+          </div>
+
+          {/* Tags */}
+          <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Tags (Optional)
+            </label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    const tag = tagInput.trim()
+                    if (tag && !formData.tags.includes(tag) && formData.tags.length < 10) {
+                      handleInputChange('tags', [...formData.tags, tag])
+                      setTagInput('')
+                    }
+                  }
+                }}
+                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                placeholder="Add tags (e.g., important, interview-prep, company:google)"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const tag = tagInput.trim()
+                  if (tag && !formData.tags.includes(tag) && formData.tags.length < 10) {
+                    handleInputChange('tags', [...formData.tags, tag])
+                    setTagInput('')
+                  }
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Add
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+              Press Enter or click Add. Max 10 tags.
+            </p>
+            {formData.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {formData.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm"
+                  >
+                    #{tag}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleInputChange('tags', formData.tags.filter((_, i) => i !== index))
+                      }}
+                      className="ml-1 hover:text-red-600 dark:hover:text-red-400"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Problem Statement */}

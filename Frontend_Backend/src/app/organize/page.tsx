@@ -16,6 +16,7 @@ interface Problem {
   problemStatement?: string
   myCode?: string
   intuition?: string
+  tags?: string[]
 }
 
 interface Stats {
@@ -447,6 +448,24 @@ export default function OrganizePage() {
                   <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg line-clamp-2 transition-colors">
                     {problem.title}
                   </h3>
+
+                  {problem.tags && problem.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {problem.tags.slice(0, 3).map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-xs"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                      {problem.tags.length > 3 && (
+                        <span className="inline-flex items-center px-2 py-0.5 text-gray-500 dark:text-gray-400 text-xs">
+                          +{problem.tags.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 dark:text-gray-400 transition-colors">
                     <div className="flex items-center">

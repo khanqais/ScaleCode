@@ -135,6 +135,17 @@ const problemSchema = new mongoose.Schema({
       message: 'Invalid category'
     }
   },
+  tags: {
+    type: [String],
+    default: [],
+    validate: {
+      validator: function(tags: string[]) {
+        // Each tag should be between 1-50 characters
+        return tags.every(tag => tag.length >= 1 && tag.length <= 50)
+      },
+      message: 'Each tag must be between 1 and 50 characters'
+    }
+  },
   isPublic: {
     type: Boolean,
     default: false
@@ -145,6 +156,7 @@ const problemSchema = new mongoose.Schema({
 
 problemSchema.index({ userId: 1, createdAt: -1 });
 problemSchema.index({ userId: 1, category: 1 });
+problemSchema.index({ userId: 1, tags: 1 });
 
 // Clear any cached model to ensure we use the latest schema
 if (mongoose.models.Problem) {

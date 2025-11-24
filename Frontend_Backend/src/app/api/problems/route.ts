@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     
-    const { title, problemStatement, myCode, intuition, Confidence, category } = body;
+    const { title, problemStatement, myCode, intuition, Confidence, category, tags } = body;
 
     
     if (!title || !problemStatement || !myCode || !Confidence || !category) {
@@ -150,6 +150,7 @@ export async function POST(request: NextRequest) {
       intuition: intuition?.trim() || '',
       Confidence: parseInt(Confidence),
       category,
+      tags: tags || [],
     });
 
     

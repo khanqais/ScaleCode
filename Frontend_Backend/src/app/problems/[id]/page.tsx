@@ -178,6 +178,7 @@ interface Problem {
   intuition: string
   createdAt: string
   updatedAt: string
+  tags?: string[]
 }
 
 export default function ProblemDetailPage() {
@@ -515,6 +516,21 @@ function ProblemDetailPageContent() {
         </div>
 
         <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-4 sm:mb-6">
+          {problem.tags && problem.tags.length > 0 && (
+            <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {problem.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="flex items-center gap-3">
               <Calendar className="text-gray-400 dark:text-gray-500 flex-shrink-0 w-5 h-5" />
