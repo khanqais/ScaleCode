@@ -8,8 +8,7 @@ A modern, full-stack web application designed to **revolutionize how you revise 
 
 You solve hundreds of DSA problems, but **retention is the real challenge**. Most developers forget solutions within weeks. AlgoGrid ensures **lasting mastery** through:
 
-✅ **Automatic confidence decay** - Your confidence drops 10% every 2 weeks without revision  
-✅ **Smart priority scoring** - AI-driven algorithm determines which problems need attention  
+✅ **Automatic confidence decay** - Your confidence drops 10% every 2 weeks without revision    
 ✅ **Spaced repetition** - Review problems at optimal intervals for long-term retention  
 ✅ **Save & Organize** - Store every DSA problem you solve with your code, approach, and intuition  
 
