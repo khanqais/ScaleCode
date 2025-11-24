@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useUser, SignInButton } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import RevisionModal from '@/components/RevisionModal'
@@ -190,12 +190,18 @@ export default function OrganizePage() {
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8">
           <div className="max-w-md mx-auto">
+            <Brain className="w-16 h-16 mx-auto mb-6 text-gray-400 dark:text-gray-600" />
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors">
               Please sign in to access AlgoGrid
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 transition-colors">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-8 transition-colors">
               You need to be signed in to organize your coding solutions.
             </p>
+            <SignInButton mode="modal" forceRedirectUrl="/organize">
+              <button className="bg-black dark:bg-white text-white dark:text-black px-8 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+                Sign In to Continue
+              </button>
+            </SignInButton>
           </div>
         </div>
       </div>

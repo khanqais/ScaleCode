@@ -4,8 +4,11 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { useUser, SignInButton } from '@clerk/nextjs'
 
 const CallToAction = () => {
+  const { isSignedIn } = useUser()
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -67,20 +70,37 @@ const CallToAction = () => {
             variants={itemVariants}
             className="flex flex-col sm:flex-row gap-4 items-center justify-center"
           >
-            <Link href="/organize">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-              >
-                <Button 
-                  size="lg" 
-                  className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors"
+            {isSignedIn ? (
+              <Link href="/organize">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                 >
-                  Get Started Free
-                </Button>
-              </motion.div>
-            </Link>
+                  <Button 
+                    size="lg" 
+                    className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors"
+                  >
+                    Get Started Free
+                  </Button>
+                </motion.div>
+              </Link>
+            ) : (
+              <SignInButton mode="modal" forceRedirectUrl="/organize">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                >
+                  <Button 
+                    size="lg" 
+                    className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors"
+                  >
+                    Get Started Free
+                  </Button>
+                </motion.div>
+              </SignInButton>
+            )}
             
             <Link href="/problems">
               <motion.div

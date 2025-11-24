@@ -193,7 +193,7 @@ export default function EditProblemPage() {
   const handleSave = async () => {
     if (!problem) return
     
-    // Basic validation
+   
     if (!formData.title.trim()) {
       setError('Title is required')
       return
