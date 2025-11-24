@@ -25,12 +25,21 @@ const Navbar = () => {
       >
         <Link href="/" className="flex items-center space-x-3">
           <div className="w-12 h-12 rounded-lg overflow-hidden">
+            {/* Light mode logo */}
             <Image 
-              src="/logo.png" 
+              src="/logo_white.png" 
               alt="AlgoGrid Logo" 
-              width={50} 
-              height={50}
-              className="w-full h-full object-cover"
+              width={50}  
+              height={50} 
+              className="w-full h-full object-cover dark:hidden" 
+            />
+            {/* Dark mode logo */}
+            <Image 
+              src="/logo_black.png" 
+              alt="AlgoGrid Logo" 
+              width={50}  
+              height={50} 
+              className="w-full h-full object-cover hidden dark:block" 
             />
           </div>
           <span className="text-xl font-bold text-black dark:text-white transition-colors">AlgoGrid</span>
