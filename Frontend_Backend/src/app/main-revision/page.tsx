@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import type { ProblemWithScore } from '@/utils/revisionAlgorithm'
-import Link from 'next/link'
 import Navbar from '@/components/navbar'
 import { useUser } from '@clerk/nextjs'
 

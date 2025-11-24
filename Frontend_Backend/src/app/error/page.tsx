@@ -1,26 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { AlertCircle, Home, RefreshCw, ArrowLeft } from 'lucide-react'
+import { AlertCircle, Home, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export default function ErrorPage({
-  error,
-  reset,
-}: {
-  error?: Error & { digest?: string }
-  reset?: () => void
-}) {
+export default function ErrorPage() {
   const router = useRouter()
-
-  useEffect(() => {
-    // Log error to error reporting service
-    if (error) {
-      console.error('Error boundary caught:', error)
-    }
-  }, [error])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4">
@@ -38,35 +24,11 @@ export default function ErrorPage({
         </h1>
         
         <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-8">
-          We encountered an unexpected error. Don't worry, our team has been notified and we're working on it.
+          We encountered an unexpected error. Don&apos;t worry, our team has been notified and we&apos;re working on it.
         </p>
-
-        {/* Error Details (only in development) */}
-        {process.env.NODE_ENV === 'development' && error && (
-          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-lg text-left">
-            <p className="text-sm font-mono text-red-800 dark:text-red-300 break-all">
-              {error.message || 'Unknown error'}
-            </p>
-            {error.digest && (
-              <p className="text-xs text-red-600 dark:text-red-400 mt-2">
-                Error ID: {error.digest}
-              </p>
-            )}
-          </div>
-        )}
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-          {reset && (
-            <Button
-              onClick={reset}
-              className="w-full sm:w-auto bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Try Again
-            </Button>
-          )}
-          
           <Button
             variant="outline"
             onClick={() => router.back()}

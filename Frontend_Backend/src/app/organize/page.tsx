@@ -358,7 +358,6 @@ export default function OrganizePage() {
                 {Object.entries(stats.categoryStats)
                   .sort(([, a], [, b]) => b - a)
                   .map(([category, count], index) => {
-                    const percentage = (count / stats.totalProblems) * 100
                     const colors = [
                       { bg: 'bg-blue-500', ring: 'ring-blue-500/20', text: 'text-blue-600 dark:text-blue-400', glow: 'shadow-blue-500/20' },
                       { bg: 'bg-purple-500', ring: 'ring-purple-500/20', text: 'text-purple-600 dark:text-purple-400', glow: 'shadow-purple-500/20' },
