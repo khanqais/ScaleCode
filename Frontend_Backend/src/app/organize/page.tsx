@@ -143,7 +143,6 @@ export default function OrganizePage() {
 
   useEffect(() => {
     if (user) {
-      console.log(' User available, fetching data...')
       fetchAllData()
     }
   }, [user, router, fetchAllData])

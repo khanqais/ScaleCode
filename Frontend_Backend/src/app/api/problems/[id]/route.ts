@@ -49,7 +49,6 @@ export async function GET(
     const problem = await Problem.findOne({ _id: id, userId });
 
     if (!problem) {
-      console.log('Problem not found:', id);
       return NextResponse.json({
         success: false,
         error: 'Problem not found'
@@ -107,7 +106,6 @@ export async function PUT(
     );
 
     if (!problem) {
-      console.log(' Problem not found for update:', id);
       return NextResponse.json({
         success: false,
         error: 'Problem not found'

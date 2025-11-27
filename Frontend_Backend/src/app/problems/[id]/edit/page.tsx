@@ -7,6 +7,16 @@ import Link from 'next/link'
 import Navbar from '@/components/navbar'
 import { ArrowLeft, Save, X, AlertCircle } from 'lucide-react'
 
+interface Solution {
+  code: string
+  intuition: string
+  language: string
+  timeComplexity?: string
+  spaceComplexity?: string
+  approach?: string
+  createdAt?: string
+}
+
 interface Problem {
   _id: string
   title: string
@@ -15,6 +25,7 @@ interface Problem {
   problemStatement: string
   myCode: string
   intuition: string
+  solutions?: Solution[]
   createdAt: string
   updatedAt: string
   tags?: string[]
@@ -124,10 +135,16 @@ export default function EditProblemPage() {
     category: '',
     Confidence: 1,
     problemStatement: '',
-    myCode: '',
-    intuition: '',
     tags: [] as string[]
   })
+  const [solutions, setSolutions] = useState<Solution[]>([{
+    code: '',
+    intuition: '',
+    language: 'cpp',
+    timeComplexity: '',
+    spaceComplexity: '',
+    approach: ''
+  }])
   const [tagInput, setTagInput] = useState('')
 
   // Fetch problem data
@@ -165,10 +182,21 @@ export default function EditProblemPage() {
             category: problemData.category || '',
             Confidence: problemData.Confidence || 1,
             problemStatement: problemData.problemStatement || '',
-            myCode: problemData.myCode || '',
-            intuition: problemData.intuition || '',
             tags: problemData.tags || []
           })
+          // Load solutions or create from legacy fields
+          if (problemData.solutions && problemData.solutions.length > 0) {
+            setSolutions(problemData.solutions)
+          } else if (problemData.myCode) {
+            setSolutions([{
+              code: problemData.myCode || '',
+              intuition: problemData.intuition || '',
+              language: 'cpp',
+              timeComplexity: '',
+              spaceComplexity: '',
+              approach: ''
+            }])
+          }
         } else {
           setError(result.error || 'Failed to fetch problem')
         }
@@ -202,8 +230,8 @@ export default function EditProblemPage() {
       setError('Problem statement is required')
       return
     }
-    if (!formData.myCode.trim()) {
-      setError('Solution code is required')
+    if (!solutions[0]?.code.trim()) {
+      setError('At least one solution code is required')
       return
     }
     if (!formData.category) {
@@ -220,7 +248,13 @@ export default function EditProblemPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          solutions: solutions.filter(sol => sol.code.trim() !== ''),
+          // Keep backward compatibility
+          myCode: solutions[0]?.code || '',
+          intuition: solutions[0]?.intuition || ''
+        })
       })
 
       const result = await response.json()
@@ -469,32 +503,139 @@ export default function EditProblemPage() {
             />
           </div>
 
-          {/* Solution Code */}
+          {/* Multiple Solutions Section */}
           <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Solution Code
-            </label>
-            <textarea
-              value={formData.myCode}
-              onChange={(e) => handleInputChange('myCode', e.target.value)}
-              rows={12}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm resize-vertical"
-              placeholder="Write your solution code here..."
-            />
-          </div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Solutions ({solutions.length})</h2>
+              <button
+                type="button"
+                onClick={() => setSolutions([...solutions, {
+                  code: '',
+                  intuition: '',
+                  language: 'cpp',
+                  timeComplexity: '',
+                  spaceComplexity: '',
+                  approach: ''
+                }])}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+              >
+                + Add Solution
+              </button>
+            </div>
 
-          {/* Intuition */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Intuition/Approach (Optional)
-            </label>
-            <textarea
-              value={formData.intuition}
-              onChange={(e) => handleInputChange('intuition', e.target.value)}
-              rows={4}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-vertical"
-              placeholder="Explain your approach and intuition (optional)..."
-            />
+            {solutions.map((solution, index) => (
+              <div key={index} className="mb-8 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Solution {index + 1}
+                  </h3>
+                  {solutions.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setSolutions(solutions.filter((_, i) => i !== index))}
+                      className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Language
+                      </label>
+                      <select
+                        value={solution.language}
+                        onChange={(e) => {
+                          const newSolutions = [...solutions]
+                          newSolutions[index].language = e.target.value
+                          setSolutions(newSolutions)
+                        }}
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="go">Go</option>
+                        <option value="rust">Rust</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Time Complexity
+                      </label>
+                      <input
+                        type="text"
+                        value={solution.timeComplexity}
+                        onChange={(e) => {
+                          const newSolutions = [...solutions]
+                          newSolutions[index].timeComplexity = e.target.value
+                          setSolutions(newSolutions)
+                        }}
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="e.g., O(n log n)"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Space Complexity
+                      </label>
+                      <input
+                        type="text"
+                        value={solution.spaceComplexity}
+                        onChange={(e) => {
+                          const newSolutions = [...solutions]
+                          newSolutions[index].spaceComplexity = e.target.value
+                          setSolutions(newSolutions)
+                        }}
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="e.g., O(n)"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Approach / Intuition
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={solution.intuition}
+                      onChange={(e) => {
+                        const newSolutions = [...solutions]
+                        newSolutions[index].intuition = e.target.value
+                        setSolutions(newSolutions)
+                      }}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                      placeholder="Explain your approach and thought process..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Solution Code {index === 0 && <span className="text-red-500">*</span>}
+                    </label>
+                    <textarea
+                      rows={12}
+                      value={solution.code}
+                      onChange={(e) => {
+                        const newSolutions = [...solutions]
+                        newSolutions[index].code = e.target.value
+                        setSolutions(newSolutions)
+                      }}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                      placeholder="Paste your working solution code here..."
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

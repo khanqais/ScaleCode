@@ -168,6 +168,16 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
   )
 }
 
+interface Solution {
+  code: string
+  intuition: string
+  language: string
+  timeComplexity?: string
+  spaceComplexity?: string
+  approach?: string
+  createdAt?: string
+}
+
 interface Problem {
   _id: string
   title: string
@@ -176,6 +186,7 @@ interface Problem {
   problemStatement: string
   myCode: string
   intuition: string
+  solutions?: Solution[]
   createdAt: string
   updatedAt: string
   tags?: string[]
@@ -208,6 +219,7 @@ function ProblemDetailPageContent() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [selectedSolutionIndex, setSelectedSolutionIndex] = useState(0)
   
   const [showRevisionModal, setShowRevisionModal] = useState(false)
 
@@ -569,28 +581,101 @@ function ProblemDetailPageContent() {
           </div>
         </div>
 
-        {problem.intuition && (
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-gray-700 mb-4 sm:mb-6">
-            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <Lightbulb className="text-yellow-500 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />
-              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">Your Intuition & Approach</h2>
-            </div>
-            
-            <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-3 sm:p-4 lg:p-6 rounded-r-lg">
-              <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed font-sans text-xs sm:text-sm lg:text-base overflow-x-auto">
-                {problem.intuition}
-              </pre>
-            </div>
-          </div>
-        )}
-
         <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-gray-700 mb-4 sm:mb-6">
           <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
             <Code2 className="text-green-500 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">Your Solution</h2>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
+              {problem.solutions && problem.solutions.length > 0 ? `Solutions (${problem.solutions.length})` : 'Your Solution'}
+            </h2>
           </div>
-          
-          <CodeBlock code={problem.myCode} language="cpp" />
+
+          {problem.solutions && problem.solutions.length > 0 ? (
+            <div>
+              {/* Solution Tabs */}
+              {problem.solutions.length > 1 && (
+                <div className="flex flex-wrap gap-2 mb-4 border-b border-gray-200 dark:border-gray-700 pb-3">
+                  {problem.solutions.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedSolutionIndex(index)}
+                      className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+                        selectedSolutionIndex === index
+                          ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 border-b-2 border-green-500'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      Solution {index + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Selected Solution Display */}
+              {problem.solutions[selectedSolutionIndex] && (
+                <div>
+                  {/* Complexity and Language Info */}
+                  <div className="flex flex-wrap gap-3 mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Language:</span>
+                      <span className="px-3 py-1 bg-blue-600 text-white text-xs rounded-full font-semibold">
+                        {problem.solutions[selectedSolutionIndex].language.toUpperCase()}
+                      </span>
+                    </div>
+                    {problem.solutions[selectedSolutionIndex].timeComplexity && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Time:</span>
+                        <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs rounded-full font-semibold">
+                          {problem.solutions[selectedSolutionIndex].timeComplexity}
+                        </span>
+                      </div>
+                    )}
+                    {problem.solutions[selectedSolutionIndex].spaceComplexity && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Space:</span>
+                        <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 text-xs rounded-full font-semibold">
+                          {problem.solutions[selectedSolutionIndex].spaceComplexity}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Intuition/Approach */}
+                  {problem.solutions[selectedSolutionIndex].intuition && (
+                    <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-3 sm:p-4 rounded-r-lg mb-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Lightbulb className="text-yellow-500 w-5 h-5" />
+                        <h3 className="font-semibold text-gray-900 dark:text-white">Approach & Intuition</h3>
+                      </div>
+                      <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed font-sans text-xs sm:text-sm overflow-x-auto">
+                        {problem.solutions[selectedSolutionIndex].intuition}
+                      </pre>
+                    </div>
+                  )}
+
+                  {/* Code Block */}
+                  <CodeBlock 
+                    code={problem.solutions[selectedSolutionIndex].code} 
+                    language={problem.solutions[selectedSolutionIndex].language} 
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              {problem.intuition && (
+                <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-3 sm:p-4 rounded-r-lg mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lightbulb className="text-yellow-500 w-5 h-5" />
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Approach & Intuition</h3>
+                  </div>
+                  <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed font-sans text-xs sm:text-sm overflow-x-auto">
+                    {problem.intuition}
+                  </pre>
+                </div>
+              )}
+              <CodeBlock code={problem.myCode} language="cpp" />
+            </div>
+          )}
         </div>
 
         <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700">

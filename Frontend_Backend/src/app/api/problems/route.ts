@@ -11,10 +11,7 @@ async function getUserPlan(userId: string) {
     const user = await client.users.getUser(userId);
     
     // Get subscription plan from publicMetadata
-    const subscriptionPlan = user.publicMetadata?.subscriptionPlan as string || 'free';
-    
-    console.log('📊 User plan:', subscriptionPlan);
-    return subscriptionPlan; 
+    return user.publicMetadata?.subscriptionPlan as string || 'free'; 
   } catch (error) {
     console.error('❌ Error getting user plan:', error);
     return 'free'; 
@@ -29,9 +26,7 @@ function getProblemLimit(plan: string): number {
     'pro_max': 4000        // problem_limit_max feature
   };
   
-  const limit = limits[plan] || 100;
-  console.log(`🔢 Plan "${plan}" has limit: ${limit}`);
-  return limit;
+  return limits[plan] || 100;
 }
 
 async function ensureUserExists(userId: string) {
@@ -99,12 +94,9 @@ export async function POST(request: NextRequest) {
     const userPlan = await getUserPlan(userId);
     const problemLimit = getProblemLimit(userPlan);
     const currentProblemCount = await Problem.countDocuments({ userId });
-
-    console.log(`✅ User ${userId} - Plan: ${userPlan}, Current: ${currentProblemCount}/${problemLimit}`);
     
     // Check if user has reached their limit
     if (currentProblemCount >= problemLimit) {
-      console.log(`🚫 Limit reached for user ${userId}`);
       return NextResponse.json({
         success: false,
         error: 'Problem limit reached',
@@ -119,14 +111,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     
-    const { title, problemStatement, myCode, intuition, Confidence, category, tags } = body;
+    const { title, problemStatement, myCode, intuition, Confidence, category, tags, solutions } = body;
 
     
-    if (!title || !problemStatement || !myCode || !Confidence || !category) {
+    if (!title || !problemStatement || !Confidence || !category) {
       const missingFields = [];
       if (!title) missingFields.push('title');
       if (!problemStatement) missingFields.push('problemStatement');
-      if (!myCode) missingFields.push('myCode');
       if (!Confidence) missingFields.push('Confidence');
       if (!category) missingFields.push('category');
       
@@ -136,7 +127,22 @@ export async function POST(request: NextRequest) {
         success: false,
         error: 'Missing required fields',
         missingFields,
-        required: ['title', 'problemStatement', 'myCode', 'Confidence', 'category']
+        required: ['title', 'problemStatement', 'Confidence', 'category']
+      }, { status: 400 });
+    }
+
+    // Validate at least one solution exists
+    if (!solutions || solutions.length === 0) {
+      if (!myCode) {
+        return NextResponse.json({
+          success: false,
+          error: 'At least one solution is required'
+        }, { status: 400 });
+      }
+    } else if (!solutions[0]?.code) {
+      return NextResponse.json({
+        success: false,
+        error: 'First solution must have code'
       }, { status: 400 });
     }
 
@@ -146,8 +152,9 @@ export async function POST(request: NextRequest) {
       userId,
       title: title.trim(),
       problemStatement: problemStatement.trim(),
-      myCode: myCode.trim(),
-      intuition: intuition?.trim() || '',
+      myCode: myCode?.trim() || solutions?.[0]?.code || '',
+      intuition: intuition?.trim() || solutions?.[0]?.intuition || '',
+      solutions: solutions || [],
       Confidence: parseInt(Confidence),
       category,
       tags: tags || [],

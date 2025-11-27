@@ -24,7 +24,7 @@ const ThemeToggle = () => {
         className="w-5 h-5 flex items-center justify-center"
       >
         {theme === 'light' ? (
-          // Sun icon
+         
           <svg
             className="w-5 h-5 text-yellow-500"
             fill="currentColor"
@@ -37,7 +37,7 @@ const ThemeToggle = () => {
             />
           </svg>
         ) : (
-          // Moon icon
+          
           <svg
             className="w-5 h-5 text-blue-300"
             fill="currentColor"

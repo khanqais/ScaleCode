@@ -30,12 +30,18 @@ export default function AddProblemPage() {
   const [formData, setFormData] = useState({
     title: '',
     problemStatement: '',
-    myCode: '',
-    intuition: '',
     Confidence: 5,
     category: 'Graph',
     tags: [] as string[]
   })
+  const [solutions, setSolutions] = useState([{
+    code: '',
+    intuition: '',
+    language: 'cpp',
+    timeComplexity: '',
+    spaceComplexity: '',
+    approach: ''
+  }])
   const [tagInput, setTagInput] = useState('')
 
   const categories = [
@@ -135,14 +141,14 @@ export default function AddProblemPage() {
       const problemData = {
         title: formData.title,
         problemStatement: formData.problemStatement,
-        myCode: formData.myCode,
-        intuition: formData.intuition,
+        solutions: solutions.filter(sol => sol.code.trim() !== ''),
         Confidence: formData.Confidence,
         category: formData.category,
         tags: formData.tags,
+        // Keep backward compatibility
+        myCode: solutions[0]?.code || '',
+        intuition: solutions[0]?.intuition || ''
       }
-      
-      console.log('Sending problem data:', problemData)
       
       const response = await fetch('/api/problems', {
         method: 'POST',
@@ -153,10 +159,8 @@ export default function AddProblemPage() {
       })
 
       const result = await response.json()
-      console.log('API Response:', result)
 
       if (response.ok && result.success) {
-        console.log('Problem created successfully!')
         setSuccess(true)
         
         // Update usage info if available in response
@@ -183,7 +187,6 @@ export default function AddProblemPage() {
         setError(result.message)
       } else {
         setError(result.error || 'Failed to save problem')
-        console.error('API Error:', result)
       }
       
     } catch (error) {
@@ -462,34 +465,56 @@ export default function AddProblemPage() {
             </div>
 
             <div className="mb-4">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Confidence Level
-                </label>
-                <div className="flex items-center gap-2 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-semibold">
-                  {formData.Confidence}/10
-                </div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Confidence Level: <span className={`font-bold ${
+                  formData.Confidence <= 3 ? 'text-red-600' : 
+                  formData.Confidence <= 6 ? 'text-yellow-600' : 
+                  'text-green-600'
+                }`}>{formData.Confidence}/10</span>
+              </label>
+              
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value={formData.Confidence}
+                onChange={(e) => setFormData({...formData, Confidence: parseInt(e.target.value)})}
+                className="w-full h-3 rounded-lg appearance-none cursor-pointer slider"
+                style={{
+                  background: `linear-gradient(to right, 
+                    #ef4444 0%, #ef4444 30%, 
+                    #eab308 30%, #eab308 60%, 
+                    #22c55e 60%, #22c55e 100%)`
+                }}
+              />
+              
+              <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+                <span>1 - Low</span>
+                <span>5 - Medium</span>
+                <span>10 - High</span>
               </div>
               
-              <div className="relative mb-3">
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={formData.Confidence}
-                  onChange={(e) => setFormData({...formData, Confidence: parseInt(e.target.value)})}
-                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                  style={{
-                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(formData.Confidence / 10) * 100}%, #e5e7eb ${(formData.Confidence / 10) * 100}%, #e5e7eb 100%)`
-                  }}
-                />
-              </div>
-              
-              <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>Low</span>
-                <span>Medium</span>
-                <span>High</span>
-              </div>
+              <style jsx>{`
+                .slider::-webkit-slider-thumb {
+                  appearance: none;
+                  width: 24px;
+                  height: 24px;
+                  border-radius: 50%;
+                  background: white;
+                  border: 3px solid ${formData.Confidence <= 3 ? '#ef4444' : formData.Confidence <= 6 ? '#eab308' : '#22c55e'};
+                  cursor: pointer;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                }
+                .slider::-moz-range-thumb {
+                  width: 24px;
+                  height: 24px;
+                  border-radius: 50%;
+                  background: white;
+                  border: 3px solid ${formData.Confidence <= 3 ? '#ef4444' : formData.Confidence <= 6 ? '#eab308' : '#22c55e'};
+                  cursor: pointer;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                }
+              `}</style>
             </div>
 
             <div>
@@ -507,33 +532,145 @@ export default function AddProblemPage() {
             </div>
           </div>
 
+          {/* Multiple Solutions Section */}
           <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center gap-2 mb-4">
-              <Brain className="text-purple-500" size={20} />
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Your Intuition</h2>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Code className="text-green-500" size={20} />
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Solutions ({solutions.length})</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSolutions([...solutions, {
+                  code: '',
+                  intuition: '',
+                  language: 'cpp',
+                  timeComplexity: '',
+                  spaceComplexity: '',
+                  approach: ''
+                }])}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium flex items-center gap-2"
+              >
+                <Code size={16} />
+                Add Another Solution
+              </button>
             </div>
-            <textarea
-              rows={4}
-              value={formData.intuition}
-              onChange={(e) => setFormData({...formData, intuition: e.target.value})}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Explain your approach and thought process..."
-            />
-          </div>
 
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center gap-2 mb-4">
-              <Code className="text-green-500" size={20} />
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Your Solution Code</h2>
-            </div>
-            <textarea
-              required
-              rows={12}
-              value={formData.myCode}
-              onChange={(e) => setFormData({...formData, myCode: e.target.value})}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-              placeholder="Paste your working solution code here..."
-            />
+            {solutions.map((solution, index) => (
+              <div key={index} className="mb-8 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Solution {index + 1}
+                  </h3>
+                  {solutions.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setSolutions(solutions.filter((_, i) => i !== index))}
+                      className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Language
+                      </label>
+                      <select
+                        value={solution.language}
+                        onChange={(e) => {
+                          const newSolutions = [...solutions]
+                          newSolutions[index].language = e.target.value
+                          setSolutions(newSolutions)
+                        }}
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="go">Go</option>
+                        <option value="rust">Rust</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Time Complexity
+                      </label>
+                      <input
+                        type="text"
+                        value={solution.timeComplexity}
+                        onChange={(e) => {
+                          const newSolutions = [...solutions]
+                          newSolutions[index].timeComplexity = e.target.value
+                          setSolutions(newSolutions)
+                        }}
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="e.g., O(n log n)"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Space Complexity
+                      </label>
+                      <input
+                        type="text"
+                        value={solution.spaceComplexity}
+                        onChange={(e) => {
+                          const newSolutions = [...solutions]
+                          newSolutions[index].spaceComplexity = e.target.value
+                          setSolutions(newSolutions)
+                        }}
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="e.g., O(n)"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <Brain className="inline w-4 h-4 mr-1" />
+                      Approach / Intuition
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={solution.intuition}
+                      onChange={(e) => {
+                        const newSolutions = [...solutions]
+                        newSolutions[index].intuition = e.target.value
+                        setSolutions(newSolutions)
+                      }}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                      placeholder="Explain your approach and thought process..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Solution Code {index === 0 && <span className="text-red-500">*</span>}
+                    </label>
+                    <textarea
+                      required={index === 0}
+                      rows={12}
+                      value={solution.code}
+                      onChange={(e) => {
+                        const newSolutions = [...solutions]
+                        newSolutions[index].code = e.target.value
+                        setSolutions(newSolutions)
+                      }}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                      placeholder="Paste your working solution code here..."
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="flex gap-4">

@@ -17,9 +17,41 @@ const problemSchema = new mongoose.Schema({
     required: [true, 'Problem statement is required'],
     trim: true
   },
+  solutions: [{
+    code: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    intuition: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    language: {
+      type: String,
+      default: 'cpp'
+    },
+    timeComplexity: {
+      type: String,
+      default: ''
+    },
+    spaceComplexity: {
+      type: String,
+      default: ''
+    },
+    approach: {
+      type: String,
+      default: ''
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  // Keep old fields for backward compatibility
   myCode: {
     type: String,
-    required: [true, 'Solution code is required'],
     trim: true
   },
   intuition: {

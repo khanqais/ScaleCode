@@ -14,17 +14,15 @@ interface ProblemLeanDoc {
 
 export async function GET() {
   try {
-    await connectDB()
+    await connectDB();
     
-    const { userId } = await auth()
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
-      )
+      );
     }
-
-    console.log('🔍 Fetching stats for user:', userId)
 
     const problems = await Problem.find({ userId }).lean() as ProblemLeanDoc[]
     const totalProblems = problems.length

@@ -2,6 +2,17 @@
 
 import { useState, useEffect } from 'react'
 
+// Solution interface
+interface Solution {
+  code: string
+  intuition: string
+  language: string
+  timeComplexity?: string
+  spaceComplexity?: string
+  approach?: string
+  createdAt?: string
+}
+
 // Problem interface
 interface Problem {
   _id: string
@@ -10,6 +21,7 @@ interface Problem {
   problemStatement?: string
   myCode?: string
   intuition?: string
+  solutions?: Solution[]
   Confidence: number
   category: string
   isPublic?: boolean
@@ -29,6 +41,7 @@ interface RevisionModalProps {
     problemStatement?: string
     myCode?: string
     intuition?: string
+    solutions?: Solution[]
   }
 }
 
@@ -42,6 +55,12 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
   const [copied, setCopied] = useState<'user' | 'solution' | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [mobileView, setMobileView] = useState<'problem' | 'code'>('problem')
+  const [selectedSolutionIndex, setSelectedSolutionIndex] = useState(0)
+  
+  // Get the active solution to compare against
+  const activeSolution = problem.solutions && problem.solutions.length > 0 
+    ? problem.solutions[selectedSolutionIndex] 
+    : { code: problem.myCode || '', intuition: problem.intuition || '', language: 'cpp' }
 
   
   useEffect(() => {
@@ -268,6 +287,9 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
                   <ComparisonPhase 
                     userCode={userCode}
                     problem={problem}
+                    activeSolution={activeSolution}
+                    selectedSolutionIndex={selectedSolutionIndex}
+                    setSelectedSolutionIndex={setSelectedSolutionIndex}
                     copied={copied}
                     handleCopy={handleCopy}
                     elapsedTime={elapsedTime}
@@ -299,6 +321,9 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
                     <ComparisonPhase 
                       userCode={userCode}
                       problem={problem}
+                      activeSolution={activeSolution}
+                      selectedSolutionIndex={selectedSolutionIndex}
+                      setSelectedSolutionIndex={setSelectedSolutionIndex}
                       copied={copied}
                       handleCopy={handleCopy}
                       elapsedTime={elapsedTime}
@@ -365,7 +390,10 @@ function CodingPhase({
 
 function ComparisonPhase({ 
   userCode, 
-  problem, 
+  problem,
+  activeSolution,
+  selectedSolutionIndex,
+  setSelectedSolutionIndex,
   copied, 
   handleCopy, 
   elapsedTime, 
@@ -375,6 +403,9 @@ function ComparisonPhase({
 }: {
   userCode: string
   problem: Problem
+  activeSolution: { code: string; intuition: string; language: string; timeComplexity?: string; spaceComplexity?: string }
+  selectedSolutionIndex: number
+  setSelectedSolutionIndex: (index: number) => void
   copied: 'user' | 'solution' | null
   handleCopy: (code: string, type: 'user' | 'solution') => void
   elapsedTime: number
@@ -382,11 +413,32 @@ function ComparisonPhase({
   handleReset: () => void
   onClose: () => void
 }) {
+  const hasSolutions = problem.solutions && problem.solutions.length > 0
+  
   return (
     <>
       <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Solution Comparison</h3>
         <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Compare your solution with your original solution</p>
+        
+        {/* Solution tabs if multiple solutions exist */}
+        {hasSolutions && problem.solutions && problem.solutions.length > 1 && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {problem.solutions.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedSolutionIndex(index)}
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                  selectedSolutionIndex === index
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                Solution {index + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       
       <div className="flex-1 overflow-y-auto">
@@ -412,18 +464,37 @@ function ComparisonPhase({
         
         <div>
           <div className="flex items-center justify-between p-3 sm:p-4 bg-green-50 dark:bg-green-900/30">
-            <h4 className="font-semibold text-green-900 dark:text-green-100 text-sm sm:text-base">Your Original Solution</h4>
+            <div>
+              <h4 className="font-semibold text-green-900 dark:text-green-100 text-sm sm:text-base">
+                Your Original Solution {hasSolutions && `${selectedSolutionIndex + 1}`}
+              </h4>
+              {activeSolution.timeComplexity && (
+                <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                  Time: {activeSolution.timeComplexity}
+                  {activeSolution.spaceComplexity && ` | Space: ${activeSolution.spaceComplexity}`}
+                </p>
+              )}
+            </div>
             <button
-              onClick={() => handleCopy(problem.myCode || '', 'solution')}
+              onClick={() => handleCopy(activeSolution.code || '', 'solution')}
               className="flex items-center gap-1 px-2 sm:px-3 py-1 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800/50 rounded transition-colors text-xs sm:text-sm"
             >
               {copied === 'solution' ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <Copy className="w-3 h-3 sm:w-4 sm:h-4" />}
               {copied === 'solution' ? 'Copied!' : 'Copy'}
             </button>
           </div>
+          
+          {/* Show intuition if exists */}
+          {activeSolution.intuition && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/30 border-b border-yellow-400 p-3">
+              <p className="text-xs font-semibold text-yellow-800 dark:text-yellow-200 mb-1">Approach:</p>
+              <pre className="whitespace-pre-wrap text-yellow-900 dark:text-yellow-100 text-xs">{activeSolution.intuition}</pre>
+            </div>
+          )}
+          
           <div className="bg-gray-900 overflow-x-auto">
             <pre className="p-3 sm:p-4 text-green-400 font-mono text-xs sm:text-sm">
-              <code>{problem.myCode || 'No solution available'}</code>
+              <code>{activeSolution.code || 'No solution available'}</code>
             </pre>
           </div>
         </div>
