@@ -32,32 +32,32 @@ const Features = () => {
     {
       icon: '📝',
       title: 'Problem Management',
-      description: 'Save your coding solutions from various platforms including LeetCode, HackerRank, and CodeForces.'
+      description: 'Save and manage your coding solutions with detailed problem statements, code, and intuition notes.'
     },
     {
       icon: '🎯',
       title: 'Smart Organization',
-      description: 'Group problems by difficulty, topics, data structures, or create custom categories that work for you.'
-    },
-    {
-      icon: '📊',
-      title: 'Progress Tracking',
-      description: 'Track your coding journey with detailed analytics and insights about your problem-solving patterns.'
-    },
-    {
-      icon: '🔍',
-      title: 'Quick Search',
-      description: 'Find any problem quickly with our powerful search and filtering system across all your solutions.'
+      description: 'Organize problems by categories and confidence levels with an intuitive dashboard view.'
     },
     {
       icon: '📚',
-      title: 'Revision Mode',
-      description: 'Review your solutions systematically with our spaced repetition system to reinforce learning.'
+      title: 'Intelligent Revision System',
+      description: 'Review problems with our confidence-based spaced repetition algorithm that prioritizes what needs practice.'
     },
     {
-      icon: '🚀',
-      title: 'Performance Insights',
-      description: 'Get insights into your coding patterns, most solved topics, and areas that need improvement.'
+      icon: '📊',
+      title: 'Basic Analytics',
+      description: 'Track your total problems, categories covered, and confidence distribution across your solutions.'
+    },
+    {
+      icon: '🔍',
+      title: 'Filter & Search',
+      description: 'Filter problems by category and confidence level to quickly find the problems you need.'
+    },
+    {
+      icon: '💼',
+      title: 'Flexible Plans',
+      description: 'Choose from Free, Pro, or Advanced plans to scale your problem-solving journey as you grow.'
     }
   ]
 
