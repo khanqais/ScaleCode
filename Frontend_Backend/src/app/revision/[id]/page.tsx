@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Check, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Check, Eye, EyeOff, X, Copy } from 'lucide-react'
 import axios from 'axios'
 
 
@@ -60,10 +60,11 @@ export default function RevisionPage() {
   const [problem, setProblem] = useState<Problem | null>(null)
   const [userCode, setUserCode] = useState('')
   const [newConfidence, setNewConfidence] = useState<number>(5)
-  const [showSolution, setShowSolution] = useState(false)
-  const [showIntuition, setShowIntuition] = useState(false)
+  const [showSolutionModal, setShowSolutionModal] = useState(false)
+  const [showIntuitionModal, setShowIntuitionModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
+  const [copiedSolution, setCopiedSolution] = useState(false)
 
   const fetchProblem = useCallback(async () => {
     try {
@@ -175,19 +176,19 @@ export default function RevisionPage() {
           
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setShowIntuition(!showIntuition)}
+              onClick={() => setShowIntuitionModal(!showIntuitionModal)}
               className="flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors"
             >
-              {showIntuition ? <EyeOff size={16} /> : <Eye size={16} />}
-              {showIntuition ? 'Hide' : 'Show'} Intuition
+              {showIntuitionModal ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showIntuitionModal ? 'Hide' : 'Show'} Intuition
             </button>
             
             <button
-              onClick={() => setShowSolution(!showSolution)}
+              onClick={() => setShowSolutionModal(!showSolutionModal)}
               className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition-colors"
             >
-              {showSolution ? <EyeOff size={16} /> : <Eye size={16} />}
-              {showSolution ? 'Hide' : 'Show'} Solution
+              {showSolutionModal ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showSolutionModal ? 'Hide' : 'Show'} Solution
             </button>
             
             <button
@@ -214,24 +215,6 @@ export default function RevisionPage() {
                   </pre>
                 </div>
               </div>
-
-              {showIntuition && (
-                <div className="p-6 bg-yellow-50 border-b border-yellow-200">
-                  <h3 className="text-lg font-semibold text-yellow-800 mb-3">💡 Your Intuition</h3>
-                  <p className="text-sm text-yellow-700 whitespace-pre-wrap">
-                    {problem.intuition}
-                  </p>
-                </div>
-              )}
-
-              {showSolution && (
-                <div className="p-6 bg-green-50">
-                  <h3 className="text-lg font-semibold text-green-800 mb-3">✅ Your Solution</h3>
-                  <pre className="text-sm text-green-700 bg-white p-4 rounded-lg border font-mono overflow-auto">
-                    {problem.myCode}
-                  </pre>
-                </div>
-              )}
             </div>
           </div>
 
@@ -262,31 +245,31 @@ export default function RevisionPage() {
         </div>
 
         
-        <div className="mt-6 p-8 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg">
-          <h2 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-white">Rate Your Understanding</h2>
+        <div className="mt-6 p-4 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg">
+          <h2 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-white">Rate Your Understanding</h2>
           
           
-          <div className="flex items-center justify-center gap-8 mb-8">
+          <div className="flex items-center justify-center gap-4 mb-4">
             <div className="text-center">
-              <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Current Confidence</div>
-              <div className="text-5xl font-bold text-gray-700 dark:text-gray-300">{problem.Confidence}/10</div>
+              <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Current Confidence</div>
+              <div className="text-3xl font-bold text-gray-700 dark:text-gray-300">{problem.Confidence}/10</div>
               {problem.revisionCount !== undefined && problem.revisionCount > 0 && (
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Revised {problem.revisionCount} times
                 </div>
               )}
             </div>
 
-            <div className="text-4xl text-gray-400">→</div>
+            <div className="text-2xl text-gray-400">→</div>
 
             <div className="text-center">
-              <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">New Confidence</div>
-              <div className="text-5xl font-bold text-blue-600 dark:text-blue-400">{newConfidence}/10</div>
+              <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">New Confidence</div>
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{newConfidence}/10</div>
             </div>
           </div>
 
           
-          <div className="mb-6">
+          <div className="mb-4">
             <div className="relative">
               <input
                 type="range"
@@ -294,7 +277,7 @@ export default function RevisionPage() {
                 max="10"
                 value={newConfidence}
                 onChange={(e) => setNewConfidence(parseInt(e.target.value))}
-                className="w-full h-4 rounded-full appearance-none cursor-pointer slider-thumb"
+                className="w-full h-3 rounded-full appearance-none cursor-pointer slider-thumb"
                 style={{
                   background: `linear-gradient(to right, 
                     #ef4444 0%, 
@@ -308,19 +291,19 @@ export default function RevisionPage() {
               />
             </div>
             
-            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-3 px-1">
+            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2 px-1">
               <span className="font-medium">Need to relearn</span>
               <span className="font-medium">Complete mastery</span>
             </div>
           </div>
 
           
-          <div className="mb-6 p-5 rounded-xl bg-gray-800 dark:bg-gray-900 text-white shadow-md">
-            <div className="flex items-center gap-4">
-              <div className={`w-3 h-3 rounded-full flex-shrink-0 ${getConfidenceColor(newConfidence)}`}></div>
+          <div className="mb-4 p-3 rounded-lg bg-gray-800 dark:bg-gray-900 text-white shadow-md">
+            <div className="flex items-center gap-3">
+              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${getConfidenceColor(newConfidence)}`}></div>
               <div className="flex-1">
-                <div className="font-bold text-lg mb-1">{getConfidenceLabel(newConfidence)}</div>
-                <div className="text-sm text-gray-300">
+                <div className="font-bold text-sm mb-0.5">{getConfidenceLabel(newConfidence)}</div>
+                <div className="text-xs text-gray-300">
                   {newConfidence <= 3 ? 'This problem will appear again soon in your revision queue' :
                    newConfidence <= 5 ? 'This problem will be scheduled for review in 1 week' :
                    newConfidence <= 7 ? 'This problem will be scheduled for review in 2 weeks' :
@@ -334,17 +317,89 @@ export default function RevisionPage() {
           <button
             onClick={handleComplete}
             disabled={updating}
-            className="w-full py-5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all font-bold text-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg flex items-center justify-center gap-2"
+            className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all font-semibold text-base shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg flex items-center justify-center gap-2"
           >
             <Check size={24} />
             {updating ? 'Saving...' : 'Complete Revision & Update Confidence'}
           </button>
         </div>
+      </div>
+      </div>
 
-        
-        
-      </div>
-      </div>
+      {/* Intuition Modal */}
+      {showIntuitionModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] flex flex-col shadow-xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-yellow-800">💡 Your Intuition</h2>
+              <button
+                onClick={() => setShowIntuitionModal(false)}
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-auto p-6 bg-yellow-50">
+              <p className="text-sm text-yellow-700 whitespace-pre-wrap leading-relaxed">
+                {problem.intuition}
+              </p>
+            </div>
+            
+            <div className="p-4 border-t border-gray-200 flex justify-end gap-2">
+              <button
+                onClick={() => setShowIntuitionModal(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Solution Modal */}
+      {showSolutionModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] flex flex-col shadow-xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-green-800">✅ Your Solution</h2>
+              <button
+                onClick={() => setShowSolutionModal(false)}
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-auto p-6 bg-green-50">
+              <pre className="text-sm text-green-700 bg-white p-4 rounded-lg border font-mono overflow-auto">
+                {problem.myCode}
+              </pre>
+            </div>
+            
+            <div className="p-4 border-t border-gray-200 flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(problem.myCode)
+                  setCopiedSolution(true)
+                  setTimeout(() => setCopiedSolution(false), 2000)
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Copy size={16} />
+                {copiedSolution ? 'Copied!' : 'Copy Code'}
+              </button>
+              <button
+                onClick={() => setShowSolutionModal(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

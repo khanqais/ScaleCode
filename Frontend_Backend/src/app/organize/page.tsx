@@ -377,7 +377,7 @@ export default function OrganizePage() {
                       <div
                         key={category}
                         onClick={() => router.push(`/problems?category=${encodeURIComponent(category)}`)}
-                        className="group relative bg-white dark:bg-gray-900 rounded-xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
+                        className="group relative bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1 max-w-xs"
                       >
                         <div className="flex items-start justify-between mb-4">
                           <div className={`w-10 h-10 rounded-lg ${color.bg} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center`}>

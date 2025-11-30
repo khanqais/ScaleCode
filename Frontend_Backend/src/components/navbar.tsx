@@ -2,14 +2,17 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { UserButton, useUser, SignInButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import ThemeToggle from './ThemeToggle'
 import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 
 const Navbar = () => {
   const { isSignedIn, user } = useUser()
+  const pathname = usePathname()
 
   return (
     <motion.nav
@@ -59,6 +62,18 @@ const Navbar = () => {
            </Button>
           </Link>
         </motion.div>
+
+        {isSignedIn && pathname !== '/' && pathname !== '/organize' && (
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Link href="/add-problem">
+              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                <Plus size={18} />
+                Add Problem
+              </button>
+            </Link>
+          </motion.div>
+        )}
+
         <ThemeToggle />
         
         {isSignedIn ? (
@@ -97,6 +112,14 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       <div className="md:hidden flex items-center space-x-4">
+        {isSignedIn && pathname !== '/' && pathname !== '/organize' && (
+          <Link href="/add-problem">
+            <button className="flex items-center gap-1 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white px-3 py-2 rounded-lg font-medium text-sm transition-colors">
+              <Plus size={16} />
+              Add
+            </button>
+          </Link>
+        )}
         <ThemeToggle />
         {isSignedIn ? (
           <UserButton 
