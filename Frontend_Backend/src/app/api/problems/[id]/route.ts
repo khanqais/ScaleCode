@@ -4,7 +4,7 @@ import connectDB from '@/lib/db';
 import Problem from '@/lib/models/Problem';
 import User from '@/lib/models/User';
 
-// Helper function to update user stats
+
 async function updateUserStats(userId: string) {
   try {
     const problems = await Problem.find({ userId });
@@ -24,7 +24,7 @@ async function updateUserStats(userId: string) {
     
     
   } catch (error) {
-    console.error('❌ Error updating user stats:', error);
+    console.error(' Error updating user stats:', error);
   }
 }
 
@@ -120,7 +120,7 @@ export async function PUT(
       data: problem
     });
 
-    // DISABLE CACHING
+    
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
@@ -128,7 +128,7 @@ export async function PUT(
     return response;
 
   } catch (error: unknown) {
-    console.error('❌ Update problem error:', error);
+    console.error(' Update problem error:', error);
     
     if (error instanceof Error && error.name === 'ValidationError') {
       return NextResponse.json({

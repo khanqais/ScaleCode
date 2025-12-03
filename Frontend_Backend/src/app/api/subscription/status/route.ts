@@ -15,7 +15,7 @@ export async function GET() {
       );
     }
 
-    // Get the current user with metadata
+   
     const user = await currentUser();
     
     if (!user) {
@@ -28,11 +28,11 @@ export async function GET() {
       );
     }
 
-    // Get subscription plan from user's public metadata
+    
     const subscriptionPlan = user.publicMetadata?.subscriptionPlan as string || 'free';
     const subscriptionStatus = user.publicMetadata?.subscriptionStatus as string || 'inactive';
 
-    // Return subscription information
+    
     return NextResponse.json({
       success: true,
       subscription: {
@@ -55,7 +55,7 @@ export async function GET() {
   }
 }
 
-// Helper function to get plan features
+
 function getPlanFeatures(plan: string) {
   const features: Record<string, { problemLimit: number, features: string[] }> = {
     'free': {
