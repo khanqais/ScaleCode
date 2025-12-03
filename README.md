@@ -69,6 +69,10 @@ Your confidence decays over time, ensuring you revisit problems before forgettin
 - **Category Navigation**: Quick access to specific problem types
 - **Responsive Design**: Perfect experience on all devices
 
+### Architecture
+<img width="1367" height="790" alt="image" src="https://github.com/user-attachments/assets/0cbf7443-754c-4441-a91e-ab9b2c425c07" />
+
+
 ## 🛠️ Tech Stack
 
 ### Frontend
