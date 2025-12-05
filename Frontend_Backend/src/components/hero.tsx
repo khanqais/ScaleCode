@@ -54,9 +54,9 @@ const Hero = () => {
         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black dark:text-white mb-6 sm:mb-8 max-w-4xl leading-tight"
         variants={itemVariants}
       >
-        Revise your coding
+        Remember every
         <br className="hidden sm:block" />
-        <span className="sm:hidden"> </span>solutions effectively
+        <span className="sm:hidden"> </span>algorithm, forever
       </motion.h1>
 
       <motion.p 
