@@ -57,7 +57,7 @@ export default function AddProblemPage() {
     'Interview Questions', 'Contest Problems', 'Mock Interview',
   ]
 
-  // Fetch current usage info on component mount
+  
   useEffect(() => {
     const fetchUsageInfo = async () => {
       if (!user) {
@@ -121,7 +121,7 @@ export default function AddProblemPage() {
       return
     }
 
-    // Check if limit is reached before attempting to submit
+    
     if (usageInfo && usageInfo.remaining <= 0) {
       setLimitReached(true)
       setLimitInfo({
@@ -145,7 +145,7 @@ export default function AddProblemPage() {
         Confidence: formData.Confidence,
         category: formData.category,
         tags: formData.tags,
-        // Keep backward compatibility
+       
         myCode: solutions[0]?.code || '',
         intuition: solutions[0]?.intuition || ''
       }
@@ -163,7 +163,7 @@ export default function AddProblemPage() {
       if (response.ok && result.success) {
         setSuccess(true)
         
-        // Update usage info if available in response
+        
         if (result.usage) {
           setUsageInfo({
             currentCount: result.usage.currentCount,
@@ -177,7 +177,7 @@ export default function AddProblemPage() {
           router.push(`/organize?refresh=${Date.now()}`)
         }, 1500)
       } else if (result.limitReached) {
-        // Handle limit reached
+        
         setLimitReached(true)
         setLimitInfo({
           currentCount: result.currentCount,
@@ -197,7 +197,7 @@ export default function AddProblemPage() {
     }
   }
 
-  // Limit Reached Modal
+  
   if (limitReached && limitInfo) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center transition-colors p-6">
@@ -255,7 +255,7 @@ export default function AddProblemPage() {
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Add New Problem</h1>
         </div>
 
-        {/* Usage Info Banner */}
+        
         {usageInfo && !loadingUsage && (
           <div className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-100 dark:border-gray-600">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -301,7 +301,7 @@ export default function AddProblemPage() {
               </div>
             </div>
             
-            {/* Progress Bar */}
+           
             <div className="mt-4">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
                 <span>Usage</span>
