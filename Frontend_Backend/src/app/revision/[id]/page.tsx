@@ -153,8 +153,8 @@ export default function RevisionPage() {
       <style dangerouslySetInnerHTML={{ __html: sliderStyles }} />
       <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between max-w-7xl mx-auto w-full gap-4">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
             <button
               onClick={() => router.push('/problems')}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -174,7 +174,7 @@ export default function RevisionPage() {
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-start sm:justify-end">
             <button
               onClick={() => setShowIntuitionModal(!showIntuitionModal)}
               className="flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors"
@@ -203,10 +203,10 @@ export default function RevisionPage() {
       </div>
 
       <div className="max-w-7xl mx-auto p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           
           <div className="flex flex-col">
-            <div className="bg-white rounded-xl border border-gray-200 flex flex-col" style={{ minHeight: '500px', maxHeight: '70vh' }}>
+            <div className="bg-white rounded-xl border border-gray-200 flex flex-col min-h-[260px] sm:min-h-[380px] md:min-h-[500px] max-h-[70vh] overflow-hidden">
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Problem Statement</h2>
                 <div className="prose prose-sm max-w-none">
@@ -220,7 +220,7 @@ export default function RevisionPage() {
 
          
           <div className="flex flex-col">
-            <div className="bg-white rounded-xl border border-gray-200 flex flex-col" style={{ minHeight: '500px', maxHeight: '70vh' }}>
+            <div className="bg-white rounded-xl border border-gray-200 flex flex-col min-h-[260px] sm:min-h-[380px] md:min-h-[500px] max-h-[70vh] overflow-hidden">
               <div className="p-4 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900">Write Your Solution</h2>
               </div>
@@ -229,7 +229,7 @@ export default function RevisionPage() {
                 <textarea
                   value={userCode}
                   onChange={(e) => setUserCode(e.target.value)}
-                  className="w-full h-full p-6 border-0 resize-none font-mono text-sm focus:outline-none focus:ring-0"
+                  className="w-full min-h-[180px] sm:min-h-[260px] p-6 border-0 resize-y font-mono text-sm focus:outline-none focus:ring-0"
                   placeholder="// Write your solution here..."
                 />
               </div>
