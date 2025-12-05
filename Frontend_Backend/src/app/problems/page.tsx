@@ -5,7 +5,6 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
-import RevisionModal from '@/components/RevisionModal'
 import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play, Trash2 } from 'lucide-react'
 
 interface Problem {
@@ -24,10 +23,6 @@ function ProblemsPageContent() {
   const { user } = useUser()
   const router = useRouter()
   const searchParams = useSearchParams()
-  
-  const [showRevisionModal, setShowRevisionModal] = useState(false)
-  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null)
-  const [loadingProblem, setLoadingProblem] = useState(false)
   
   // Simple state management instead of SWR
   const [allProblems, setAllProblems] = useState<Problem[]>([])
@@ -107,43 +102,8 @@ function ProblemsPageContent() {
     }
   }, [searchParams])
 
-  const fetchProblemDetails = async (problemId: string) => {
-    try {
-      setLoadingProblem(true)
-      const response = await fetch(`/api/problems/${problemId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch problem details: ${response.status}`)
-      }
-
-      const result = await response.json()
-      
-      if (result.success) {
-        return result.data
-      } else {
-        throw new Error(result.error || 'Failed to fetch problem details')
-      }
-    } catch (err) {
-      console.error('Error fetching problem details:', err)
-      alert('Failed to load problem details for revision')
-      return null
-    } finally {
-      setLoadingProblem(false)
-    }
-  }
-
-  const handleStartRevision = async (problem: Problem) => {
-    const fullProblem = await fetchProblemDetails(problem._id)
-    
-    if (fullProblem) {
-      setSelectedProblem(fullProblem)
-      setShowRevisionModal(true)
-    }
+  const handleStartRevision = (problemId: string) => {
+    router.push(`/revision/${problemId}`)
   }
 
   const getConfidenceColor = (confidence: number) => {
@@ -400,12 +360,11 @@ function ProblemsPageContent() {
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handleStartRevision(problem)}
-                      disabled={loadingProblem}
-                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 dark:bg-purple-700 text-white rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors text-sm font-medium disabled:opacity-50"
+                      onClick={() => handleStartRevision(problem._id)}
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 dark:bg-purple-700 text-white rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors text-sm font-medium"
                     >
                       <Play className="h-4 w-4" />
-                      {loadingProblem ? 'Loading...' : 'Practice'}
+                      Practice
                     </button>
                     
                     <button
@@ -432,26 +391,7 @@ function ProblemsPageContent() {
           </div>
         )}
 
-        {loadingProblem && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-            <div className="bg-white rounded-lg p-6 flex items-center gap-3">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
-              <span className="text-gray-700">Loading problem for revision...</span>
-            </div>
-          </div>
-        )}
-
-        {showRevisionModal && selectedProblem && (
-          <RevisionModal
-            isOpen={showRevisionModal}
-            onClose={() => {
-              setShowRevisionModal(false)
-              setSelectedProblem(null)
-            }}
-            problem={selectedProblem}
-          />
-        )}
-      </main>
+        </main>
     </div>
   )
 }

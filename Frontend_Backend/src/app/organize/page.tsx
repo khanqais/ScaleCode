@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { useUser, SignInButton } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
-import RevisionModal from '@/components/RevisionModal'
 import { Plus, Folder as FolderIcon, FileCode, Brain, TrendingUp, Code, Calendar, AlertCircle, RefreshCw, Play } from 'lucide-react'
 
 interface Problem {
@@ -47,10 +46,6 @@ export default function OrganizePage() {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  const [showRevisionModal, setShowRevisionModal] = useState(false)
-  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null)
-  const [loadingProblem, setLoadingProblem] = useState(false)
 
   const fetchProblems = useCallback(async () => {
     if (!user) {
@@ -102,43 +97,8 @@ export default function OrganizePage() {
     setLoading(false)
   }, [user, fetchProblems, fetchStats])
 
-  const fetchProblemDetails = async (problemId: string) => {
-    try {
-      setLoadingProblem(true)
-      const response = await fetch(`/api/problems/${problemId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch problem details: ${response.status}`)
-      }
-
-      const result = await response.json()
-      
-      if (result.success) {
-        return result.data
-      } else {
-        throw new Error(result.error || 'Failed to fetch problem details')
-      }
-    } catch (err) {
-      console.error('Error fetching problem details:', err)
-      alert('Failed to load problem details for revision')
-      return null
-    } finally {
-      setLoadingProblem(false)
-    }
-  }
-
-  const handleStartRevision = async (problem: Problem) => {
-    const fullProblem = await fetchProblemDetails(problem._id)
-    
-    if (fullProblem) {
-      setSelectedProblem(fullProblem)
-      setShowRevisionModal(true)
-    }
+  const handleStartRevision = (problemId: string) => {
+    router.push(`/revision/${problemId}`)
   }
 
   useEffect(() => {
@@ -479,13 +439,12 @@ export default function OrganizePage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        handleStartRevision(problem)
+                        handleStartRevision(problem._id)
                       }}
-                      disabled={loadingProblem}
-                      className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-medium flex-shrink-0 ml-2 flex items-center gap-1 disabled:opacity-50 transition-colors"
+                      className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-medium flex-shrink-0 ml-2 flex items-center gap-1 transition-colors"
                     >
                       <Play size={12} />
-                      {loadingProblem ? 'Loading...' : 'Practice'}
+                      Practice
                     </button>
                   </div>
                 </div>
@@ -494,26 +453,7 @@ export default function OrganizePage() {
           </div>
         )}
 
-        {loadingProblem && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-            <div className="bg-white rounded-lg p-6 flex items-center gap-3">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
-              <span className="text-gray-700">Loading problem for revision...</span>
-            </div>
-          </div>
-        )}
-
-        {showRevisionModal && selectedProblem && (
-          <RevisionModal
-            isOpen={showRevisionModal}
-            onClose={() => {
-              setShowRevisionModal(false)
-              setSelectedProblem(null)
-            }}
-            problem={selectedProblem}
-          />
-        )}
-      </div>
+        </div>
     </div>
   )
 }

@@ -5,7 +5,6 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
-import RevisionModal from '@/components/RevisionModal'
 import { 
   ArrowLeft, 
   Calendar, 
@@ -220,8 +219,6 @@ function ProblemDetailPageContent() {
   const [deleting, setDeleting] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [selectedSolutionIndex, setSelectedSolutionIndex] = useState(0)
-  
-  const [showRevisionModal, setShowRevisionModal] = useState(false)
 
   const fetchProblem = useCallback(async () => {
     try {
@@ -313,7 +310,9 @@ function ProblemDetailPageContent() {
   }
 
   const handleStartRevision = () => {
-    setShowRevisionModal(true)
+    if (problem) {
+      router.push(`/revision/${problem._id}`)
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -756,15 +755,6 @@ function ProblemDetailPageContent() {
             </div>
           </div>
         </div>
-      )}
-
-     
-      {showRevisionModal && (
-        <RevisionModal
-          isOpen={showRevisionModal}
-          onClose={() => setShowRevisionModal(false)}
-          problem={problem}
-        />
       )}
     </div>
   )
