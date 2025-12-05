@@ -7,7 +7,7 @@ import axios from 'axios'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-// CodeBlock component with syntax highlighting
+
 function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string }) {
   const [copied, setCopied] = useState(false)
 
@@ -470,7 +470,7 @@ export default function RevisionPage() {
       </div>
       </div>
 
-      {/* Intuition Modal */}
+      
       {showIntuitionModal && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
           <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-lg w-full sm:max-w-2xl max-h-[85vh] sm:max-h-[80vh] flex flex-col shadow-xl transition-colors">
