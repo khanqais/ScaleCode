@@ -4,7 +4,7 @@ A modern, full-stack web application designed to **revolutionize how you revise 
 
 **🌐 Live Demo:** [https://scale-code.vercel.app/](https://scale-code.vercel.app/)
 
-## 🎯 The Problem We Solve
+## 🎯 The Problem I Solve
 
 You solve hundreds of DSA problems, but **retention is the real challenge**. Most developers forget solutions within weeks. AlgoGrid ensures **lasting mastery** through:
 
