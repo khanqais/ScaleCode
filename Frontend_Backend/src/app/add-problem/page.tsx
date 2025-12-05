@@ -243,60 +243,60 @@ export default function AddProblemPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black p-6 transition-colors">
+    <div className="min-h-screen bg-gray-50 dark:bg-black p-4 sm:p-6 transition-colors">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" />
           </button>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Add New Problem</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Add New Problem</h1>
         </div>
 
         {/* Usage Info Banner */}
         {usageInfo && !loadingUsage && (
-          <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 shadow-sm border border-blue-100 dark:border-gray-600">
-            <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-100 dark:border-gray-600">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                  <TrendingUp className="text-blue-600 dark:text-blue-400" size={24} />
+                <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                  <TrendingUp className="text-blue-600 dark:text-blue-400 w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                     Your Progress
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     <span className="capitalize font-medium">{usageInfo.plan}</span> Plan
                   </p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-6">
+              <div className="flex items-center justify-around sm:justify-end gap-4 sm:gap-6">
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400">
                     {usageInfo.currentCount}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Problems Created</p>
+                  <p className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400">Created</p>
                 </div>
                 
-                <div className="h-12 w-px bg-gray-300 dark:bg-gray-600"></div>
+                <div className="h-8 sm:h-12 w-px bg-gray-300 dark:bg-gray-600"></div>
                 
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600 dark:text-green-400">
                     {usageInfo.remaining}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Remaining</p>
+                  <p className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400">Remaining</p>
                 </div>
                 
-                <div className="h-12 w-px bg-gray-300 dark:bg-gray-600"></div>
+                <div className="h-8 sm:h-12 w-px bg-gray-300 dark:bg-gray-600 hidden sm:block"></div>
                 
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+                <div className="text-center hidden sm:block">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-600 dark:text-gray-400">
                     {usageInfo.limit}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Limit</p>
+                  <p className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400">Total Limit</p>
                 </div>
               </div>
             </div>

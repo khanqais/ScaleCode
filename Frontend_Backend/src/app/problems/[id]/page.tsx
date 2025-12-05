@@ -85,45 +85,45 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
       ...atomDark['pre[class*="language-"]'],
       background: '#1a1a1a',
       margin: 0,
-      padding: '1rem',
-      fontSize: '14px',
+      padding: '0.75rem',
+      fontSize: '12px',
       lineHeight: '1.5',
       fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
     },
     'code[class*="language-"]': {
       ...atomDark['code[class*="language-"]'],
       background: '#1a1a1a',
-      fontSize: '14px',
+      fontSize: '12px',
       lineHeight: '1.5',
       fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
     }
   }
 
   return (
-    <div className="code-block-container bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-700 transition-all duration-300">
+    <div className="code-block-container bg-gray-900 rounded-lg sm:rounded-xl overflow-hidden shadow-xl sm:shadow-2xl border border-gray-700 transition-all duration-300">
       
-      <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-750 border-b border-gray-600">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
-            <div className="w-3 h-3 bg-yellow-500 rounded-full shadow-sm"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full shadow-sm"></div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-gray-800 to-gray-750 border-b border-gray-600 gap-2 sm:gap-0">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-red-500 rounded-full shadow-sm"></div>
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-yellow-500 rounded-full shadow-sm"></div>
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full shadow-sm"></div>
           </div>
-          <div className="h-4 w-px bg-gray-600"></div>
-          <Code2 className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-300 text-sm font-medium">Solution.{langConfig.extension}</span>
+          <div className="h-4 w-px bg-gray-600 hidden sm:block"></div>
+          <Code2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
+          <span className="text-gray-300 text-xs sm:text-sm font-medium truncate">Solution.{langConfig.extension}</span>
         </div>
-        <div className="flex items-center gap-3">
-          <div className={`px-3 py-1 ${langConfig.color} text-white text-xs rounded-full font-semibold shadow-sm`}>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className={`px-2 sm:px-3 py-0.5 sm:py-1 ${langConfig.color} text-white text-[10px] sm:text-xs rounded-full font-semibold shadow-sm`}>
             {langConfig.name}
           </div>
-          <span className="text-gray-400 text-xs">{lineCount} lines</span>
+          <span className="text-gray-400 text-[10px] sm:text-xs">{lineCount} lines</span>
           <button
             onClick={handleCopyCode}
-            className="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-md text-xs transition-colors"
+            className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-md text-[10px] sm:text-xs transition-colors"
           >
             {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-            {copied ? 'Copied!' : 'Copy'}
+            <span className="hidden xs:inline">{copied ? 'Copied!' : 'Copy'}</span>
           </button>
         </div>
       </div>
@@ -137,22 +137,23 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
           lineNumberStyle={{ 
             color: '#6b7280', 
             backgroundColor: '#1f2937',
-            paddingRight: '1rem',
+            paddingRight: '0.5rem',
             textAlign: 'right',
-            minWidth: '3rem',
-            borderRight: '1px solid #374151'
+            minWidth: '2rem',
+            borderRight: '1px solid #374151',
+            fontSize: '10px'
           }}
           customStyle={{
             margin: 0,
             background: '#1a1a1a',
-            fontSize: '14px',
-            lineHeight: '1.5',
+            fontSize: '11px',
+            lineHeight: '1.4',
             fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
           }}
           codeTagProps={{
             style: {
-              fontSize: '14px',
-              lineHeight: '1.5',
+              fontSize: '11px',
+              lineHeight: '1.4',
               fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
             }
           }}
