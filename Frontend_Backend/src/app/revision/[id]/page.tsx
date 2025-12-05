@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Check, Eye, EyeOff, X, Copy, Code2 } from 'lucide-react'
+import { ArrowLeft, Check, Eye, EyeOff, X, Copy, Code2, Sparkles, Lightbulb, ChevronRight, Loader2 } from 'lucide-react'
 import axios from 'axios'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -60,15 +60,15 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
       background: '#1a1a1a',
       margin: 0,
       padding: '0.75rem',
-      fontSize: '12px',
-      lineHeight: '1.5',
+      fontSize: '14px',
+      lineHeight: '1.6',
       fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
     },
     'code[class*="language-"]': {
       ...atomDark['code[class*="language-"]'],
       background: '#1a1a1a',
-      fontSize: '12px',
-      lineHeight: '1.5',
+      fontSize: '14px',
+      lineHeight: '1.6',
       fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
     }
   }
@@ -111,21 +111,21 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
             backgroundColor: '#1f2937',
             paddingRight: '0.5rem',
             textAlign: 'right',
-            minWidth: '2rem',
+            minWidth: '2.5rem',
             borderRight: '1px solid #374151',
-            fontSize: '10px'
+            fontSize: '13px'
           }}
           customStyle={{
             margin: 0,
             background: '#1a1a1a',
-            fontSize: '11px',
-            lineHeight: '1.4',
+            fontSize: '14px',
+            lineHeight: '1.6',
             fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
           }}
           codeTagProps={{
             style: {
-              fontSize: '11px',
-              lineHeight: '1.4',
+              fontSize: '14px',
+              lineHeight: '1.6',
               fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
             }
           }}
@@ -206,6 +206,11 @@ export default function RevisionPage() {
   const [newConfidence, setNewConfidence] = useState<number>(5)
   const [showSolutionModal, setShowSolutionModal] = useState(false)
   const [showIntuitionModal, setShowIntuitionModal] = useState(false)
+  const [showAIHintModal, setShowAIHintModal] = useState(false)
+  const [aiHint, setAiHint] = useState<string>('')
+  const [aiHintLevel, setAiHintLevel] = useState<1 | 2 | 3>(1)
+  const [aiHintLoading, setAiHintLoading] = useState(false)
+  const [aiHintError, setAiHintError] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
 
@@ -248,6 +253,39 @@ export default function RevisionPage() {
       alert('Failed to save revision')
     } finally {
       setUpdating(false)
+    }
+  }
+
+  const handleGetAIHint = async (level: 1 | 2 | 3) => {
+    if (!problem) return
+    
+    setAiHintLoading(true)
+    setAiHintError('')
+    setAiHintLevel(level)
+    
+    try {
+      const response = await axios.post('/api/ai/hint', {
+        problemTitle: problem.title,
+        problemStatement: problem.problemStatement,
+        category: problem.category,
+        userCode: userCode || undefined,
+        hintLevel: level
+      })
+      
+      if (response.data.success) {
+        setAiHint(response.data.data.hint)
+      } else {
+        setAiHintError(response.data.error || 'Failed to generate hint')
+      }
+    } catch (error) {
+      console.error('Error getting AI hint:', error)
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        setAiHintError(error.response.data.error)
+      } else {
+        setAiHintError('Failed to get AI hint. Please try again.')
+      }
+    } finally {
+      setAiHintLoading(false)
     }
   }
 
@@ -318,6 +356,19 @@ export default function RevisionPage() {
           </div>
           
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
+            <button
+              onClick={() => {
+                setShowAIHintModal(true)
+                if (!aiHint) {
+                  handleGetAIHint(1)
+                }
+              }}
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all text-xs sm:text-sm shadow-md hover:shadow-lg"
+            >
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">AI</span> Hint
+            </button>
+            
             <button
               onClick={() => setShowIntuitionModal(!showIntuitionModal)}
               className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-800/40 transition-colors text-xs sm:text-sm"
@@ -523,6 +574,156 @@ export default function RevisionPage() {
             <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
               <button
                 onClick={() => setShowSolutionModal(false)}
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AI Hint Modal */}
+      {showAIHintModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-lg w-full sm:max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-xl transition-colors">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-white">AI Hint Assistant</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Get progressive hints without spoiling the solution</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAIHintModal(false)}
+                className="p-1.5 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-600 dark:text-gray-400"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Hint Level Selector */}
+            <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+              <p className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Choose hint level:</p>
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <button
+                  onClick={() => handleGetAIHint(1)}
+                  disabled={aiHintLoading}
+                  className={`flex flex-col items-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
+                    aiHintLevel === 1 
+                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/30' 
+                      : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700'
+                  } disabled:opacity-50`}
+                >
+                  <Lightbulb className={`w-5 h-5 sm:w-6 sm:h-6 mb-1 ${aiHintLevel === 1 ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`} />
+                  <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">Nudge</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Gentle push</span>
+                </button>
+                
+                <button
+                  onClick={() => handleGetAIHint(2)}
+                  disabled={aiHintLoading}
+                  className={`flex flex-col items-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
+                    aiHintLevel === 2 
+                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/30' 
+                      : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700'
+                  } disabled:opacity-50`}
+                >
+                  <div className="flex mb-1">
+                    <Lightbulb className={`w-5 h-5 sm:w-6 sm:h-6 ${aiHintLevel === 2 ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`} />
+                    <Lightbulb className={`w-5 h-5 sm:w-6 sm:h-6 -ml-2 ${aiHintLevel === 2 ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`} />
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">Approach</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Algorithm hint</span>
+                </button>
+                
+                <button
+                  onClick={() => handleGetAIHint(3)}
+                  disabled={aiHintLoading}
+                  className={`flex flex-col items-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
+                    aiHintLevel === 3 
+                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/30' 
+                      : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700'
+                  } disabled:opacity-50`}
+                >
+                  <div className="flex mb-1">
+                    <Lightbulb className={`w-5 h-5 sm:w-6 sm:h-6 ${aiHintLevel === 3 ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`} />
+                    <Lightbulb className={`w-5 h-5 sm:w-6 sm:h-6 -ml-2 ${aiHintLevel === 3 ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`} />
+                    <Lightbulb className={`w-5 h-5 sm:w-6 sm:h-6 -ml-2 ${aiHintLevel === 3 ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`} />
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">Detailed</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Step by step</span>
+                </button>
+              </div>
+            </div>
+            
+            {/* Hint Content */}
+            <div className="flex-1 overflow-auto p-4 sm:p-6">
+              {aiHintLoading ? (
+                <div className="flex flex-col items-center justify-center py-8 sm:py-12">
+                  <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 text-purple-500 animate-spin mb-3" />
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Generating your hint...</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 mt-1">This may take a few seconds</p>
+                </div>
+              ) : aiHintError ? (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 sm:p-6">
+                  <p className="text-sm sm:text-base text-red-700 dark:text-red-400 font-medium mb-2">Unable to generate hint</p>
+                  <p className="text-xs sm:text-sm text-red-600 dark:text-red-300">{aiHintError}</p>
+                  <button
+                    onClick={() => handleGetAIHint(aiHintLevel)}
+                    className="mt-3 px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg text-xs sm:text-sm hover:bg-red-200 dark:hover:bg-red-800/40 transition-colors"
+                  >
+                    Try again
+                  </button>
+                </div>
+              ) : aiHint ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
+                      aiHintLevel === 1 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
+                      aiHintLevel === 2 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
+                      'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
+                    }`}>
+                      Level {aiHintLevel} Hint
+                    </span>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-800 rounded-lg p-4 sm:p-6 border border-purple-100 dark:border-purple-900/30">
+                    <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
+                      {aiHint}
+                    </p>
+                  </div>
+                  
+                  {aiHintLevel < 3 && (
+                    <button
+                      onClick={() => handleGetAIHint((aiHintLevel + 1) as 1 | 2 | 3)}
+                      disabled={aiHintLoading}
+                      className="flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 text-sm sm:text-base font-medium transition-colors"
+                    >
+                      <span>Need more help? Get Level {aiHintLevel + 1} hint</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center">
+                  <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-purple-300 dark:text-purple-700 mb-3" />
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Select a hint level above to get started</p>
+                </div>
+              )}
+            </div>
+            
+            {/* Footer */}
+            <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                💡 Try solving before getting more hints!
+              </p>
+              <button
+                onClick={() => setShowAIHintModal(false)}
                 className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
               >
                 Close

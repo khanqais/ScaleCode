@@ -86,15 +86,15 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
       background: '#1a1a1a',
       margin: 0,
       padding: '0.75rem',
-      fontSize: '12px',
-      lineHeight: '1.5',
+      fontSize: '14px',
+      lineHeight: '1.6',
       fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
     },
     'code[class*="language-"]': {
       ...atomDark['code[class*="language-"]'],
       background: '#1a1a1a',
-      fontSize: '12px',
-      lineHeight: '1.5',
+      fontSize: '14px',
+      lineHeight: '1.6',
       fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
     }
   }
@@ -139,21 +139,21 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
             backgroundColor: '#1f2937',
             paddingRight: '0.5rem',
             textAlign: 'right',
-            minWidth: '2rem',
+            minWidth: '2.5rem',
             borderRight: '1px solid #374151',
-            fontSize: '10px'
+            fontSize: '13px'
           }}
           customStyle={{
             margin: 0,
             background: '#1a1a1a',
-            fontSize: '11px',
-            lineHeight: '1.4',
+            fontSize: '14px',
+            lineHeight: '1.6',
             fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
           }}
           codeTagProps={{
             style: {
-              fontSize: '11px',
-              lineHeight: '1.4',
+              fontSize: '14px',
+              lineHeight: '1.6',
               fontFamily: "'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace",
             }
           }}

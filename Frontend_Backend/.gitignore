@@ -13,6 +13,7 @@
 .env
 REVISION_SYSTEM_COMPLETE_GUIDE.md
 webhook-explanation.txt
+AI-HINT-IMPLEMENTATION.txt
 
 # testing
 /coverage

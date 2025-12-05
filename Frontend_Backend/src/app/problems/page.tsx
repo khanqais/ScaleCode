@@ -5,7 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
-import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play, Trash2 } from 'lucide-react'
+import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play, Trash2, Brain } from 'lucide-react'
 
 interface Problem {
   _id: string
@@ -203,14 +203,26 @@ function ProblemsPageContent() {
       <Navbar />
       
       <main className="max-w-7xl mx-auto p-4 sm:p-6">
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">Your Problems</h1>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 transition-colors">
-            {selectedCategory 
-              ? `Showing ${filteredProblems.length} ${selectedCategory} problems`
-              : `${filteredProblems.length} total problems`
-            }
-          </p>
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">Your Problems</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 transition-colors">
+              {selectedCategory 
+                ? `Showing ${filteredProblems.length} ${selectedCategory} problems`
+                : `${filteredProblems.length} total problems`
+              }
+            </p>
+          </div>
+          <button 
+            onClick={() => router.push('/main-revision')}
+            className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 sm:px-6 py-3 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
+          >
+            <Brain size={20} />
+            <div className="text-center sm:text-left">
+              <div className="text-sm sm:text-base">Start Revision</div>
+              <div className="text-xs opacity-80 hidden sm:block">Practice your problems</div>
+            </div>
+          </button>
         </div>
 
         {availableCategories.length > 0 && (
