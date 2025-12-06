@@ -163,12 +163,21 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-xl w-full max-w-7xl h-[95vh] sm:h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="revision-modal-title"
+    >
+      <div 
+        className="bg-white dark:bg-gray-900 rounded-xl w-full max-w-7xl h-[95vh] sm:h-[90vh] flex flex-col overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 gap-3 sm:gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 min-w-0">
-            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{problem.title}</h2>
+            <h2 id="revision-modal-title" className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{problem.title}</h2>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs sm:text-sm text-blue-600 bg-blue-100 px-2 sm:px-3 py-1 rounded-full font-medium">
                 {problem.category}
@@ -192,17 +201,19 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
             <div className="flex items-center gap-2">
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-800/50 transition-colors text-xs sm:text-sm"
+                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-800/50 transition-colors text-xs sm:text-sm focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2"
+                aria-label="Reset revision attempt"
               >
-                <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
+                <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
                 <span className="hidden sm:inline">Reset</span>
               </button>
               
               <button
                 onClick={onClose}
-                className="p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                className="p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                aria-label="Close revision modal"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -210,24 +221,30 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
 
         
         {isMobile && (
-          <div className="flex bg-gray-100 dark:bg-gray-700 p-1 mx-4 mt-4 rounded-lg">
+          <div className="flex bg-gray-100 dark:bg-gray-700 p-1 mx-4 mt-4 rounded-lg" role="tablist" aria-label="View switcher">
             <button
               onClick={() => setMobileView('problem')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 mobileView === 'problem'
                   ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
+              role="tab"
+              aria-selected={mobileView === 'problem'}
+              aria-controls="problem-panel"
             >
               Problem
             </button>
             <button
               onClick={() => setMobileView('code')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 mobileView === 'code'
                   ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
+              role="tab"
+              aria-selected={mobileView === 'code'}
+              aria-controls="code-panel"
             >
               Code
             </button>

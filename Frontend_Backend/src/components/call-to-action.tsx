@@ -112,6 +112,7 @@ const CallToAction = () => {
                   variant="ghost" 
                   size="lg" 
                   className="text-white dark:text-black hover:text-gray-200 dark:hover:text-gray-800 hover:bg-white/10 dark:hover:bg-black/10 px-8 py-6 text-lg font-medium border border-white/20 dark:border-black/20 rounded-full transition-colors"
+                  aria-label="Browse available problems"
                 >
                   View Problems
                 </Button>

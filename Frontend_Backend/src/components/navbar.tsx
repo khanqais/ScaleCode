@@ -51,25 +51,27 @@ const Navbar = () => {
 
       <div className="hidden md:flex items-center space-x-8">
         <motion.div whileHover={{ scale: 1.05 }}>
-          <Link 
-            href="/pricing" 
-            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors font-medium"
-          >
-           <Button
-           
-           >
-            Pricing
-           </Button>
+          <Link href="/pricing">
+            <Button
+              variant="ghost"
+              className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors font-medium"
+              aria-label="View pricing plans"
+            >
+              Pricing
+            </Button>
           </Link>
         </motion.div>
 
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && (
           <motion.div whileHover={{ scale: 1.05 }}>
             <Link href="/add-problem">
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                <Plus size={18} />
+              <Button 
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                aria-label="Add a new problem"
+              >
+                <Plus size={18} aria-hidden="true" />
                 Add Problem
-              </button>
+              </Button>
             </Link>
           </motion.div>
         )}
@@ -102,9 +104,12 @@ const Navbar = () => {
         ) : (
           <motion.div whileHover={{ scale: 1.05 }}>
             <SignInButton mode="modal">
-              <button className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+              <Button 
+                className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+                aria-label="Sign in to your account"
+              >
                 Log in
-              </button>
+              </Button>
             </SignInButton>
           </motion.div>
         )}
@@ -114,10 +119,14 @@ const Navbar = () => {
       <div className="md:hidden flex items-center space-x-4">
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && (
           <Link href="/add-problem">
-            <button className="flex items-center gap-1 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white px-3 py-2 rounded-lg font-medium text-sm transition-colors">
-              <Plus size={16} />
+            <Button 
+              size="sm"
+              className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-3 py-2 rounded-lg font-medium text-sm transition-colors"
+              aria-label="Add a new problem"
+            >
+              <Plus size={16} aria-hidden="true" />
               Add
-            </button>
+            </Button>
           </Link>
         )}
         <ThemeToggle />
@@ -141,9 +150,13 @@ const Navbar = () => {
           />
         ) : (
           <SignInButton mode="modal">
-            <button className="bg-black dark:bg-white text-white dark:text-black px-3 py-2 text-sm rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+            <Button 
+              size="sm"
+              className="bg-black dark:bg-white text-white dark:text-black px-3 py-2 text-sm rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+              aria-label="Sign in to your account"
+            >
               Log in
-            </button>
+            </Button>
           </SignInButton>
         )}
       </div>

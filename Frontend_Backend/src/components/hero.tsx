@@ -54,19 +54,16 @@ const Hero = () => {
         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black dark:text-white mb-6 sm:mb-8 max-w-4xl leading-tight"
         variants={itemVariants}
       >
-        Remember every
-        <br className="hidden sm:block" />
-        <span className="sm:hidden"> </span>algorithm, forever
+        Remember every algorithm, forever
       </motion.h1>
 
       <motion.p 
         className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl leading-relaxed px-4"
         variants={itemVariants}
       >
-        Save and Revise your LeetCode, HackerRank, and coding platform solutions. 
-        Group them by topics, difficulty, or custom categories,
-        <br className="hidden sm:block" />
-        <span className="sm:hidden"> </span>Never lose track of your progress again.
+        Save and revise your LeetCode, HackerRank, and coding platform solutions. 
+        Group them by topics, difficulty, or custom categories. 
+        Never lose track of your progress again.
       </motion.p>
       <motion.div 
         className="flex flex-col sm:flex-row gap-4 items-center"
@@ -80,7 +77,8 @@ const Hero = () => {
   >
     <Button 
       size="lg" 
-      className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-8 py-6 text-lg font-medium rounded-full transition-colors"
+      className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-8 py-6 text-lg font-medium rounded-full transition-colors shadow-lg hover:shadow-xl"
+      aria-label="Start organizing your coding problems"
     >
       Start organizing
     </Button>
@@ -94,9 +92,9 @@ const Hero = () => {
           >
             <Button 
               variant="ghost" 
-              
               size="lg" 
               className="text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300 px-8 py-6 text-lg font-medium group transition-colors"
+              aria-label="View pricing plans"
             >
               See our plans 
               <motion.span 

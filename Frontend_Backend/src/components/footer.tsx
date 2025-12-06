@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { Github, Twitter, Linkedin, Heart } from 'lucide-react'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -39,15 +40,18 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <motion.div 
-              className="flex items-center space-x-3 mb-4"
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="w-10 h-10 bg-black dark:bg-white rounded-lg flex items-center justify-center transition-colors">
-                <span className="text-white dark:text-black font-bold text-sm">SC</span>
-              </div>
-              <span className="text-xl font-bold text-black dark:text-white transition-colors">AlgoGrid</span>
-            </motion.div>
+            <Link href="/" className="inline-block mb-4">
+              <motion.div 
+                className="flex items-center space-x-3"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+              >
+                <div className="w-10 h-10 bg-black dark:bg-white rounded-lg flex items-center justify-center transition-colors">
+                  <span className="text-white dark:text-black font-bold text-lg">{'</>'}</span>
+                </div>
+                <span className="text-xl font-bold text-black dark:text-white transition-colors">AlgoGrid</span>
+              </motion.div>
+            </Link>
             <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md transition-colors">
               Organize and manage your coding solutions from LeetCode, HackerRank, 
               and other coding platforms. Keep track of your progress and improve your skills.
@@ -107,26 +111,24 @@ const Footer = () => {
               © {currentYear} AlgoGrid. All rights reserved.
             </p>
             
-            <div className="flex items-center space-x-4 mt-4 md:mt-0">
-              <p className="text-gray-600 dark:text-gray-400 text-sm mr-2 transition-colors">Follow us:</p>
+            <div className="flex items-center gap-4 mt-4 md:mt-0">
               {[
-                { name: 'GitHub', href: '#', icon: '🐙' },
-                { name: 'Twitter', href: '#', icon: '🐦' },
-                { name: 'LinkedIn', href: '#', icon: '💼' }
+                { name: 'GitHub', href: '#', Icon: Github, label: 'Visit our GitHub' },
+                { name: 'Twitter', href: '#', Icon: Twitter, label: 'Follow us on Twitter' },
+                { name: 'LinkedIn', href: '#', Icon: Linkedin, label: 'Connect on LinkedIn' }
               ].map((social) => (
-                <motion.div
+                <motion.a
                   key={social.name}
-                  variants={linkVariants}
-                  whileHover="hover"
+                  href={social.href}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                  aria-label={social.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Link
-                    href={social.href}
-                    className="text-gray-600 hover:text-gray-900 transition-colors"
-                    title={social.name}
-                  >
-                    <span className="text-lg">{social.icon}</span>
-                  </Link>
-                </motion.div>
+                  <social.Icon className="w-5 h-5" aria-hidden="true" />
+                </motion.a>
               ))}
             </div>
           </div>
