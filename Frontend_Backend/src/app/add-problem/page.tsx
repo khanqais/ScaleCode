@@ -106,7 +106,7 @@ export default function AddProblemPage() {
           }
         }
       } catch (error) {
-        console.error('Error fetching usage info:', error)
+        // Error fetching usage info
       } finally {
         setLoadingUsage(false)
       }
@@ -190,7 +190,6 @@ export default function AddProblemPage() {
       }
       
     } catch (error) {
-      console.error('Error saving problem:', error)
       setError('Network error. Please check your connection.')
     } finally {
       setLoading(false)

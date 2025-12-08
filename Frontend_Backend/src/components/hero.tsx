@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { GlowingEffect } from '@/components/ui/glowing-effect'
 
 const Hero = () => {
   const containerVariants = {
@@ -45,8 +46,15 @@ const Hero = () => {
           transition: { type: 'spring', stiffness: 400, damping: 10 }
         }}
       >
-        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-black dark:bg-white rounded-3xl flex items-center justify-center shadow-lg">
-          <span className="text-white dark:text-black text-2xl sm:text-3xl font-bold">{'</>'}</span>
+        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-black dark:bg-white rounded-3xl flex items-center justify-center shadow-lg relative overflow-hidden">
+          <GlowingEffect 
+            proximity={100} 
+            spread={30} 
+            blur={10}
+            borderWidth={2}
+            disabled={false}
+          />
+          <span className="text-white dark:text-black text-2xl sm:text-3xl font-bold relative z-10">{'</>'}</span>
         </div>
       </motion.div>
 
@@ -74,13 +82,21 @@ const Hero = () => {
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
     transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+    className="relative"
   >
     <Button 
       size="lg" 
-      className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-8 py-6 text-lg font-medium rounded-full transition-colors shadow-lg hover:shadow-xl"
+      className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-8 py-6 text-lg font-medium rounded-full transition-colors shadow-lg hover:shadow-xl relative overflow-hidden"
       aria-label="Start organizing your coding problems"
     >
-      Start organizing
+      <GlowingEffect 
+        proximity={150} 
+        spread={40} 
+        blur={15}
+        borderWidth={2}
+        disabled={false}
+      />
+      <span className="relative z-10">Start organizing</span>
     </Button>
   </motion.div>
 </Link>
@@ -93,7 +109,7 @@ const Hero = () => {
             <Button 
               variant="ghost" 
               size="lg" 
-              className="text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300 px-8 py-6 text-lg font-medium group transition-colors"
+              className="text-black dark:text-white px-8 py-6 text-lg font-medium group hover:bg-transparent hover:text-black dark:hover:text-white cursor-pointer"
               aria-label="View pricing plans"
             >
               See our plans 

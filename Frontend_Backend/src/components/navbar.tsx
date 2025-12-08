@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { UserButton, useUser, SignInButton } from '@clerk/nextjs'
 import Image from 'next/image'
-import ThemeToggle from './ThemeToggle'
+import AnimatedThemeSwitch from './AnimatedThemeSwitch'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
@@ -54,7 +54,7 @@ const Navbar = () => {
           <Link href="/pricing">
             <Button
               variant="ghost"
-              className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium"
+              className="text-gray-700 dark:text-gray-300 font-medium hover:bg-transparent hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
               aria-label="View pricing plans"
             >
               Pricing
@@ -76,7 +76,7 @@ const Navbar = () => {
           </motion.div>
         )}
 
-        <ThemeToggle />
+        <AnimatedThemeSwitch />
         
         {isSignedIn ? (
           <div className="flex items-center space-x-4">
@@ -129,7 +129,7 @@ const Navbar = () => {
             </Button>
           </Link>
         )}
-        <ThemeToggle />
+        <AnimatedThemeSwitch />
         {isSignedIn ? (
           <UserButton 
             appearance={{

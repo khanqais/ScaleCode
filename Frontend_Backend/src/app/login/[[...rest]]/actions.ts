@@ -3,7 +3,6 @@
 
 export async function mongodbAction() {
   // Add MongoDB-related server actions here when ready
-  console.log('MongoDB server actions placeholder')
 }
 //   redirect('/')
 // }

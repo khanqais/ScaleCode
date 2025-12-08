@@ -13,7 +13,6 @@ async function getUserPlan(userId: string) {
     // Get subscription plan from publicMetadata
     return user.publicMetadata?.subscriptionPlan as string || 'free'; 
   } catch (error) {
-    console.error('❌ Error getting user plan:', error);
     return 'free'; 
   }
 }
@@ -47,7 +46,6 @@ async function ensureUserExists(userId: string) {
     }
     return user;
   } catch (error) {
-    console.error(' Error ensuring user exists:', error);
     throw error;
   }
 }
@@ -71,10 +69,8 @@ async function updateUserStats(userId: string) {
         'stats.lastActive': new Date()
       }
     );
-
-   
   } catch (error) {
-    console.error('❌ Error updating user stats:', error);
+    // Error updating user stats
   }
 }
 
@@ -120,8 +116,6 @@ export async function POST(request: NextRequest) {
       if (!problemStatement) missingFields.push('problemStatement');
       if (!Confidence) missingFields.push('Confidence');
       if (!category) missingFields.push('category');
-      
-      console.error(' Missing fields:', missingFields);
       
       return NextResponse.json({
         success: false,
@@ -188,9 +182,6 @@ export async function POST(request: NextRequest) {
     return response;
 
   } catch (error: unknown) {
-    console.error('❌ Create problem error:', error);
-    
-    
     if (error instanceof Error && error.name === 'ValidationError') {
       return NextResponse.json({
         success: false,
@@ -284,7 +275,6 @@ export async function GET(request: NextRequest) {
     return response;
 
   } catch (error: unknown) {
-    console.error('❌ Get problems error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch problems',
@@ -321,7 +311,6 @@ export async function DELETE(request: NextRequest) {
     });
 
     if (!deletedProblem) {
-      console.log(' Problem not found for deletion:', problemId);
       return NextResponse.json({
         success: false,
         error: 'Problem not found or you do not have permission to delete it'
@@ -345,7 +334,6 @@ export async function DELETE(request: NextRequest) {
     return response;
 
   } catch (error: unknown) {
-    console.error('Delete problem error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to delete problem',

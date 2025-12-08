@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { GlowingEffect } from '@/components/ui/glowing-effect'
 
 const Features = () => {
   const containerVariants = {
@@ -89,17 +90,20 @@ const Features = () => {
           <motion.div
             key={feature.title}
             variants={itemVariants}
-            whileHover={{ 
-              scale: 1.05,
-              transition: { type: 'spring', stiffness: 400, damping: 10 }
-            }}
-            className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/30 shadow-lg hover:shadow-xl transition-all"
+            className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/30 shadow-lg transition-all relative overflow-hidden"
           >
-            <div className="text-4xl mb-4">{feature.icon}</div>
-            <h3 className="text-xl font-semibold text-black dark:text-white mb-3">
+            <GlowingEffect 
+              proximity={120} 
+              spread={35} 
+              blur={12}
+              borderWidth={2}
+              disabled={false}
+            />
+            <div className="text-4xl mb-4 relative z-10">{feature.icon}</div>
+            <h3 className="text-xl font-semibold text-black dark:text-white mb-3 relative z-10">
               {feature.title}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed relative z-10">
               {feature.description}
             </p>
           </motion.div>

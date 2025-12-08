@@ -120,7 +120,6 @@ export async function GET(request: Request) {
     });
 
   } catch (error: unknown) {
-    console.error('❌ Get revision problems error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch revision problems',
@@ -182,7 +181,6 @@ export async function PATCH(request: Request) {
     });
 
   } catch (error: unknown) {
-    console.error('❌ Update revision error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to update revision',

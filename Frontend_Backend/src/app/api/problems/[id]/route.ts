@@ -21,10 +21,8 @@ async function updateUserStats(userId: string) {
         'stats.lastActive': new Date()
       }
     );
-    
-    
   } catch (error) {
-    console.error(' Error updating user stats:', error);
+    // Error updating user stats
   }
 }
 
@@ -70,7 +68,6 @@ export async function GET(
     return response;
 
   } catch (error: unknown) {
-    console.error('Get problem error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch problem',
@@ -128,8 +125,6 @@ export async function PUT(
     return response;
 
   } catch (error: unknown) {
-    console.error(' Update problem error:', error);
-    
     if (error instanceof Error && error.name === 'ValidationError') {
       return NextResponse.json({
         success: false,
@@ -167,7 +162,6 @@ export async function DELETE(
     const problem = await Problem.findOneAndDelete({ _id: id, userId });
 
     if (!problem) {
-      console.log(' Problem not found for deletion:', id);
       return NextResponse.json({
         success: false,
         error: 'Problem not found'
@@ -191,7 +185,6 @@ export async function DELETE(
     return response;
 
   } catch (error: unknown) {
-    console.error(' Delete problem error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to delete problem',

@@ -17,6 +17,7 @@ export async function GET() {
     await connectDB();
     
     const { userId } = await auth();
+    
     if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
@@ -26,7 +27,6 @@ export async function GET() {
 
     const problems = await Problem.find({ userId }).lean() as ProblemLeanDoc[]
     const totalProblems = problems.length
-    
     
     const categories = [...new Set(problems.map((p) => p.category))].length
     
@@ -56,8 +56,6 @@ export async function GET() {
       }
     }
 
-    
-
     const response = NextResponse.json({
       success: true,
       data: stats
@@ -70,7 +68,6 @@ export async function GET() {
     return response
 
   } catch (error: unknown) {
-    console.error('❌ Get user stats error:', error)
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch user stats',

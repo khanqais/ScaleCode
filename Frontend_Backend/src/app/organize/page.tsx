@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useUser, SignInButton } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
+import { ButtonColorful } from '@/components/ui/button-colorful'
 import { Plus, Folder as FolderIcon, FileCode, Brain, TrendingUp, Code, Calendar, AlertCircle, RefreshCw, Play } from 'lucide-react'
 
 interface Problem {
@@ -62,7 +63,6 @@ export default function OrganizePage() {
         setError('Failed to fetch problems')
       }
     } catch (error) {
-      console.error(' Error fetching problems:', error)
       setError('Failed to fetch problems')
     }
   }, [user])
@@ -72,17 +72,22 @@ export default function OrganizePage() {
     
     try {
       const response = await fetch(`/api/users/stats?t=${Date.now()}`)
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        setError(`Failed to fetch stats: ${errorData.error || response.statusText}`)
+        return
+      }
+      
       const data = await response.json()
       
       if (data.success) {
-        console.log('Total problems from stats:', data.data.totalProblems) 
         setStats(data.data)
       } else {
-        setError('Failed to fetch stats')
+        setError(`Failed to fetch stats: ${data.error || 'Unknown error'}`)
       }
     } catch (error) {
-      console.error(' Error fetching stats:', error)
-      setError('Failed to fetch stats')
+      setError(`Failed to fetch stats: ${error instanceof Error ? error.message : 'Network error'}`)
     }
   }, [user])
 
@@ -244,16 +249,11 @@ export default function OrganizePage() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <button 
+              <ButtonColorful
                 onClick={() => router.push('/main-revision')}
-                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center sm:justify-start gap-3"
-              >
-                <Brain size={20} className="sm:w-6 sm:h-6" />
-                <div className="text-center sm:text-left">
-                  <div className="text-sm sm:text-base">Start Revision</div>
-                  <div className="text-xs opacity-80 hidden sm:block">Practice your problems</div>
-                </div>
-              </button>
+                label="Start Revision"
+                className="w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-4 h-auto shadow-lg text-sm sm:text-base font-medium"
+              />
               
               <button
                 onClick={() => router.push('/add-problem')}

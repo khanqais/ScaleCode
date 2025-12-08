@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useUser, SignInButton } from '@clerk/nextjs'
+import { GlowingEffect } from '@/components/ui/glowing-effect'
 
 const CallToAction = () => {
   const { isSignedIn } = useUser()
@@ -45,6 +46,13 @@ const CallToAction = () => {
         variants={itemVariants}
         className="bg-gradient-to-r from-black to-gray-800 dark:from-white dark:to-gray-200 rounded-3xl p-8 sm:p-12 text-center text-white dark:text-black relative overflow-hidden transition-colors"
       >
+        <GlowingEffect 
+          proximity={200} 
+          spread={50} 
+          blur={20}
+          borderWidth={3}
+          disabled={false}
+        />
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-gray-800/90 dark:from-white/90 dark:to-gray-200/90"></div>
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 dark:bg-black/5 rounded-full transform translate-x-16 -translate-y-16"></div>
@@ -79,9 +87,16 @@ const CallToAction = () => {
                 >
                   <Button 
                     size="lg" 
-                    className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors"
+                    className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors relative overflow-hidden"
                   >
-                    Get Started Free
+                    <GlowingEffect 
+                      proximity={150} 
+                      spread={40} 
+                      blur={15}
+                      borderWidth={2}
+                      disabled={false}
+                    />
+                    <span className="relative z-10">Get Started Free</span>
                   </Button>
                 </motion.div>
               </Link>
@@ -94,9 +109,16 @@ const CallToAction = () => {
                 >
                   <Button 
                     size="lg" 
-                    className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors"
+                    className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors relative overflow-hidden"
                   >
-                    Get Started Free
+                    <GlowingEffect 
+                      proximity={150} 
+                      spread={40} 
+                      blur={15}
+                      borderWidth={2}
+                      disabled={false}
+                    />
+                    <span className="relative z-10">Get Started Free</span>
                   </Button>
                 </motion.div>
               </SignInButton>
@@ -111,10 +133,17 @@ const CallToAction = () => {
                 <Button 
                   variant="ghost" 
                   size="lg" 
-                  className="text-white dark:text-black hover:text-gray-200 dark:hover:text-gray-800 hover:bg-white/10 dark:hover:bg-black/10 px-8 py-6 text-lg font-medium border border-white/20 dark:border-black/20 rounded-full transition-colors"
+                  className="text-white dark:text-black hover:text-gray-200 dark:hover:text-gray-800 hover:bg-white/10 dark:hover:bg-black/10 px-8 py-6 text-lg font-medium border border-white/20 dark:border-black/20 rounded-full transition-colors relative overflow-hidden"
                   aria-label="Browse available problems"
                 >
-                  View Problems
+                  <GlowingEffect 
+                    proximity={150} 
+                    spread={40} 
+                    blur={15}
+                    borderWidth={2}
+                    disabled={false}
+                  />
+                  <span className="relative z-10">View Problems</span>
                 </Button>
               </motion.div>
             </Link>

@@ -43,7 +43,6 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('Error fetching subscription status:', error);
     return NextResponse.json(
       { 
         success: false, 

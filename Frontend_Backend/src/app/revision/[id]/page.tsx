@@ -49,7 +49,7 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
-      console.error('Failed to copy code:', err)
+      // Failed to copy
     }
   }
 
@@ -222,7 +222,7 @@ export default function RevisionPage() {
         setNewConfidence(response.data.data.Confidence)
       }
     } catch (error) {
-      console.error('Error fetching problem:', error)
+      // Error fetching problem
     } finally {
       setLoading(false)
     }
@@ -249,7 +249,6 @@ export default function RevisionPage() {
         router.push('/main-revision')
       }
     } catch (error) {
-      console.error('Error saving session:', error)
       alert('Failed to save revision')
     } finally {
       setUpdating(false)
@@ -278,7 +277,6 @@ export default function RevisionPage() {
         setAiHintError(response.data.error || 'Failed to generate hint')
       }
     } catch (error) {
-      console.error('Error getting AI hint:', error)
       if (axios.isAxiosError(error) && error.response?.data?.error) {
         setAiHintError(error.response.data.error)
       } else {

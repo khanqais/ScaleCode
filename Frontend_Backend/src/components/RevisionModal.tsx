@@ -156,7 +156,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
       setCopied(type)
       setTimeout(() => setCopied(null), 2000)
     } catch (err) {
-      console.error('Failed to copy code:', err)
+      // Failed to copy
     }
   }
 

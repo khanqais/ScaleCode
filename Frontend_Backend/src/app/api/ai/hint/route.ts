@@ -73,7 +73,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('AI Hint API error:', error)
     const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     return NextResponse.json(
       { success: false, error: errorMessage },

@@ -201,7 +201,6 @@ export default function EditProblemPage() {
           setError(result.error || 'Failed to fetch problem')
         }
       } catch (err) {
-        console.error('Error fetching problem:', err)
         setError('Failed to fetch problem')
       } finally {
         setLoading(false)
@@ -266,7 +265,6 @@ export default function EditProblemPage() {
         setError(result.error || 'Failed to update problem')
       }
     } catch (err) {
-      console.error('Error updating problem:', err)
       setError('Failed to update problem')
     } finally {
       setSaving(false)

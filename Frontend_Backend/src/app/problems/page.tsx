@@ -5,6 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
+import { ButtonColorful } from '@/components/ui/button-colorful'
 import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play, Trash2, Brain } from 'lucide-react'
 
 interface Problem {
@@ -58,7 +59,6 @@ function ProblemsPageContent() {
         setError(result.error || 'Failed to fetch problems')
       }
     } catch (err) {
-      console.error('Error fetching problems:', err)
       setError('Failed to fetch problems')
     } finally {
       setLoading(false)
@@ -156,17 +156,12 @@ function ProblemsPageContent() {
       const result = await response.json()
 
       if (response.ok && result.success) {
-        console.log('Problem deleted successfully, refreshing data...')
-        
         // Simple refresh - just refetch the data
         await fetchProblems()
-        
-        console.log('Data refreshed after deletion')
       } else {
         setErrorMessage(result.error || 'Failed to delete problem')
       }
     } catch (error) {
-      console.error('Error deleting problem:', error)
       setErrorMessage('Failed to delete problem. Please try again.')
     } finally {
       setDeletingId(null)
@@ -213,16 +208,11 @@ function ProblemsPageContent() {
               }
             </p>
           </div>
-          <button 
+          <ButtonColorful
             onClick={() => router.push('/main-revision')}
-            className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 sm:px-6 py-3 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
-          >
-            <Brain size={20} />
-            <div className="text-center sm:text-left">
-              <div className="text-sm sm:text-base">Start Revision</div>
-              <div className="text-xs opacity-80 hidden sm:block">Practice your problems</div>
-            </div>
-          </button>
+            label="Start Revision"
+            className="w-full sm:w-auto px-4 sm:px-6 py-3 h-auto shadow-lg"
+          />
         </div>
 
         {availableCategories.length > 0 && (
