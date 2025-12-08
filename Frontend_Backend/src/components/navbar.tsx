@@ -54,7 +54,7 @@ const Navbar = () => {
           <Link href="/pricing">
             <Button
               variant="ghost"
-              className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium"
               aria-label="View pricing plans"
             >
               Pricing
