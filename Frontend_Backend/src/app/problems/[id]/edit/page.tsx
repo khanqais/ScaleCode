@@ -200,7 +200,7 @@ export default function EditProblemPage() {
         } else {
           setError(result.error || 'Failed to fetch problem')
         }
-      } catch (err) {
+      } catch {
         setError('Failed to fetch problem')
       } finally {
         setLoading(false)
@@ -264,7 +264,7 @@ export default function EditProblemPage() {
       } else {
         setError(result.error || 'Failed to update problem')
       }
-    } catch (err) {
+    } catch {
       setError('Failed to update problem')
     } finally {
       setSaving(false)

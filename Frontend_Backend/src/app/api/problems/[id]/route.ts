@@ -21,7 +21,7 @@ async function updateUserStats(userId: string) {
         'stats.lastActive': new Date()
       }
     );
-  } catch (error) {
+  } catch {
     // Error updating user stats
   }
 }

@@ -48,7 +48,7 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
       await navigator.clipboard.writeText(code)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
+    } catch {
       // Failed to copy
     }
   }
@@ -221,7 +221,7 @@ export default function RevisionPage() {
         setProblem(response.data.data)
         setNewConfidence(response.data.data.Confidence)
       }
-    } catch (error) {
+    } catch {
       // Error fetching problem
     } finally {
       setLoading(false)
@@ -248,7 +248,7 @@ export default function RevisionPage() {
         alert('✅ Revision completed! Confidence updated.')
         router.push('/main-revision')
       }
-    } catch (error) {
+    } catch {
       alert('Failed to save revision')
     } finally {
       setUpdating(false)

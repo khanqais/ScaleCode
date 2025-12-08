@@ -12,7 +12,7 @@ async function getUserPlan(userId: string) {
     
     // Get subscription plan from publicMetadata
     return user.publicMetadata?.subscriptionPlan as string || 'free'; 
-  } catch (error) {
+  } catch {
     return 'free'; 
   }
 }
@@ -45,8 +45,8 @@ async function ensureUserExists(userId: string) {
       await user.save();
     }
     return user;
-  } catch (error) {
-    throw error;
+  } catch (_error) {
+    throw _error;
   }
 }
 
@@ -69,7 +69,7 @@ async function updateUserStats(userId: string) {
         'stats.lastActive': new Date()
       }
     );
-  } catch (error) {
+  } catch {
     // Error updating user stats
   }
 }

@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
 import { ButtonColorful } from '@/components/ui/button-colorful'
-import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play, Trash2, Brain } from 'lucide-react'
+import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play, Trash2 } from 'lucide-react'
 
 interface Problem {
   _id: string
@@ -58,7 +58,7 @@ function ProblemsPageContent() {
       } else {
         setError(result.error || 'Failed to fetch problems')
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch problems')
     } finally {
       setLoading(false)
@@ -161,7 +161,7 @@ function ProblemsPageContent() {
       } else {
         setErrorMessage(result.error || 'Failed to delete problem')
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('Failed to delete problem. Please try again.')
     } finally {
       setDeletingId(null)

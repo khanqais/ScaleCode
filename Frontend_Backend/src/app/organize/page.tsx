@@ -62,7 +62,7 @@ export default function OrganizePage() {
       } else {
         setError('Failed to fetch problems')
       }
-    } catch (error) {
+    } catch {
       setError('Failed to fetch problems')
     }
   }, [user])
@@ -86,8 +86,8 @@ export default function OrganizePage() {
       } else {
         setError(`Failed to fetch stats: ${data.error || 'Unknown error'}`)
       }
-    } catch (error) {
-      setError(`Failed to fetch stats: ${error instanceof Error ? error.message : 'Network error'}`)
+    } catch (_error) {
+      setError(`Failed to fetch stats: ${_error instanceof Error ? _error.message : 'Network error'}`)
     }
   }, [user])
 

@@ -105,7 +105,7 @@ export default function AddProblemPage() {
             })
           }
         }
-      } catch (error) {
+      } catch {
         // Error fetching usage info
       } finally {
         setLoadingUsage(false)
@@ -189,7 +189,7 @@ export default function AddProblemPage() {
         setError(result.error || 'Failed to save problem')
       }
       
-    } catch (error) {
+    } catch {
       setError('Network error. Please check your connection.')
     } finally {
       setLoading(false)

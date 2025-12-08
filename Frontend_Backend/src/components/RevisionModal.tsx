@@ -155,7 +155,7 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
       await navigator.clipboard.writeText(code)
       setCopied(type)
       setTimeout(() => setCopied(null), 2000)
-    } catch (err) {
+    } catch {
       // Failed to copy
     }
   }

@@ -73,7 +73,7 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
       await navigator.clipboard.writeText(code)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
+    } catch {
       // Failed to copy
     }
   }
@@ -249,7 +249,7 @@ function ProblemDetailPageContent() {
       } else {
         setError(result.error || 'Failed to fetch problem')
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch problem')
     } finally {
       setLoading(false)
@@ -280,7 +280,7 @@ function ProblemDetailPageContent() {
       } else {
         throw new Error('Failed to delete problem')
       }
-    } catch (err) {
+    } catch {
       alert('Failed to delete problem')
     } finally {
       setDeleting(false)
