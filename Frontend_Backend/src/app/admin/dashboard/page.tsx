@@ -34,7 +34,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (user) {
-      // Check if user is admin
+     
       if (!ADMIN_IDS.includes(user.id)) {
         router.push('/organize')
         return
@@ -42,7 +42,7 @@ export default function AdminDashboard() {
 
       fetchAdminStats()
     }
-  }, [user])
+  }, [user, router])
 
   const fetchAdminStats = async () => {
     try {
@@ -97,7 +97,7 @@ export default function AdminDashboard() {
               Access Denied
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              You don't have admin access to this page.
+              You don&apos;t have admin access to this page.
             </p>
           </div>
         </div>

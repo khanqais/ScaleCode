@@ -4,7 +4,6 @@ import PageTransition from "@/components/page-transition";
 import { ClerkProvider } from '@clerk/nextjs'
 import Footer from "@/components/footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { BGPattern } from "@/components/bg-pattern";
 
 export const metadata: Metadata = {
   title: "ScaleCode - Organize Your Coding Solutions",

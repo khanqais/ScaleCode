@@ -74,7 +74,7 @@ const RevisionPage = () => {
     return 'text-green-500'
   }
 
-  const getConfidenceBg = (confidence: number) => {
+  const getConfidenceBg = () => {
     return 'bg-white dark:bg-gray-900'
   }
 
@@ -94,7 +94,7 @@ const RevisionPage = () => {
     <div
       key={problem._id}
       onClick={() => handleProblemClick(problem._id)}
-      className={`p-4 sm:p-5 rounded-xl border cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 ${getConfidenceBg(problem.adjustedConfidence)} border-gray-200 dark:border-gray-700`}
+      className={`p-4 sm:p-5 rounded-xl border cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 ${getConfidenceBg()} border-gray-200 dark:border-gray-700`}
     >
       <div className="flex justify-between items-start mb-3">
         <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white flex-1 line-clamp-2 transition-colors">{problem.title}</h3>

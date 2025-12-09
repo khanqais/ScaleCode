@@ -6,6 +6,24 @@ import Problem from '@/lib/models/Problem'
 
 const ADMIN_IDS = process.env.ADMIN_USER_IDS?.split(',') || [];
 
+interface ProblemDoc {
+  userId: string
+  category: string
+  Confidence: number
+  createdAt: Date
+}
+
+interface UserStat {
+  userId: string
+  email: string
+  name: string
+  totalProblems: number
+  categories: number
+  averageConfidence: number
+  lastProblemDate: Date | null
+  categoryBreakdown: Record<string, number>
+}
+
 export async function GET() {
   try {
     await connectDB();
@@ -20,10 +38,10 @@ export async function GET() {
     }
 
     // Get all problems grouped by userId
-    const allProblems = await Problem.find({}).lean();
+    const allProblems = await Problem.find({}).lean() as ProblemDoc[];
     
     // Get unique user IDs
-    const uniqueUserIds = [...new Set(allProblems.map((p: any) => p.userId))];
+    const uniqueUserIds = [...new Set(allProblems.map((p: ProblemDoc) => p.userId))];
 
     // Fetch user details from Clerk
     const clerk = await clerkClient();
@@ -48,18 +66,9 @@ export async function GET() {
     }
 
     // Group problems by userId and calculate stats
-    const userStats: Record<string, {
-      userId: string
-      email: string
-      name: string
-      totalProblems: number
-      categories: number
-      averageConfidence: number
-      lastProblemDate: Date | null
-      categoryBreakdown: Record<string, number>
-    }> = {};
+    const userStats: Record<string, UserStat> = {};
 
-    allProblems.forEach((problem: any) => {
+    allProblems.forEach((problem: ProblemDoc) => {
       if (!userStats[problem.userId]) {
         const userDetail = userDetailsMap[problem.userId];
         userStats[problem.userId] = {
@@ -92,9 +101,9 @@ export async function GET() {
     Object.values(userStats).forEach((stat) => {
       stat.categories = Object.keys(stat.categoryBreakdown).length;
       
-      const userProblems = allProblems.filter((p: any) => p.userId === stat.userId);
+      const userProblems = allProblems.filter((p: ProblemDoc) => p.userId === stat.userId);
       stat.averageConfidence = userProblems.length > 0
-        ? Math.round((userProblems.reduce((sum: number, p: any) => sum + p.Confidence, 0) / userProblems.length) * 10) / 10
+        ? Math.round((userProblems.reduce((sum: number, p: ProblemDoc) => sum + p.Confidence, 0) / userProblems.length) * 10) / 10
         : 0;
     });
 
