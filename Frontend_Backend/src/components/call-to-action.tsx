@@ -70,7 +70,7 @@ const CallToAction = () => {
             variants={itemVariants}
             className="text-lg sm:text-xl text-gray-200 dark:text-gray-800 mb-8 max-w-3xl mx-auto transition-colors"
           >
-            Join thousands of developers who are already using AlgoGrid to track their progress,
+            Join hundereds of developers who are already using AlgoGrid to track their progress,
             organize their solutions, and accelerate their learning.
           </motion.p>
           
@@ -101,12 +101,12 @@ const CallToAction = () => {
                 </motion.div>
               </Link>
             ) : (
-              <SignInButton mode="modal" forceRedirectUrl="/organize">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+              >
+                <SignInButton mode="modal" forceRedirectUrl="/organize">
                   <Button 
                     size="lg" 
                     className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors relative overflow-hidden"
@@ -120,8 +120,8 @@ const CallToAction = () => {
                     />
                     <span className="relative z-10">Get Started Free</span>
                   </Button>
-                </motion.div>
-              </SignInButton>
+                </SignInButton>
+              </motion.div>
             )}
             
             <Link href="/problems">
