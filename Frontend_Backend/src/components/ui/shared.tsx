@@ -1,5 +1,3 @@
-import { Brain, Code, Target } from 'lucide-react'
-
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg'
   text?: string
@@ -207,5 +205,3 @@ export function ProgressBar({ value, max, color = 'blue', showPercentage = true 
     </div>
   )
 }
-
-export { Brain, Code, Target }

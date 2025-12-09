@@ -13,14 +13,8 @@ import {
   Trash2, 
   Play, 
   Copy, 
-  Check, 
-  Brain,
-  FileText,
-  Code2,
-  Target,
-  Lightbulb,
-  AlertTriangle,
-  MoreVertical
+  Check,
+  AlertTriangle
 } from 'lucide-react'
 
 
