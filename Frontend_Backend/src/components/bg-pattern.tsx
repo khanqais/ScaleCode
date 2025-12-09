@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/contexts/ThemeContext';
 
 type BGVariantType = 'dots' | 'diagonal-stripes' | 'grid' | 'horizontal-lines' | 'vertical-lines' | 'checkerboard';
 type BGMaskType =
@@ -60,8 +63,23 @@ const BGPattern = ({
 	style,
 	...props
 }: BGPatternProps) => {
+	const { theme } = useTheme();
 	const bgSize = `${size}px ${size}px`;
 	const backgroundImage = geBgImage(variant, fill, size);
+
+	// For light theme, use plain white background; for dark theme, use the pattern
+	if (theme === 'light') {
+		return (
+			<div
+				className={cn('absolute inset-0 z-[-10] size-full', className)}
+				style={{
+					backgroundColor: '#ffffff',
+					...style,
+				}}
+				{...props}
+			/>
+		);
+	}
 
 	return (
 		<div
