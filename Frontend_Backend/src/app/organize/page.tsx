@@ -367,15 +367,15 @@ export default function OrganizePage() {
 
         {problems.length === 0 ? (
           <div className="text-center py-12 sm:py-20 px-4">
-            <Code size={60} className="sm:w-20 sm:h-20 mx-auto text-gray-300 mb-4 sm:mb-6" />
-            <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">No problems yet</h3>
-            <p className="text-sm sm:text-base lg:text-lg text-gray-600 mb-6 sm:mb-8 max-w-md mx-auto">
+            <Code size={60} className="sm:w-20 sm:h-20 mx-auto text-gray-400 dark:text-gray-600 mb-4 sm:mb-6 transition-colors" />
+            <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-4 transition-colors">No problems yet</h3>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 max-w-md mx-auto transition-colors">
               Create your first problem to start organizing your DSA solutions by patterns like Graph Algorithms, Dynamic Programming, etc.
             </p>
             
             <button
               onClick={() => router.push('/add-problem')}
-              className="bg-black text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-medium hover:bg-gray-800 transition-colors inline-flex items-center gap-3"
+              className="bg-black dark:bg-white text-white dark:text-black px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors inline-flex items-center gap-3"
             >
               <Plus size={20} className="sm:w-6 sm:h-6" />
               <span className="text-sm sm:text-base">Add Your First Problem</span>
