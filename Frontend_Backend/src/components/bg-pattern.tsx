@@ -65,21 +65,10 @@ const BGPattern = ({
 }: BGPatternProps) => {
 	const { theme } = useTheme();
 	const bgSize = `${size}px ${size}px`;
-	const backgroundImage = geBgImage(variant, fill, size);
-
-	// For light theme, use plain white background; for dark theme, use the pattern
-	if (theme === 'light') {
-		return (
-			<div
-				className={cn('absolute inset-0 z-[-10] size-full', className)}
-				style={{
-					backgroundColor: '#ffffff',
-					...style,
-				}}
-				{...props}
-			/>
-		);
-	}
+	
+	// Use light gray with low opacity for light theme, dark gray for dark theme
+	const patternFill = theme === 'light' ? 'rgba(200, 200, 200, 0.4)' : fill;
+	const backgroundImage = geBgImage(variant, patternFill, size);
 
 	return (
 		<div
@@ -87,6 +76,7 @@ const BGPattern = ({
 			style={{
 				backgroundImage,
 				backgroundSize: bgSize,
+				backgroundColor: theme === 'light' ? '#ffffff' : undefined,
 				...style,
 			}}
 			{...props}
