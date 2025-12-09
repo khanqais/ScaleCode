@@ -19,7 +19,7 @@ const Navbar = () => {
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="flex items-center justify-between p-6 max-w-7xl mx-auto bg-white dark:bg-black transition-colors"
+      className="flex items-center justify-between p-6 max-w-7xl mx-auto bg-transparent transition-colors"
     >
       <motion.div 
         className="flex items-center space-x-3"
@@ -27,7 +27,7 @@ const Navbar = () => {
         whileTap={{ scale: 0.95 }}
       >
         <Link href="/" className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-lg overflow-hidden">
+          <div className="w-12 h-12  rounded-lg overflow-hidden">
             
             <Image 
               src="/logo_white.png" 
@@ -50,17 +50,19 @@ const Navbar = () => {
       </motion.div>
 
       <div className="hidden md:flex items-center space-x-8">
-        <motion.div whileHover={{ scale: 1.05 }}>
-          <Link href="/pricing">
-            <Button
-              variant="ghost"
-              className="text-gray-700 dark:text-gray-300 font-medium hover:bg-transparent hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
-              aria-label="View pricing plans"
-            >
-              Pricing
-            </Button>
-          </Link>
-        </motion.div>
+        {pathname !== '/pricing' && (
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Link href="/pricing">
+              <Button
+                variant="ghost"
+                className="text-black dark:text-white hover:bg-transparent hover:text-black dark:hover:text-white cursor-pointer"
+                aria-label="View pricing plans"
+              >
+                Pricing
+              </Button>
+            </Link>
+          </motion.div>
+        )}
 
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && (
           <motion.div whileHover={{ scale: 1.05 }}>

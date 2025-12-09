@@ -4,7 +4,7 @@ import PageTransition from "@/components/page-transition";
 import { ClerkProvider } from '@clerk/nextjs'
 import Footer from "@/components/footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { BackgroundBeams } from "@/components/ui/background-beams";
+import { BGPattern } from "@/components/bg-pattern";
 
 export const metadata: Metadata = {
   title: "ScaleCode - Organize Your Coding Solutions",
@@ -53,10 +53,11 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body className="bg-white dark:bg-black text-black dark:text-white min-h-screen transition-colors">
+        <body className="text-black dark:text-white min-h-screen">
           <ThemeProvider>
-            <div className="min-h-screen w-full h-full relative overflow-hidden">
-              <BackgroundBeams className="absolute inset-0 z-0" />
+            <div className="min-h-screen w-full h-full relative overflow-hidden bg-white dark:bg-black">
+              {/* <BackgroundBeams className="absolute inset-0 z-0" /> */}
+              <BGPattern className="absolute inset-0 z-0"/>
               <div className="relative z-10">
                 <PageTransition>
                   {children}
