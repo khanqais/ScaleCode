@@ -1,6 +1,5 @@
 import { auth } from '@clerk/nextjs/server'
 import Problem from '@/lib/models/Problem'
-import User from '@/lib/models/User'
 import { createClerkClient } from '@clerk/backend'
 import connectDB from '@/lib/db'
 
@@ -36,14 +35,24 @@ export async function GET() {
     }
 
     // Fetch user details from Clerk and build stats
-    const users = []
+    interface UserWithStats {
+      userId: string
+      email: string
+      name: string
+      totalProblems: number
+      categories: number
+      averageConfidence: number
+      lastProblemDate: string | null
+      categoryBreakdown: Record<string, number>
+    }
+    const users: UserWithStats[] = []
     for (const [userIdKey, problems] of Object.entries(userProblemsMap)) {
       try {
         const clerkUser = await clerkClient.users.getUser(userIdKey)
-        const categories = new Set(problems.map((p: any) => p.category))
+        const categories = new Set(problems.map((p: Record<string, unknown>) => p.category))
         const confidences = problems
-          .filter((p: any) => p.Confidence !== undefined)
-          .map((p: any) => p.Confidence)
+          .filter((p: Record<string, unknown>) => p.Confidence !== undefined)
+          .map((p: Record<string, unknown>) => p.Confidence as number)
         const avgConfidence =
           confidences.length > 0
             ? (confidences.reduce((a: number, b: number) => a + b, 0) / confidences.length).toFixed(2)
@@ -51,11 +60,12 @@ export async function GET() {
 
         const categoryBreakdown: Record<string, number> = {}
         for (const problem of problems) {
-          categoryBreakdown[problem.category] = (categoryBreakdown[problem.category] || 0) + 1
+          const category = (problem as Record<string, unknown>).category as string
+          categoryBreakdown[category] = (categoryBreakdown[category] || 0) + 1
         }
 
         const lastProblemDate = problems.length > 0
-          ? new Date(Math.max(...problems.map((p: any) => new Date(p.createdAt).getTime())))
+          ? new Date(Math.max(...problems.map((p: Record<string, unknown>) => new Date(p.createdAt as string).getTime())))
           : null
 
         users.push({

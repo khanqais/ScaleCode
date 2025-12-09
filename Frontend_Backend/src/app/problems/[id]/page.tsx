@@ -14,7 +14,13 @@ import {
   Play, 
   Copy, 
   Check,
-  AlertTriangle
+  AlertTriangle,
+  Code2,
+  MoreVertical,
+  FileText,
+  Lightbulb,
+  Brain,
+  Target
 } from 'lucide-react'
 
 
