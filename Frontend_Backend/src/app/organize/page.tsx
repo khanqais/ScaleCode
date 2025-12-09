@@ -5,6 +5,7 @@ import { useUser, SignInButton } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import { ButtonColorful } from '@/components/ui/button-colorful'
+import { GlowingEffect } from '@/components/ui/glowing-effect'
 import { Plus, Folder as FolderIcon, FileCode, Brain, TrendingUp, Code, Calendar, AlertCircle, RefreshCw, Play } from 'lucide-react'
 
 interface Problem {
@@ -337,8 +338,15 @@ export default function OrganizePage() {
                       <div
                         key={category}
                         onClick={() => router.push(`/problems?category=${encodeURIComponent(category)}`)}
-                        className="group relative bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
+                        className="relative group bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 transition-all duration-300 cursor-pointer"
                       >
+                        <GlowingEffect 
+                          proximity={150} 
+                          spread={40} 
+                          blur={15}
+                          borderWidth={2}
+                          disabled={false}
+                        />
                         <div className="flex items-start justify-between mb-4">
                           <div className={`w-10 h-10 rounded-lg ${color.bg} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center`}>
                             <FolderIcon className={`w-5 h-5 ${color.text}`} />
@@ -397,9 +405,16 @@ export default function OrganizePage() {
               {problems.map((problem) => (
                 <div
                   key={problem._id}
-                  className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all cursor-pointer"
+                  className="relative bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all cursor-pointer"
                   onClick={() => router.push(`/problems/${problem._id}`)}
                 >
+                  <GlowingEffect 
+                    proximity={150} 
+                    spread={40} 
+                    blur={15}
+                    borderWidth={2}
+                    disabled={false}
+                  />
                   <div className="flex items-start justify-between mb-3 sm:mb-4">
                     <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 sm:px-3 py-1 rounded-full font-medium transition-colors">
                       {problem.category}

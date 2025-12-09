@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
 import { ButtonColorful } from '@/components/ui/button-colorful'
+import { GlowingEffect } from '@/components/ui/glowing-effect'
 import { FileCode, Calendar, Star, ArrowRight, Plus, Filter, X, Search, Play, Trash2 } from 'lucide-react'
 
 interface Problem {
@@ -304,7 +305,14 @@ function ProblemsPageContent() {
         ) : (
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {filteredProblems.map((problem: Problem) => (
-              <div key={problem._id} className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 hover:shadow-md transition-all">
+              <div key={problem._id} className="relative bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 transition-all">
+                <GlowingEffect 
+                  proximity={150} 
+                  spread={40} 
+                  blur={15}
+                  borderWidth={2}
+                  disabled={false}
+                />
                 <div className="flex items-start justify-between mb-3 sm:mb-4">
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 transition-colors">

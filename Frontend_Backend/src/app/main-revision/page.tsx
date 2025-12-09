@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
+import { GlowingEffect } from '@/components/ui/glowing-effect'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import type { ProblemWithScore } from '@/utils/revisionAlgorithm'
@@ -94,8 +95,15 @@ const RevisionPage = () => {
     <div
       key={problem._id}
       onClick={() => handleProblemClick(problem._id)}
-      className={`p-4 sm:p-5 rounded-xl border cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 ${getConfidenceBg()} border-gray-200 dark:border-gray-700`}
+      className={`relative p-4 sm:p-5 rounded-xl border cursor-pointer transition-all ${getConfidenceBg()} border-gray-200 dark:border-gray-700`}
     >
+      <GlowingEffect 
+        proximity={150} 
+        spread={40} 
+        blur={15}
+        borderWidth={2}
+        disabled={false}
+      />
       <div className="flex justify-between items-start mb-3">
         <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white flex-1 line-clamp-2 transition-colors">{problem.title}</h3>
         <div className={`text-2xl font-bold ${getConfidenceColor(problem.adjustedConfidence)} ml-2`}>
