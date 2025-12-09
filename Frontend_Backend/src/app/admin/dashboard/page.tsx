@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
+import UserProblemsModal from '@/components/UserProblemsModal'
 import { BarChart3, Users, FileCode, TrendingUp } from 'lucide-react'
 
 interface UserStat {
@@ -31,6 +32,8 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedUser, setSelectedUser] = useState<{ id: string; name: string } | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -227,7 +230,14 @@ export default function AdminDashboard() {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {stats?.users.map((user) => (
-                  <tr key={user.userId} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  <tr
+                    key={user.userId}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                    onClick={() => {
+                      setSelectedUser({ id: user.userId, name: user.name })
+                      setIsModalOpen(true)
+                    }}
+                  >
                     <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white transition-colors">
                       {user.name}
                     </td>
@@ -259,6 +269,19 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* User Problems Modal */}
+      {selectedUser && (
+        <UserProblemsModal
+          userId={selectedUser.id}
+          userName={selectedUser.name}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setSelectedUser(null)
+          }}
+        />
+      )}
     </div>
   )
 }
