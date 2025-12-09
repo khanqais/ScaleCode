@@ -113,7 +113,7 @@ const Footer = () => {
             
             <div className="flex items-center gap-4 mt-4 md:mt-0">
               {[
-                { name: 'GitHub', href: '#', Icon: Github, label: 'Visit our GitHub' },
+                { name: 'GitHub', href: 'https://github.com/khanqais/ScaleCode', Icon: Github, label: 'Visit our GitHub' },
                 { name: 'Twitter', href: '#', Icon: Twitter, label: 'Follow us on Twitter' },
                 { name: 'LinkedIn', href: '#', Icon: Linkedin, label: 'Connect on LinkedIn' }
               ].map((social) => (
