@@ -77,12 +77,7 @@ const Features = () => {
         >
           Why choose AlgoGrid?
         </motion.h2>
-        <motion.p
-          variants={itemVariants}
-          className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
-        >
-          Everything you need to organize, track, and improve your coding skills in one place.
-        </motion.p>
+        
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
