@@ -79,8 +79,11 @@ export async function GET() {
           categoryBreakdown,
         })
       } catch (error) {
-        // Skip users that can't be found in Clerk
-        console.warn(`Failed to fetch Clerk user ${userIdKey}:`, error)
+        // Skip users that can't be found in Clerk (deleted users)
+        // Only log unexpected errors (not 404s)
+        if (error instanceof Error && 'status' in error && (error as any).status !== 404) {
+          console.error(`Error fetching Clerk user ${userIdKey}:`, error)
+        }
         continue
       }
     }
