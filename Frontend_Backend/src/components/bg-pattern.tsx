@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
 
@@ -64,19 +64,37 @@ const BGPattern = ({
 	...props
 }: BGPatternProps) => {
 	const { theme } = useTheme();
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) {
+		return null;
+	}
+
 	const bgSize = `${size}px ${size}px`;
 	
 	// Use light gray with low opacity for light theme, dark gray for dark theme
 	const patternFill = theme === 'light' ? 'rgba(200, 200, 200, 0.4)' : fill;
 	const backgroundImage = geBgImage(variant, patternFill, size);
+	const bgColor = theme === 'light' ? '#ffffff' : '#000000';
 
 	return (
 		<div
-			className={cn('absolute inset-0 z-[-10] size-full', maskClasses[mask], className)}
+			className={cn(className)}
 			style={{
+				position: 'fixed',
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+				zIndex: 0,
+				pointerEvents: 'none',
 				backgroundImage,
 				backgroundSize: bgSize,
-				backgroundColor: theme === 'light' ? '#ffffff' : undefined,
+				backgroundColor: bgColor,
 				...style,
 			}}
 			{...props}

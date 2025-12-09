@@ -273,7 +273,7 @@ export default function EditProblemPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black">
+      <div className="min-h-screen bg-transparent">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh]">
           <div className="animate-spin rounded-full h-24 w-24 sm:h-32 sm:w-32 border-b-2 border-black dark:border-white"></div>
@@ -284,7 +284,7 @@ export default function EditProblemPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black">
+      <div className="min-h-screen bg-transparent">
         <Navbar />
         <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4">
           <AlertCircle className="w-16 h-16 text-red-500" />
@@ -303,7 +303,7 @@ export default function EditProblemPage() {
 
   if (error && !problem) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black">
+      <div className="min-h-screen bg-transparent">
         <Navbar />
         <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4">
           <AlertCircle className="w-16 h-16 text-red-500" />
@@ -322,7 +322,7 @@ export default function EditProblemPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+    <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">

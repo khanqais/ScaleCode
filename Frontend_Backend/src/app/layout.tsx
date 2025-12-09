@@ -53,17 +53,13 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body className="text-black dark:text-white min-h-screen">
+        <body className="text-black dark:text-white transition-colors">
           <ThemeProvider>
-            <div className="min-h-screen w-full h-full relative overflow-hidden bg-white dark:bg-black">
-              {/* <BackgroundBeams className="absolute inset-0 z-0" /> */}
-              <BGPattern className="absolute inset-0 z-0"/>
-              <div className="relative z-10">
-                <PageTransition>
-                  {children}
-                  <Footer/>
-                </PageTransition>
-              </div>
+            <div className="relative z-10 min-h-screen w-full">
+              <PageTransition>
+                {children}
+                <Footer/>
+              </PageTransition>
             </div>
           </ThemeProvider>
         </body>

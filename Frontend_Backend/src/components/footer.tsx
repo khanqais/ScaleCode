@@ -35,7 +35,7 @@ const Footer = () => {
       whileInView="visible"
       viewport={{ once: true }}
       variants={footerVariants}
-      className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 mt-16 transition-colors"
+      className="bg-transparent backdrop-blur-none mt-16 transition-colors"
     >
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -105,7 +105,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 transition-colors">
+        <div className="mt-8 pt-8 transition-colors">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-600 dark:text-gray-400 text-sm transition-colors">
               © {currentYear} AlgoGrid. All rights reserved.

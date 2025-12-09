@@ -199,7 +199,7 @@ export default function AddProblemPage() {
   
   if (limitReached && limitInfo) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center transition-colors p-6">
+      <div className="min-h-screen bg-transparent flex items-center justify-center transition-colors p-6">
         <div className="bg-white dark:bg-gray-900 rounded-xl p-8 shadow-lg max-w-md w-full text-center transition-colors">
           <Crown className="mx-auto text-yellow-500 mb-4" size={64} />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Upgrade to Continue</h2>
@@ -231,7 +231,7 @@ export default function AddProblemPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center transition-colors">
+      <div className="min-h-screen bg-transparent flex items-center justify-center transition-colors">
         <div className="bg-white dark:bg-gray-900 rounded-xl p-8 shadow-lg text-center transition-colors">
           <CheckCircle className="mx-auto text-green-500 mb-4" size={64} />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">Problem Saved!</h2>
@@ -242,7 +242,7 @@ export default function AddProblemPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black p-4 sm:p-6 transition-colors">
+    <div className="min-h-screen bg-transparent p-4 sm:p-6 transition-colors">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
           <button

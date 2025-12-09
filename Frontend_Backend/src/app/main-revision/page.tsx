@@ -75,10 +75,7 @@ const RevisionPage = () => {
   }
 
   const getConfidenceBg = (confidence: number) => {
-    if (confidence < 4) return 'bg-red-100 dark:bg-red-900/20'
-    if (confidence < 6) return 'bg-orange-100 dark:bg-orange-900/20'
-    if (confidence < 8) return 'bg-yellow-100 dark:bg-yellow-900/20'
-    return 'bg-green-100 dark:bg-green-900/20'
+    return 'bg-white dark:bg-gray-900'
   }
 
   const formatDays = (days: number) => {
@@ -182,7 +179,7 @@ const RevisionPage = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+      <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8">
           <div className="max-w-md mx-auto">
@@ -199,7 +196,7 @@ const RevisionPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+    <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">

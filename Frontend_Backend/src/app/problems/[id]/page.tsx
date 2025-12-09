@@ -344,7 +344,7 @@ function ProblemDetailPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black">
+      <div className="min-h-screen bg-transparent">
         <Navbar />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="animate-pulse">
@@ -369,7 +369,7 @@ function ProblemDetailPageContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black">
+      <div className="min-h-screen bg-transparent">
         <Navbar />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -406,7 +406,7 @@ function ProblemDetailPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+    <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">

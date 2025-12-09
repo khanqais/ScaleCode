@@ -330,7 +330,7 @@ export default function RevisionPage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: sliderStyles }} />
-      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+      <div className="min-h-screen bg-transparent transition-colors">
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between max-w-7xl mx-auto gap-3 lg:gap-4">
           <div className="flex items-start sm:items-center gap-3 sm:gap-4">

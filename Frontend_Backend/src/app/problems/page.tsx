@@ -170,7 +170,7 @@ function ProblemsPageContent() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+      <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh] text-center p-6">
           <div>
@@ -184,7 +184,7 @@ function ProblemsPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+      <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh]">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -194,7 +194,7 @@ function ProblemsPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+    <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
       <main className="max-w-7xl mx-auto p-4 sm:p-6">
@@ -406,7 +406,7 @@ function ProblemsPageContent() {
 export default function ProblemsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-transparent">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh]">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>

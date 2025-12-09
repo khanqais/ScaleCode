@@ -64,7 +64,7 @@ const Navbar = () => {
           </motion.div>
         )}
 
-        {isSignedIn && pathname !== '/' && pathname !== '/organize' && (
+        {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <motion.div whileHover={{ scale: 1.05 }}>
             <Link href="/add-problem">
               <Button 
@@ -119,7 +119,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       <div className="md:hidden flex items-center space-x-4">
-        {isSignedIn && pathname !== '/' && pathname !== '/organize' && (
+        {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <Link href="/add-problem">
             <Button 
               size="sm"

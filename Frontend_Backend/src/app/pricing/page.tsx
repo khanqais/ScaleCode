@@ -4,7 +4,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-black dark:to-gray-900 pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       <Navbar/>
       <main className="container mx-auto px-4 py-3 md:py-16 max-w-7xl">
         

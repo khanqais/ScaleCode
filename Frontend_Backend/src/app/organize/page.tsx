@@ -150,7 +150,7 @@ export default function OrganizePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+      <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
         <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8">
           <div className="max-w-md mx-auto">
@@ -174,7 +174,7 @@ export default function OrganizePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+      <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
           <div className="animate-pulse">
@@ -215,7 +215,7 @@ export default function OrganizePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+    <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
@@ -319,7 +319,7 @@ export default function OrganizePage() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
                 {Object.entries(stats.categoryStats)
                   .sort(([, a], [, b]) => b - a)
                   .map(([category, count], index) => {
@@ -337,7 +337,7 @@ export default function OrganizePage() {
                       <div
                         key={category}
                         onClick={() => router.push(`/problems?category=${encodeURIComponent(category)}`)}
-                        className="group relative bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1 max-w-xs"
+                        className="group relative bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
                       >
                         <div className="flex items-start justify-between mb-4">
                           <div className={`w-10 h-10 rounded-lg ${color.bg} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center`}>
