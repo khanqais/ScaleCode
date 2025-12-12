@@ -90,7 +90,7 @@ export async function GET() {
     }
 
     // Calculate summary stats
-    const totalProblems = allProblems.length
+    const totalProblems = users.reduce((sum, user) => sum + user.totalProblems, 0)
     const totalUsers = users.length
 
     return Response.json({
