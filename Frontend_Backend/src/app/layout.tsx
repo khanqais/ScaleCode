@@ -6,8 +6,11 @@ import Footer from "@/components/footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export const metadata: Metadata = {
-  title: "ScaleCode - Organize Your Coding Solutions",
+  title: "AlgoGrid",
   description: "Save and organize your LeetCode, HackerRank, and coding platform solutions",
+  icons:{
+    icon:'/logo_black.png'
+  }
 };
 
 export default function RootLayout({
