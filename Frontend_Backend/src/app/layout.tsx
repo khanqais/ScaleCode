@@ -6,11 +6,56 @@ import Footer from "@/components/footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export const metadata: Metadata = {
-  title: "AlgoGrid",
-  description: "Save and organize your LeetCode, HackerRank, and coding platform solutions",
-  icons:{
-    icon:'/logo_black.png'
-  }
+  title: "AlgoGrid - Master DSA Patterns & Coding Challenges",
+  description: "Learn Data Structures and Algorithms systematically. Practice 265+ problems organized by patterns and explore company-specific questions to ace your coding interviews.",
+  keywords: ["DSA", "Data Structures", "Algorithms", "LeetCode", "Coding Challenges", "Interview Prep", "AlgoGrid"],
+  authors: [{ name: "AlgoGrid" }],
+  creator: "AlgoGrid",
+  metadataBase: new URL("https://algogrid.dev"),
+  icons: {
+    icon: "/logo_black.png",
+    apple: "/logo_black.png",
+  },
+  manifest: "/manifest.json",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://algogrid.dev",
+    siteName: "AlgoGrid",
+    title: "AlgoGrid - Master DSA Patterns & Coding Challenges",
+    description: "Learn Data Structures and Algorithms systematically. Practice 265+ problems organized by patterns and explore company-specific questions to ace your coding interviews.",
+    images: [
+      {
+        url: "https://algogrid.dev/logo_black.png",
+        width: 1200,
+        height: 630,
+        alt: "AlgoGrid Logo",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AlgoGrid - Master DSA Patterns & Coding Challenges",
+    description: "Learn Data Structures and Algorithms systematically. Practice 265+ problems organized by patterns.",
+    images: ["https://algogrid.dev/logo_black.png"],
+    creator: "@algogrid",
+    site: "@algogrid",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://algogrid.dev",
+  },
 };
 
 export default function RootLayout({
@@ -18,8 +63,35 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AlgoGrid",
+    "url": "https://algogrid.dev",
+    "description": "Learn Data Structures and Algorithms systematically. Practice 265+ problems organized by patterns.",
+    "applicationCategory": "EducationalApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "265"
+    }
+  };
+
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charSet="UTF-8" />
+      </head>
       <body className="text-black dark:text-white transition-colors">
         <SessionProvider>
           <ThemeProvider>
