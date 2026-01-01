@@ -264,10 +264,6 @@ git push origin main
 3. **Environment Variables**
 Set production values for:
    - `MONGODB_URI` - Your MongoDB Atlas connection string
-   - `CLERK_SECRET_KEY` - Clerk secret key
-   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk publishable key
-   - Clerk webhook secret for user synchronization
-
 
 ## 🎯 Use Cases
 
