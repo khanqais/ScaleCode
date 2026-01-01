@@ -1,24 +1,22 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/auth'
 import Problem from '@/lib/models/Problem'
-import { createClerkClient } from '@clerk/backend'
+import User from '@/lib/models/User'
 import connectDB from '@/lib/db'
-
-const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY })
 
 export async function GET() {
   try {
     // Connect to database
     await connectDB()
 
-    const { userId } = await auth()
+    const session = await auth()
 
-    if (!userId) {
+    if (!session?.user?.id) {
       return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
     // Check if user is admin
     const adminIds = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',') || []
-    if (!adminIds.includes(userId)) {
+    if (!adminIds.includes(session.user.id)) {
       return Response.json({ success: false, error: 'Forbidden' }, { status: 403 })
     }
 
@@ -34,7 +32,7 @@ export async function GET() {
       userProblemsMap[problem.userId].push(problem)
     }
 
-    // Fetch user details from Clerk and build stats
+    // Fetch user details from database and build stats
     interface UserWithStats {
       userId: string
       email: string
@@ -48,7 +46,7 @@ export async function GET() {
     const users: UserWithStats[] = []
     for (const [userIdKey, problems] of Object.entries(userProblemsMap)) {
       try {
-        const clerkUser = await clerkClient.users.getUser(userIdKey)
+        const dbUser = await User.findById(userIdKey)
         const categories = new Set(problems.map((p: Record<string, unknown>) => p.category))
         const confidences = problems
           .filter((p: Record<string, unknown>) => p.Confidence !== undefined)
@@ -70,8 +68,8 @@ export async function GET() {
 
         users.push({
           userId: userIdKey,
-          email: clerkUser.emailAddresses[0]?.emailAddress || 'N/A',
-          name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+          email: dbUser?.email || 'N/A',
+          name: dbUser ? `${dbUser.firstName || ''} ${dbUser.lastName || ''}`.trim() : 'Unknown User',
           totalProblems: problems.length,
           categories: categories.size,
           averageConfidence: parseFloat(String(avgConfidence)),
@@ -79,12 +77,8 @@ export async function GET() {
           categoryBreakdown,
         })
       } catch (error) {
-        // Skip users that can't be found in Clerk (deleted users)
-        // Only log unexpected errors (not 404s)
-        const clerkError = error as { status?: number }
-        if (error instanceof Error && 'status' in error && clerkError.status !== 404) {
-          console.error(`Error fetching Clerk user ${userIdKey}:`, error)
-        }
+        // Skip users that can't be found (deleted users)
+        console.error(`Error fetching user ${userIdKey}:`, error)
         continue
       }
     }

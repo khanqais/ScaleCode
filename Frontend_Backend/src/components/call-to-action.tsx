@@ -4,11 +4,12 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { useUser, SignInButton } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 import { GlowingEffect } from '@/components/ui/glowing-effect'
 
 const CallToAction = () => {
-  const { isSignedIn } = useUser()
+  const { data: session, status } = useSession()
+  const isSignedIn = status === 'authenticated'
   
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -106,7 +107,7 @@ const CallToAction = () => {
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 10 }}
               >
-                <SignInButton mode="modal" forceRedirectUrl="/organize">
+                <Link href="/login?callbackUrl=/organize">
                   <Button 
                     size="lg" 
                     className="bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-8 py-6 text-lg font-medium rounded-full transition-colors relative overflow-hidden"
@@ -120,7 +121,7 @@ const CallToAction = () => {
                     />
                     <span className="relative z-10">Get Started Free</span>
                   </Button>
-                </SignInButton>
+                </Link>
               </motion.div>
             )}
             

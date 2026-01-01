@@ -1,16 +1,16 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-  clerkId: {
-    type: String,
-    required: true,
-    unique: true
-  },
   email: {
     type: String,
-    required: false,
+    required: true,
+    unique: true,
     lowercase: true,
     trim: true
+  },
+  password: {
+    type: String,
+    required: false // Not required for OAuth users
   },
   firstName: {
     type: String,
@@ -22,6 +22,23 @@ const userSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String
+  },
+  provider: {
+    type: String, // 'credentials', 'google', 'github'
+    default: 'credentials'
+  },
+  providerId: {
+    type: String // OAuth provider's user ID
+  },
+  subscriptionPlan: {
+    type: String,
+    enum: ['free', 'pro', 'pro_max'],
+    default: 'free'
+  },
+  subscriptionStatus: {
+    type: String,
+    enum: ['active', 'inactive', 'cancelled'],
+    default: 'active'
   },
   preferences: {
     defaultConfidence: {
@@ -54,8 +71,8 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-
-userSchema.index({ email: 1 });
+// Indexes - email is already indexed by unique: true above
+userSchema.index({ provider: 1, providerId: 1 });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 

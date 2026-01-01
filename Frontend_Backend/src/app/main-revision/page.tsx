@@ -6,7 +6,7 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import type { ProblemWithScore } from '@/utils/revisionAlgorithm'
 import Navbar from '@/components/navbar'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 
 interface GroupedProblems {
   urgent: ProblemWithScore[]
@@ -35,7 +35,8 @@ interface RevisionData {
 }
 
 const RevisionPage = () => {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const [loading, setLoading] = useState(false)
   const [revisionData, setRevisionData] = useState<RevisionData | null>(null)
   const [selectedMode, setSelectedMode] = useState<'priority' | 'urgent' | 'all' | 'needsRevision'>('all')

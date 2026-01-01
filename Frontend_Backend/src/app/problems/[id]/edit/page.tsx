@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
@@ -120,7 +120,9 @@ const categories = [
 ]
 
 export default function EditProblemPage() {
-  const { user, isLoaded } = useUser()
+  const { data: session, status } = useSession()
+  const user = session?.user
+  const isLoaded = status !== 'loading'
   const router = useRouter()
   const params = useParams()
   

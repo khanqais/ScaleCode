@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/auth';
 import connectDB from '@/lib/db';
 import Problem from '@/lib/models/Problem';
 import User from '@/lib/models/User';
@@ -13,8 +13,8 @@ async function updateUserStats(userId: string) {
       ? problems.reduce((sum: number, p: { Confidence: number }) => sum + p.Confidence, 0) / totalProblems 
       : 0;
 
-    await User.findOneAndUpdate(
-      { clerkId: userId },
+    await User.findByIdAndUpdate(
+      userId,
       {
         'stats.totalProblems': totalProblems,
         'stats.averageConfidence': Math.round(averageConfidence * 10) / 10,
@@ -33,13 +33,15 @@ export async function GET(
   try {
     await connectDB();
     
-    const { userId } = await auth();
-    if (!userId) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
     const { id } = await params;
     
@@ -83,13 +85,15 @@ export async function PUT(
   try {
     await connectDB();
     
-    const { userId } = await auth();
-    if (!userId) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
     const { id } = await params;
     const body = await request.json();
@@ -149,13 +153,15 @@ export async function DELETE(
   try {
     await connectDB();
     
-    const { userId } = await auth();
-    if (!userId) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
     const { id } = await params;
 

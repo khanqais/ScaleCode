@@ -1,7 +1,7 @@
 // Use internal Next.js API routes for Vercel deployment
 const API_BASE_URL = '/api'
 
-// Make authenticated API calls using Clerk's built-in authentication
+// Make authenticated API calls using NextAuth's built-in authentication
 export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const config: RequestInit = {
     ...options,
@@ -33,7 +33,7 @@ export const makeAuthenticatedCall = async (
   endpoint: string, 
   options: RequestInit = {}
 ) => {
-  // Since we're using Clerk's server-side auth with cookies, we don't need the token
+  // Since we're using NextAuth's server-side auth with cookies, we don't need the token
   return apiCall(endpoint, options)
 }
 

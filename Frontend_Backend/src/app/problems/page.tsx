@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense, useMemo, useCallback } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
@@ -22,7 +22,8 @@ interface Problem {
 }
 
 function ProblemsPageContent() {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const router = useRouter()
   const searchParams = useSearchParams()
   

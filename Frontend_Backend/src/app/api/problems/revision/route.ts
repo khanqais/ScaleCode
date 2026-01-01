@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/auth';
 import connectDB from '@/lib/db';
 import Problem from '@/lib/models/Problem';
 import {
@@ -14,13 +14,15 @@ export async function GET(request: Request) {
   try {
     await connectDB();
     
-    const { userId } = await auth();
-    if (!userId) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
    
     const { searchParams } = new URL(request.url);
@@ -133,13 +135,15 @@ export async function PATCH(request: Request) {
   try {
     await connectDB();
     
-    const { userId } = await auth();
-    if (!userId) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
     const { problemId, confidence } = await request.json();
 

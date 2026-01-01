@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useUser, SignInButton } from '@clerk/nextjs'
+import { useSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import { ButtonColorful } from '@/components/ui/button-colorful'
@@ -33,8 +33,21 @@ interface Stats {
   }
 }
 
+// Custom SignIn Button Component
+function SignInButton({ children, className }: { children: React.ReactNode, className?: string }) {
+  return (
+    <button 
+      onClick={() => signIn()} 
+      className={className || "bg-black dark:bg-white text-white dark:text-black px-8 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"}
+    >
+      {children}
+    </button>
+  )
+}
+
 export default function OrganizePage() {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const router = useRouter()
   
   const [problems, setProblems] = useState<Problem[]>([])
@@ -162,10 +175,8 @@ export default function OrganizePage() {
             <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-8 transition-colors">
               You need to be signed in to organize your coding solutions.
             </p>
-            <SignInButton mode="modal" forceRedirectUrl="/organize">
-              <button className="bg-black dark:bg-white text-white dark:text-black px-8 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
-                Sign In to Continue
-              </button>
+            <SignInButton>
+              Sign In to Continue
             </SignInButton>
           </div>
         </div>

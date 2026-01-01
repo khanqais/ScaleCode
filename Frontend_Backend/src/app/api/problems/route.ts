@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, clerkClient } from '@clerk/nextjs/server';
+import { auth } from '@/auth';
 import connectDB from '@/lib/db';
 import Problem from '@/lib/models/Problem';
 import User from '@/lib/models/User';
@@ -7,17 +7,14 @@ import User from '@/lib/models/User';
 
 async function getUserPlan(userId: string) {
   try {
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
-    
-    // Get subscription plan from publicMetadata
-    return user.publicMetadata?.subscriptionPlan as string || 'free'; 
+    const user = await User.findById(userId);
+    return user?.subscriptionPlan as string || 'free'; 
   } catch {
     return 'free'; 
   }
 }
 
-// Get problem limit based on plan - Updated to match your Clerk features
+// Get problem limit based on plan - Updated to match your features
 function getProblemLimit(plan: string): number {
   const limits: Record<string, number> = {
     'free': 100,           // problem_limit feature
@@ -28,19 +25,16 @@ function getProblemLimit(plan: string): number {
   return limits[plan] || 100;
 }
 
-async function ensureUserExists(userId: string) {
+async function ensureUserExists(userId: string, email?: string, firstName?: string, lastName?: string, profileImage?: string) {
   try {
-    let user = await User.findOne({ clerkId: userId });
+    let user = await User.findById(userId);
     if (!user) {
-      const client = await clerkClient();
-      const clerkUser = await client.users.getUser(userId);
-      
       user = new User({
-        clerkId: userId,
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
-        firstName: clerkUser.firstName || '',
-        lastName: clerkUser.lastName || '',
-        profileImage: clerkUser.imageUrl || ''
+        _id: userId,
+        email: email || '',
+        firstName: firstName || '',
+        lastName: lastName || '',
+        profileImage: profileImage || ''
       });
       await user.save();
     }
@@ -61,8 +55,8 @@ async function updateUserStats(userId: string) {
 
     
 
-    await User.findOneAndUpdate(
-      { clerkId: userId },
+    await User.findByIdAndUpdate(
+      userId,
       {
         'stats.totalProblems': totalProblems,
         'stats.averageConfidence': Math.round(averageConfidence * 10) / 10,
@@ -78,13 +72,15 @@ export async function POST(request: NextRequest) {
   try {
     await connectDB();
     
-    const { userId } = await auth();
-    if (!userId) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
     // Get user's current plan and calculate limit
     const userPlan = await getUserPlan(userId);
@@ -140,7 +136,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    await ensureUserExists(userId);
+    await ensureUserExists(userId, session.user.email, session.user.firstName, session.user.lastName, session.user.image);
 
     const problem = new Problem({
       userId,
@@ -204,13 +200,15 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
     
-    const { userId } = await auth();
-    if (!userId) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
     
 
@@ -287,13 +285,15 @@ export async function DELETE(request: NextRequest) {
   try {
     await connectDB();
     
-    const { userId } = await auth();
-    if (!userId) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
     const { searchParams } = new URL(request.url);
     const problemId = searchParams.get('id');

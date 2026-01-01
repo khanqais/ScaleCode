@@ -1,14 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle, Crown, TrendingUp } from 'lucide-react'
 
 export default function AddProblemPage() {
   
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

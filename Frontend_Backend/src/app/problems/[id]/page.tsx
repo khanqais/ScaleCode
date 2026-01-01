@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense, useCallback } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
@@ -208,7 +208,8 @@ export default function ProblemDetailPage() {
 }
 
 function ProblemDetailPageContent() {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const router = useRouter()
   const params = useParams()
   

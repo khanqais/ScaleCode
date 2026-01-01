@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/auth'
 import Problem from '@/lib/models/Problem'
 import connectDB from '@/lib/db'
 
@@ -11,15 +11,15 @@ export async function GET(
   try {
     await connectDB()
 
-    const { userId } = await auth()
+    const session = await auth()
 
-    if (!userId) {
+    if (!session?.user?.id) {
       return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
     // Check if user is admin
     const adminIds = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',') || []
-    if (!adminIds.includes(userId)) {
+    if (!adminIds.includes(session.user.id)) {
       return Response.json({ success: false, error: 'Forbidden' }, { status: 403 })
     }
 

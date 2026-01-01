@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/auth'
 import connectDB from '@/lib/db'
 import Problem from '@/lib/models/Problem'
 
@@ -16,14 +16,16 @@ export async function GET() {
   try {
     await connectDB();
     
-    const { userId } = await auth();
+    const session = await auth();
     
-    if (!userId) {
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+    
+    const userId = session.user.id;
 
     const problems = await Problem.find({ userId }).lean() as ProblemLeanDoc[]
     const totalProblems = problems.length

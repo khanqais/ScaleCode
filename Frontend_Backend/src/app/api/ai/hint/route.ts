@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/auth'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 // AI Hint API Route
@@ -16,8 +16,8 @@ interface HintRequest {
 export async function POST(request: NextRequest) {
   try {
     // Verify authentication
-    const { userId } = await auth()
-    if (!userId) {
+    const session = await auth()
+    if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }

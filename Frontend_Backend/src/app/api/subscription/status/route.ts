@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { auth } from '@/auth';
+import connectDB from '@/lib/db';
+import User from '@/lib/models/User';
 
 export async function GET() {
   try {
-    const { userId } = await auth();
+    const session = await auth();
 
-    if (!userId) {
+    if (!session?.user?.id) {
       return NextResponse.json(
         { 
           success: false, 
@@ -15,8 +17,9 @@ export async function GET() {
       );
     }
 
+    await connectDB();
    
-    const user = await currentUser();
+    const user = await User.findById(session.user.id);
     
     if (!user) {
       return NextResponse.json(
@@ -29,8 +32,8 @@ export async function GET() {
     }
 
     
-    const subscriptionPlan = user.publicMetadata?.subscriptionPlan as string || 'free';
-    const subscriptionStatus = user.publicMetadata?.subscriptionStatus as string || 'inactive';
+    const subscriptionPlan = user.subscriptionPlan as string || 'free';
+    const subscriptionStatus = user.subscriptionStatus as string || 'active';
 
     
     return NextResponse.json({

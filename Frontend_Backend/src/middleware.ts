@@ -1,32 +1,62 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { getToken } from "next-auth/jwt"
 
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-  '/private(.*)',
-  '/add-problem(.*)',
-  '/problems(.*)',
-  '/revision(.*)',
-])
+// Protected routes that require authentication
+const protectedRoutes = [
+  '/dashboard',
+  '/private',
+  '/add-problem',
+  '/problems',
+  '/revision',
+  '/main-revision',
+]
 
-const isPublicRoute = createRouteMatcher([
+// Public routes that don't require authentication
+const publicRoutes = [
   '/',
-  '/login(.*)',
-  '/sign-up(.*)',
-  '/api/webhooks(.*)',
-  '/organize(.*)', // Allow access, handle auth in component
-])
+  '/login',
+  '/sign-up',
+  '/api/auth',
+  '/api/webhooks',
+  '/organize',
+  '/pricing',
+]
 
-export default clerkMiddleware(async (auth, req) => {
+export async function middleware(req: NextRequest) {
+  const { nextUrl } = req
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  const isLoggedIn = !!token
+
   // Check if pricing page is disabled
-  if (process.env.DISABLE_PRICING === 'true' && req.nextUrl.pathname === '/pricing') {
+  if (process.env.DISABLE_PRICING === 'true' && nextUrl.pathname === '/pricing') {
     return NextResponse.redirect(new URL('/', req.url))
   }
 
-  if (!isPublicRoute(req) && isProtectedRoute(req)) {
-    await auth.protect()
+  // Check if the current path is a protected route
+  const isProtectedRoute = protectedRoutes.some(route => 
+    nextUrl.pathname.startsWith(route)
+  )
+
+  // Check if the current path is a public route
+  const isPublicRoute = publicRoutes.some(route => 
+    nextUrl.pathname.startsWith(route)
+  )
+
+  // Redirect to login if accessing protected route without authentication
+  if (isProtectedRoute && !isLoggedIn) {
+    const loginUrl = new URL('/login', req.url)
+    loginUrl.searchParams.set('callbackUrl', nextUrl.pathname)
+    return NextResponse.redirect(loginUrl)
   }
-})
+
+  // Redirect to organize if logged in user tries to access login page
+  if (nextUrl.pathname === '/login' && isLoggedIn) {
+    return NextResponse.redirect(new URL('/organize', req.url))
+  }
+
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: [

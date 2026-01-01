@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { clerkClient } from '@clerk/nextjs/server';
 import { Webhook } from 'svix';
+import connectDB from '@/lib/db';
+import User from '@/lib/models/User';
 
 export async function POST(req: NextRequest) {
-  const client = await clerkClient();
   try {
-    const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+    const webhookSecret = process.env.SUBSCRIPTION_WEBHOOK_SECRET;
     if (!webhookSecret) {
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
     }
@@ -19,7 +19,8 @@ export async function POST(req: NextRequest) {
     let evt: {
       type: string;
       data: {
-        payer?: { user_id: string };
+        userId?: string;
+        email?: string;
         status: string;
         items?: Array<{
           status: string;
@@ -47,11 +48,12 @@ export async function POST(req: NextRequest) {
 
     if (eventType === 'subscription.created' || eventType === 'subscription.updated') {
       const { data } = evt;
-      const { user_id } = data.payer || {};
+      const userId = data.userId;
+      const email = data.email;
       const { status } = data;
       
-      if (!user_id) {
-        return NextResponse.json({ error: 'No user_id in webhook' }, { status: 400 });
+      if (!userId && !email) {
+        return NextResponse.json({ error: 'No userId or email in webhook' }, { status: 400 });
       }
 
       const activeItem = data.items?.find((item: { status: string }) => 
@@ -75,37 +77,48 @@ export async function POST(req: NextRequest) {
         subscriptionPlan = 'free';
       }
 
-      await client.users.updateUser(user_id, {
-        publicMetadata: {
+      await connectDB();
+      
+      const query = userId ? { _id: userId } : { email: email };
+      await User.findOneAndUpdate(
+        query,
+        {
           subscriptionPlan,
           subscriptionStatus: status,
         },
-      });
+        { new: true }
+      );
       
       return NextResponse.json({ 
         success: true, 
-        message: `User ${user_id} updated to ${subscriptionPlan}` 
+        message: `User updated to ${subscriptionPlan}` 
       });
     }
 
     if (eventType === 'subscription.deleted' || eventType === 'subscription.canceled') {
       const { data } = evt;
-      const { user_id } = data.payer || {};
+      const userId = data.userId;
+      const email = data.email;
 
-      if (!user_id) {
-        return NextResponse.json({ error: 'No user_id in webhook' }, { status: 400 });
+      if (!userId && !email) {
+        return NextResponse.json({ error: 'No userId or email in webhook' }, { status: 400 });
       }
 
-      await client.users.updateUser(user_id, {
-        publicMetadata: {
+      await connectDB();
+      
+      const query = userId ? { _id: userId } : { email: email };
+      await User.findOneAndUpdate(
+        query,
+        {
           subscriptionPlan: 'free',
           subscriptionStatus: 'canceled',
         },
-      });
+        { new: true }
+      );
       
       return NextResponse.json({ 
         success: true, 
-        message: `User ${user_id} downgraded to free` 
+        message: `User downgraded to free` 
       });
     }
 

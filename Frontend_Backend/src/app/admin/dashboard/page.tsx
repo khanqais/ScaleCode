@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import UserProblemsModal from '@/components/UserProblemsModal'
@@ -27,7 +27,8 @@ interface AdminStats {
 const ADMIN_IDS = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',') || [];
 
 export default function AdminDashboard() {
-  const { user } = useUser()
+  const { data: session } = useSession()
+  const user = session?.user
   const router = useRouter()
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [loading, setLoading] = useState(true)
