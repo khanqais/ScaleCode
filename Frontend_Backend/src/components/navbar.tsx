@@ -50,7 +50,9 @@ const Navbar = () => {
       </motion.div>
 
       <div className="hidden md:flex items-center space-x-8">
-        {pathname !== '/pricing' && (
+       
+        {/* {pathname !== '/pricing' &&
+         (
           <motion.div whileHover={{ scale: 1.05 }}>
             <Link href="/pricing">
               <Button
@@ -62,7 +64,8 @@ const Navbar = () => {
               </Button>
             </Link>
           </motion.div>
-        )}
+        )
+        } */}
 
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <motion.div whileHover={{ scale: 1.05 }}>
@@ -117,7 +120,7 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* Mobile menu */}
+      
       <div className="md:hidden flex items-center space-x-4">
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <Link href="/add-problem">

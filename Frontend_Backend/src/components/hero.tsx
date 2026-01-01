@@ -100,7 +100,7 @@ const Hero = () => {
     </Button>
   </motion.div>
 </Link>
-        <Link href="/pricing">
+        {/* <Link href="/pricing">
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -122,7 +122,7 @@ const Hero = () => {
               </motion.span>
             </Button>
           </motion.div>
-        </Link>
+        </Link> */}
       </motion.div>
     </motion.div>
   )

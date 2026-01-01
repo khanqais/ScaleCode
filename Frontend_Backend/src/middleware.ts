@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
@@ -17,6 +18,11 @@ const isPublicRoute = createRouteMatcher([
 ])
 
 export default clerkMiddleware(async (auth, req) => {
+  // Check if pricing page is disabled
+  if (process.env.DISABLE_PRICING === 'true' && req.nextUrl.pathname === '/pricing') {
+    return NextResponse.redirect(new URL('/', req.url))
+  }
+
   if (!isPublicRoute(req) && isProtectedRoute(req)) {
     await auth.protect()
   }

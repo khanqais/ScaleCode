@@ -255,7 +255,8 @@ export default function AddProblemPage() {
         </div>
 
         
-        {usageInfo && !loadingUsage && (
+        {/* Your Progress Box - Commented Out */}
+        {/* {usageInfo && !loadingUsage && (
           <div className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-100 dark:border-gray-600">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -330,8 +331,8 @@ export default function AddProblemPage() {
               )}
             </div>
           </div>
-        )}
-
+        )} */}
+  
         {/* Limit Reached Warning */}
         {usageInfo && usageInfo.remaining <= 0 && (
           <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
