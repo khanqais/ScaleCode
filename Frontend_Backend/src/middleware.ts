@@ -10,7 +10,6 @@ const protectedRoutes = [
   '/problems',
   '/revision',
   '/main-revision',
-  '/organize',
 ]
 
 // Public routes that don't require authentication
@@ -20,6 +19,7 @@ const publicRoutes = [
   '/sign-up',
   '/api/auth',
   '/api/webhooks',
+  '/organize',
   '/pricing',
 ]
 
