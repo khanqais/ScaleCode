@@ -10,6 +10,7 @@ const protectedRoutes = [
   '/problems',
   '/revision',
   '/main-revision',
+  '/organize',
 ]
 
 // Public routes that don't require authentication
@@ -19,13 +20,15 @@ const publicRoutes = [
   '/sign-up',
   '/api/auth',
   '/api/webhooks',
-  '/organize',
   '/pricing',
 ]
 
 export async function middleware(req: NextRequest) {
   const { nextUrl } = req
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  const token = await getToken({ 
+    req, 
+    secret: process.env.NEXTAUTH_SECRET 
+  })
   const isLoggedIn = !!token
 
   // Check if pricing page is disabled
