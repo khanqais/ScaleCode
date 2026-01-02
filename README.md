@@ -2,7 +2,7 @@
 
 A modern, full-stack web application designed to **revolutionize how you revise Data Structures & Algorithms**. Unlike traditional problem trackers, AlgoGrid uses an **intelligent spaced-repetition algorithm** to ensure you never forget what you've learned.
 
-**🌐 Live Demo:** [https://scale-code.vercel.app/](https://scale-code.vercel.app/)
+**🌐 Live Demo:** [https://www.algogrid.dev](https://www.algogrid.dev)
 
 ## 🎯 The Problem I Solve
 
@@ -127,21 +127,19 @@ npm install
 3. **Environment Setup**
 Create a `.env.local` file:
 ```env
-# Database
-MONGODB_URI=mongodb://localhost:27017/scalecode
-# or for MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/scalecode
+NEXTAUTH_SECRET=...
+NEXTAUTH_URL=http://localhost:3000
 
-# Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_SECRET_KEY=sk_test_...
-CLERK_WEBHOOK_SECRET=....
 
-# Optional Clerk URLs
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/organize
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/organize
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GITHUB_CLIENT_ID=...
+GITHUB_CLIENT_SECRET=...
+MONGO_URI=...
+
+GEMINI_API_KEY=...
+
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 4. **Run the development server**
@@ -266,10 +264,6 @@ git push origin main
 3. **Environment Variables**
 Set production values for:
    - `MONGODB_URI` - Your MongoDB Atlas connection string
-   - `CLERK_SECRET_KEY` - Clerk secret key
-   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk publishable key
-   - Clerk webhook secret for user synchronization
-
 
 ## 🎯 Use Cases
 
