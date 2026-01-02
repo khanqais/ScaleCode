@@ -1,27 +1,8 @@
-import { auth } from "@/auth"
+import NextAuth from "next-auth"
+import { authConfig } from "@/auth.config"
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
 
-// Protected routes that require authentication
-const protectedRoutes = [
-  '/dashboard',
-  '/private',
-  '/add-problem',
-  '/problems',
-  '/revision',
-  '/main-revision',
-]
-
-// Public routes that don't require authentication
-const publicRoutes = [
-  '/',
-  '/login',
-  '/sign-up',
-  '/api/auth',
-  '/api/webhooks',
-  '/organize',
-  '/pricing',
-]
+const { auth } = NextAuth(authConfig)
 
 export default auth((req) => {
   const { nextUrl } = req
@@ -31,6 +12,16 @@ export default auth((req) => {
   if (process.env.DISABLE_PRICING === 'true' && nextUrl.pathname === '/pricing') {
     return NextResponse.redirect(new URL('/', req.url))
   }
+
+  // Protected routes that require authentication
+  const protectedRoutes = [
+    '/dashboard',
+    '/private',
+    '/add-problem',
+    '/problems',
+    '/revision',
+    '/main-revision',
+  ]
 
   // Check if the current path is a protected route
   const isProtectedRoute = protectedRoutes.some(route => 

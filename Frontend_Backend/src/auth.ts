@@ -5,6 +5,7 @@ import GitHub from "next-auth/providers/github"
 import bcrypt from "bcryptjs"
 import connectDB from "@/lib/db"
 import User from "@/lib/models/User"
+import { authConfig } from "@/auth.config"
 
 declare module "next-auth" {
   interface Session {
@@ -33,6 +34,7 @@ declare module "next-auth" {
 
 // Extend the JWT type inline
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -84,6 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     })
   ],
   callbacks: {
+    ...authConfig.callbacks,
     async signIn({ user, account }) {
       if (account?.provider === "google" || account?.provider === "github") {
         await connectDB()
