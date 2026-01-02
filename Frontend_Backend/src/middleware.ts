@@ -25,9 +25,21 @@ const publicRoutes = [
 
 export async function middleware(req: NextRequest) {
   const { nextUrl } = req
+  const secret = process.env.NEXTAUTH_SECRET
+  
+  // Debug logging
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Middleware Debug:', {
+      pathname: nextUrl.pathname,
+      hasSecret: !!secret,
+      secretLength: secret?.length,
+      cookies: req.cookies.getAll().map(c => c.name),
+    })
+  }
+  
   const token = await getToken({ 
     req, 
-    secret: process.env.NEXTAUTH_SECRET 
+    secret: secret
   })
   const isLoggedIn = !!token
 
