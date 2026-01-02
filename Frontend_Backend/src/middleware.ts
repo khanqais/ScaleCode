@@ -50,9 +50,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Redirect to organize if logged in user tries to access login page
+  // Redirect to organize (or callbackUrl) if logged in user tries to access login page
   if (nextUrl.pathname === '/login' && isLoggedIn) {
-    return NextResponse.redirect(new URL('/organize', req.url))
+    const callbackUrl = nextUrl.searchParams.get('callbackUrl') || '/organize'
+    return NextResponse.redirect(new URL(callbackUrl, req.url))
   }
 
   return NextResponse.next()
