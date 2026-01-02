@@ -41,7 +41,7 @@ function ProblemsPageContent() {
     
     try {
       setLoading(true)
-      const response = await fetch('/api/problems', {
+      const response = await fetch('/api/problems?limit=10000', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -413,7 +413,7 @@ export default function OrganizePage() {
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {problems.map((problem) => (
+              {problems.slice(0, 5).map((problem) => (
                 <div
                   key={problem._id}
                   className="relative bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all cursor-pointer"
