@@ -1,6 +1,6 @@
+import { auth } from "@/auth"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { getToken } from "next-auth/jwt"
 
 // Protected routes that require authentication
 const protectedRoutes = [
@@ -23,28 +23,9 @@ const publicRoutes = [
   '/pricing',
 ]
 
-export async function middleware(req: NextRequest) {
+export default auth((req) => {
   const { nextUrl } = req
-  const secret = process.env.NEXTAUTH_SECRET
-  
-  const token = await getToken({ 
-    req, 
-    secret: secret
-  })
-  
-  // Debug logging
-  if (process.env.NODE_ENV === 'production') {
-    console.log('=== MIDDLEWARE DEBUG ===')
-    console.log('Pathname:', nextUrl.pathname)
-    console.log('Has Secret:', !!secret)
-    console.log('Secret Length:', secret?.length)
-    console.log('Token result:', token ? 'TOKEN FOUND' : 'TOKEN IS NULL')
-    console.log('Session cookie present:', req.cookies.has('__Secure-authjs.session-token'))
-    console.log('All cookies:', req.cookies.getAll().map(c => c.name))
-    console.log('======================')
-  }
-  
-  const isLoggedIn = !!token
+  const isLoggedIn = !!req.auth
 
   // Check if pricing page is disabled
   if (process.env.DISABLE_PRICING === 'true' && nextUrl.pathname === '/pricing') {
@@ -53,11 +34,6 @@ export async function middleware(req: NextRequest) {
 
   // Check if the current path is a protected route
   const isProtectedRoute = protectedRoutes.some(route => 
-    nextUrl.pathname.startsWith(route)
-  )
-
-  // Check if the current path is a public route
-  const isPublicRoute = publicRoutes.some(route => 
     nextUrl.pathname.startsWith(route)
   )
 
@@ -75,7 +51,7 @@ export async function middleware(req: NextRequest) {
   }
 
   return NextResponse.next()
-}
+})
 
 export const config = {
   matcher: [
