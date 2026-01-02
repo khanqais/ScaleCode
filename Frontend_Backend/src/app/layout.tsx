@@ -33,10 +33,10 @@ export const metadata: Metadata = {
     description: "Learn Data Structures and Algorithms systematically. Practice 265+ problems organized by patterns and explore company-specific questions to ace your coding interviews.",
     images: [
       {
-        url: "https://algogrid.dev/logo_black.png",
+        url: "https://algogrid.dev/bg_white.png",
         width: 1200,
         height: 630,
-        alt: "AlgoGrid Logo",
+        alt: "AlgoGrid - Master DSA Patterns & Coding Challenges",
         type: "image/png",
       },
     ],
@@ -44,8 +44,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AlgoGrid - Master DSA Patterns & Coding Challenges",
-    description: "Learn Data Structures and Algorithms systematically. Practice 265+ problems organized by patterns.",
-    images: ["https://algogrid.dev/logo_black.png"],
+    description: "Learn Data Structures and Algorithms systematically. Practice 265+ problems organized by patterns and explore company-specific questions to ace your coding interviews.",
+    images: ["https://algogrid.dev/bg_white.png"],
     creator: "@algogrid",
     site: "@algogrid",
   },
