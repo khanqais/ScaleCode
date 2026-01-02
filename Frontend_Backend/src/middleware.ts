@@ -27,20 +27,23 @@ export async function middleware(req: NextRequest) {
   const { nextUrl } = req
   const secret = process.env.NEXTAUTH_SECRET
   
-  // Debug logging
-  if (process.env.NODE_ENV === 'production') {
-    console.log('Middleware Debug:', {
-      pathname: nextUrl.pathname,
-      hasSecret: !!secret,
-      secretLength: secret?.length,
-      cookies: req.cookies.getAll().map(c => c.name),
-    })
-  }
-  
   const token = await getToken({ 
     req, 
     secret: secret
   })
+  
+  // Debug logging
+  if (process.env.NODE_ENV === 'production') {
+    console.log('=== MIDDLEWARE DEBUG ===')
+    console.log('Pathname:', nextUrl.pathname)
+    console.log('Has Secret:', !!secret)
+    console.log('Secret Length:', secret?.length)
+    console.log('Token result:', token ? 'TOKEN FOUND' : 'TOKEN IS NULL')
+    console.log('Session cookie present:', req.cookies.has('__Secure-authjs.session-token'))
+    console.log('All cookies:', req.cookies.getAll().map(c => c.name))
+    console.log('======================')
+  }
+  
   const isLoggedIn = !!token
 
   // Check if pricing page is disabled
