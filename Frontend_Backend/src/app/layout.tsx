@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   authors: [{ name: "AlgoGrid" }],
   creator: "AlgoGrid",
   metadataBase: new URL("https://algogrid.dev"),
+  verification: {
+    google: "ZdW69PAoGjfGt7fzGGUe-syWf4phn77yt3XmADC3Gwg",
+  },
   icons: {
     icon: [
       { url: "/logo_black.png" },
