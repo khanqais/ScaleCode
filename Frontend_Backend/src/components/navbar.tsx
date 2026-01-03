@@ -95,14 +95,7 @@ function UserButton() {
 
             {/* Menu Items */}
             <div className="py-2">
-              <Link
-                href="/organize"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                <User size={16} />
-                Dashboard
-              </Link>
+            
               <button
                 onClick={() => {
                   setIsOpen(false)
