@@ -2,7 +2,6 @@ import NextAuth, { type DefaultSession } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import GitHub from "next-auth/providers/github"
-import bcrypt from "bcryptjs"
 import connectDB from "@/lib/db"
 import User from "@/lib/models/User"
 import { authConfig } from "@/auth.config"
@@ -48,35 +47,37 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        otp: { label: "OTP", type: "text" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password are required")
+        if (!credentials?.email || !credentials?.otp) {
+          throw new Error("Email and OTP are required")
         }
 
         await connectDB()
 
-        const user = await User.findOne({ email: credentials.email })
+        const user = await User.findOne({ 
+          email: credentials.email,
+          otp: credentials.otp,
+          otpExpiry: { $gt: new Date() }
+        })
         
-        if (!user || !user.password) {
-          throw new Error("Invalid email or password")
+        if (!user) {
+          throw new Error("Invalid or expired OTP")
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        )
-
-        if (!isPasswordValid) {
-          throw new Error("Invalid email or password")
-        }
+        // Clear OTP after successful verification
+        user.otp = undefined
+        user.otpExpiry = undefined
+        await user.save()
 
         return {
           id: user._id.toString(),
           email: user.email,
-          name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.email.split('@')[0],
-          image: user.profileImage,
+          name: user.firstName && user.lastName 
+            ? `${user.firstName} ${user.lastName}`.trim() 
+            : user.firstName || user.email.split('@')[0],
+          image: user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email.split('@')[0])}&background=random&size=200`,
           firstName: user.firstName,
           lastName: user.lastName,
           subscriptionPlan: user.subscriptionPlan || 'free',
@@ -103,7 +104,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: user.email,
             firstName,
             lastName,
-            profileImage: user.image,
+            profileImage: user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName || user.email?.split('@')[0] || 'User')}&background=random&size=200`,
             provider: account.provider,
             providerId: account.providerAccountId,
             subscriptionPlan: 'free',
@@ -137,6 +138,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.lastName = dbUser.lastName
           token.subscriptionPlan = dbUser.subscriptionPlan || 'free'
           token.subscriptionStatus = dbUser.subscriptionStatus || 'active'
+          
+          console.log('🔍 JWT Callback - User from DB:')
+          console.log('Email:', dbUser.email)
+          console.log('Profile Image:', dbUser.profileImage)
+          console.log('Token Image:', token.image)
         }
       }
       
@@ -158,6 +164,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.lastName = token.lastName as string | undefined
         session.user.subscriptionPlan = token.subscriptionPlan as string | undefined
         session.user.subscriptionStatus = token.subscriptionStatus as string | undefined
+        
+        console.log('🔍 Session Callback:')
+        console.log('Session User Image:', session.user.image)
       }
       return session
     },

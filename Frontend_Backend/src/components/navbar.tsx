@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSession, signOut } from 'next-auth/react'
@@ -29,6 +30,7 @@ function UserButton() {
   if (!session?.user) return null
 
   const userInitial = session.user.firstName?.[0] || session.user.name?.[0] || session.user.email?.[0] || 'U'
+  
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -39,11 +41,14 @@ function UserButton() {
       >
         <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center select-none">
           {session.user.image ? (
-            <img
+            <Image
               src={session.user.image}
               alt={session.user.name || 'User'}
+              width={40}
+              height={40}
               className="w-full h-full object-cover"
               draggable="false"
+              unoptimized
             />
           ) : (
             <span className="text-white font-semibold text-lg uppercase">{userInitial}</span>
@@ -65,11 +70,14 @@ function UserButton() {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center flex-shrink-0 select-none">
                   {session.user.image ? (
-                    <img
+                    <Image
                       src={session.user.image}
                       alt={session.user.name || 'User'}
+                      width={48}
+                      height={48}
                       className="w-full h-full object-cover"
                       draggable="false"
+                      unoptimized
                     />
                   ) : (
                     <span className="text-white font-semibold text-xl uppercase">{userInitial}</span>

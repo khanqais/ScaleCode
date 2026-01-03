@@ -20,7 +20,7 @@ export const authConfig: NextAuthConfig = {
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        otp: { label: "OTP", type: "text" }
       },
       // In Edge runtime, we can't do DB operations
       // The actual authorize logic is in auth.ts
