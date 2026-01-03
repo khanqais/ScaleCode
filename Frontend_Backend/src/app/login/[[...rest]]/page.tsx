@@ -41,7 +41,7 @@ export default function LoginPage() {
         {/* Heading */}
         <div className="text-center mb-4">
           <h1 style={{ fontFamily: 'Playfair Display, Georgia, serif' }} className="text-3xl md:text-4xl font-normal text-white leading-tight italic">
-            Sign up below to unlock the full potential of AlgoGrid
+            Sign in below to unlock the full potential of AlgoGrid
           </h1>
         </div>
 

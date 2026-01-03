@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import PageTransition from "@/components/page-transition";
 import SessionProvider from "@/components/SessionProvider";
-import Footer from "@/components/footer";
+import ConditionalFooter from "@/components/ConditionalFooter";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { IBM_Plex_Sans, Playfair_Display } from "next/font/google";
 
@@ -125,7 +125,7 @@ export default function RootLayout({
             <div className="relative z-10 min-h-screen w-full">
               <PageTransition>
                 {children}
-                <Footer/>
+                <ConditionalFooter />
               </PageTransition>
             </div>
           </ThemeProvider>
