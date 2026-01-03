@@ -4,6 +4,21 @@ import PageTransition from "@/components/page-transition";
 import SessionProvider from "@/components/SessionProvider";
 import Footer from "@/components/footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { headers } from "next/headers";
+import { IBM_Plex_Sans, Playfair_Display } from "next/font/google";
+
+const ibmPlexSans = IBM_Plex_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+const playfairDisplay = Playfair_Display({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-playfair',
+});
 
 export const metadata: Metadata = {
   title: "AlgoGrid - Master DSA Patterns & Coding Challenges",
@@ -73,6 +88,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = headers();
+  const pathname = headersList.get('x-pathname') || '';
+  const isLoginPage = pathname.includes('/login');
+  
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -111,7 +130,7 @@ export default function RootLayout({
             <div className="relative z-10 min-h-screen w-full">
               <PageTransition>
                 {children}
-                <Footer/>
+                {!isLoginPage && <Footer/>}
               </PageTransition>
             </div>
           </ThemeProvider>

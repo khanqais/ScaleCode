@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import StyledLoginForm from '@/components/StyledLoginForm'
-import Image from 'next/image'
-import Link from 'next/link'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -39,18 +37,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center justify-center">
-            <Image 
-              src="/logo_black.png" 
-              alt="ScaleCode Logo" 
-              width={56}  
-              height={56} 
-              className="w-14 h-14 object-cover" 
-            />
-          </Link>
+      <div className="w-full max-w-md flex flex-col justify-center">
+        {/* Heading */}
+        <div className="text-center mb-4">
+          <h1 style={{ fontFamily: 'Playfair Display, Georgia, serif' }} className="text-3xl md:text-4xl font-normal text-white leading-tight italic">
+            Sign up below to unlock the full potential of AlgoGrid
+          </h1>
         </div>
 
         <StyledLoginForm isLogin={isLogin} onToggleMode={() => setIsLogin(!isLogin)} />

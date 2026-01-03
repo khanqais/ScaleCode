@@ -8,6 +8,10 @@ export default auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
 
+  // Add pathname to response headers
+  const response = NextResponse.next()
+  response.headers.set('x-pathname', nextUrl.pathname)
+
   // Check if pricing page is disabled
   if (process.env.DISABLE_PRICING === 'true' && nextUrl.pathname === '/pricing') {
     return NextResponse.redirect(new URL('/', req.url))
@@ -41,7 +45,7 @@ export default auth((req) => {
     return NextResponse.redirect(new URL(callbackUrl, req.url))
   }
 
-  return NextResponse.next()
+  return response
 })
 
 export const config = {
