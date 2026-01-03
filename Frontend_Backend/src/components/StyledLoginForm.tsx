@@ -166,7 +166,7 @@ const StyledForm = () => {
                 value={email}
                 onChange={handleInputChange}
                 required
-                placeholder="you@example.com"
+                placeholder="Enter your email"
                 className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-gray-800/50 border border-gray-600/50 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/70 focus:ring-1 focus:ring-purple-500/50"
               />
             </div>
