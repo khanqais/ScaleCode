@@ -138,11 +138,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.lastName = dbUser.lastName
           token.subscriptionPlan = dbUser.subscriptionPlan || 'free'
           token.subscriptionStatus = dbUser.subscriptionStatus || 'active'
-          
-          console.log('🔍 JWT Callback - User from DB:')
-          console.log('Email:', dbUser.email)
-          console.log('Profile Image:', dbUser.profileImage)
-          console.log('Token Image:', token.image)
         }
       }
       
@@ -164,9 +159,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.lastName = token.lastName as string | undefined
         session.user.subscriptionPlan = token.subscriptionPlan as string | undefined
         session.user.subscriptionStatus = token.subscriptionStatus as string | undefined
-        
-        console.log('🔍 Session Callback:')
-        console.log('Session User Image:', session.user.image)
       }
       return session
     },

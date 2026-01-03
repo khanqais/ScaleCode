@@ -104,9 +104,9 @@ export async function POST(request: NextRequest) {
       
       console.log(`✅ Email sent successfully to ${email}`);
       console.log(`OTP: ${otp}`);
-    } catch (emailError: any) {
+    } catch (emailError) {
       console.error('❌ Failed to send email. Error details:');
-      console.error('Error message:', emailError?.message);
+      console.error('Error message:', emailError instanceof Error ? emailError.message : 'Unknown error');
       console.error('Full error:', emailError);
       // Still return success if OTP was saved to DB (can use console for development)
       console.log(`\n🔐 FALLBACK - OTP for ${email}: ${otp}\n`);

@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useSession, signOut } from 'next-auth/react'
 import AnimatedThemeSwitch from './AnimatedThemeSwitch'
 import { Button } from '@/components/ui/button'
-import { Plus, LogOut, User, ChevronDown } from 'lucide-react'
+import { Plus, LogOut, User } from 'lucide-react'
 
 // Custom UserButton component to match Clerk's UI
 function UserButton() {
@@ -30,7 +30,6 @@ function UserButton() {
   if (!session?.user) return null
 
   const userInitial = session.user.firstName?.[0] || session.user.name?.[0] || session.user.email?.[0] || 'U'
-  
 
   return (
     <div className="relative" ref={dropdownRef}>
