@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
 
-    // First, find the user by email
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
@@ -32,7 +31,6 @@ export async function POST(request: NextRequest) {
     console.log('OTP Expiry:', user.otpExpiry);
     console.log('Current time:', new Date());
 
-    // Check if OTP matches
     if (user.otp !== otp.toString()) {
       console.log('OTP does not match');
       return NextResponse.json(
@@ -41,7 +39,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if OTP is expired
     if (!user.otpExpiry || user.otpExpiry < new Date()) {
       console.log('OTP expired');
       return NextResponse.json(
@@ -50,7 +47,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Clear OTP after successful verification
     user.otp = undefined;
     user.otpExpiry = undefined;
     await user.save();

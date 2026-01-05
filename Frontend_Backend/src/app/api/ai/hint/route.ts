@@ -10,12 +10,11 @@ interface HintRequest {
   problemStatement: string
   category: string
   userCode?: string
-  hintLevel: 1 | 2 | 3 // 1 = gentle nudge, 2 = approach hint, 3 = detailed hint
+  hintLevel: 1 | 2 | 3 
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify authentication
     const session = await auth()
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -24,7 +23,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check for API key
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
       return NextResponse.json(
@@ -36,7 +34,6 @@ export async function POST(request: NextRequest) {
     const body: HintRequest = await request.json()
     const { problemTitle, problemStatement, category, userCode, hintLevel } = body
 
-    // Validate required fields
     if (!problemTitle || !problemStatement || !hintLevel) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
@@ -44,14 +41,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Build the prompt based on hint level
     const prompt = buildHintPrompt(problemTitle, problemStatement, category, userCode, hintLevel)
 
-    // Initialize Google Generative AI
     const genAI = new GoogleGenerativeAI(apiKey)
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
-    // Generate content
     const result = await model.generateContent(prompt)
     const response = await result.response
     const hintText = response.text()

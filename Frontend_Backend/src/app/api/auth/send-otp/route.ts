@@ -16,18 +16,15 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
 
-    // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
     console.log('Generated OTP:', otp);
     console.log('OTP Expiry:', otpExpiry);
 
-    // Find or create user
     let user = await User.findOne({ email: email.toLowerCase() });
     
     if (!user) {
-      // Create new user with OTP
       user = new User({
         email: email.toLowerCase(),
         otp,
@@ -37,7 +34,6 @@ export async function POST(request: NextRequest) {
       });
       console.log('Creating new user');
     } else {
-      // Update existing user with new OTP
       user.otp = otp;
       user.otpExpiry = otpExpiry;
       console.log('Updating existing user');
@@ -45,7 +41,6 @@ export async function POST(request: NextRequest) {
 
     await user.save();
     
-    // Send OTP via email using nodemailer
     try {
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -108,7 +103,6 @@ export async function POST(request: NextRequest) {
       console.error('❌ Failed to send email. Error details:');
       console.error('Error message:', emailError instanceof Error ? emailError.message : 'Unknown error');
       console.error('Full error:', emailError);
-      // Still return success if OTP was saved to DB (can use console for development)
       console.log(`\n🔐 FALLBACK - OTP for ${email}: ${otp}\n`);
     }
 

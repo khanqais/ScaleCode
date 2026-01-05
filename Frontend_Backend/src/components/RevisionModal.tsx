@@ -57,7 +57,6 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
   const [mobileView, setMobileView] = useState<'problem' | 'code'>('problem')
   const [selectedSolutionIndex, setSelectedSolutionIndex] = useState(0)
   
-  // Get the active solution to compare against
   const activeSolution = problem.solutions && problem.solutions.length > 0 
     ? problem.solutions[selectedSolutionIndex] 
     : { code: problem.myCode || '', intuition: problem.intuition || '', language: 'cpp' }
@@ -156,7 +155,6 @@ export default function RevisionModal({ isOpen, onClose, problem }: RevisionModa
       setCopied(type)
       setTimeout(() => setCopied(null), 2000)
     } catch {
-      // Failed to copy
     }
   }
 
@@ -565,7 +563,6 @@ function MobileProblemView({
         </div>
       </div>
       
-      {/* Intuition Section */}
       {problem.intuition && (
         <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
           <button

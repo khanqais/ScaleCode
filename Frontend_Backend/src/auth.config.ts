@@ -3,8 +3,6 @@ import Google from "next-auth/providers/google"
 import GitHub from "next-auth/providers/github"
 import Credentials from "next-auth/providers/credentials"
 
-// This is the Edge-compatible auth config (no database imports)
-// Used by middleware for route protection
 export const authConfig: NextAuthConfig = {
   providers: [
     Google({
@@ -15,15 +13,12 @@ export const authConfig: NextAuthConfig = {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
-    // Credentials provider needs to be listed but authorize is handled in auth.ts
     Credentials({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         otp: { label: "OTP", type: "text" }
       },
-      // In Edge runtime, we can't do DB operations
-      // The actual authorize logic is in auth.ts
       authorize: () => null,
     })
   ],
@@ -31,7 +26,6 @@ export const authConfig: NextAuthConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
       
-      // Protected routes that require authentication
       const protectedRoutes = [
         '/dashboard',
         '/private',
@@ -47,7 +41,7 @@ export const authConfig: NextAuthConfig = {
       
       if (isProtectedRoute) {
         if (isLoggedIn) return true
-        return false // Redirect to login
+        return false
       }
       
       return true
@@ -59,7 +53,7 @@ export const authConfig: NextAuthConfig = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true,

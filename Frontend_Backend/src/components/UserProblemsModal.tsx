@@ -81,7 +81,6 @@ export default function UserProblemsModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-        {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -99,7 +98,6 @@ export default function UserProblemsModal({
           </button>
         </div>
 
-        {/* Content */}
         <div className="overflow-y-auto flex-1 p-6">
           {loading ? (
             <div className="flex items-center justify-center py-12">
@@ -123,7 +121,6 @@ export default function UserProblemsModal({
                   key={problem.id}
                   className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
                 >
-                  {/* Problem Header */}
                   <button
                     onClick={() =>
                       setExpandedProblem(
@@ -156,10 +153,8 @@ export default function UserProblemsModal({
                     )}
                   </button>
 
-                  {/* Problem Details */}
                   {expandedProblem === problem.id && (
                     <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800/50">
-                      {/* Problem Statement */}
                       <div className="mb-6">
                         <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                           Problem Statement
@@ -171,7 +166,6 @@ export default function UserProblemsModal({
                         </div>
                       </div>
 
-                      {/* Solutions */}
                       {problem.solutions.length > 0 && (
                         <div>
                           <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
@@ -233,7 +227,6 @@ export default function UserProblemsModal({
                                         </div>
                                       )}
 
-                                      {/* Intuition */}
                                       {solution.intuition && (
                                         <div>
                                           <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
@@ -245,7 +238,6 @@ export default function UserProblemsModal({
                                         </div>
                                       )}
 
-                                      {/* Complexity */}
                                       <div className="grid grid-cols-2 gap-3">
                                         {solution.timeComplexity && (
                                           <div>

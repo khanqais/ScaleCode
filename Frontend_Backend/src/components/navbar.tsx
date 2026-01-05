@@ -10,7 +10,6 @@ import AnimatedThemeSwitch from './AnimatedThemeSwitch'
 import { Button } from '@/components/ui/button'
 import { Plus, LogOut, User } from 'lucide-react'
 
-// Custom UserButton component to match Clerk's UI
 function UserButton() {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useState(false)
@@ -64,7 +63,6 @@ function UserButton() {
             transition={{ duration: 0.15 }}
             className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
           >
-            {/* User Info Section */}
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center flex-shrink-0 select-none">
@@ -93,9 +91,7 @@ function UserButton() {
               </div>
             </div>
 
-            {/* Menu Items */}
             <div className="py-2">
-            
               <button
                 onClick={() => {
                   setIsOpen(false)
@@ -151,23 +147,6 @@ const Navbar = () => {
       </motion.div>
 
       <div className="hidden md:flex items-center space-x-8">
-       
-        {/* {pathname !== '/pricing' &&
-         (
-          <motion.div whileHover={{ scale: 1.05 }}>
-            <Link href="/pricing">
-              <Button
-                variant="ghost"
-                className="text-black dark:text-white hover:bg-transparent hover:text-black dark:hover:text-white cursor-pointer"
-                aria-label="View pricing plans"
-              >
-                Pricing
-              </Button>
-            </Link>
-          </motion.div>
-        )
-        } */}
-
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <motion.div whileHover={{ scale: 1.05 }}>
             <Link href="/add-problem">

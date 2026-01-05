@@ -7,7 +7,6 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password, firstName, lastName } = await request.json()
 
-    // Validate required fields
     if (!email || !password) {
       return NextResponse.json(
         { success: false, error: 'Email and password are required' },
@@ -15,7 +14,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -24,7 +22,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate password length
     if (password.length < 8) {
       return NextResponse.json(
         { success: false, error: 'Password must be at least 8 characters' },
@@ -34,10 +31,8 @@ export async function POST(request: NextRequest) {
 
     await connectDB()
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() })
     if (existingUser) {
-      // If user exists and already has a password, reject
       if (existingUser.password) {
         return NextResponse.json(
           { success: false, error: 'An account with this email already exists. Please sign in or use "Forgot Password".' },
@@ -45,7 +40,6 @@ export async function POST(request: NextRequest) {
         )
       }
       
-      // If user exists from OAuth but no password, allow setting one
       const hashedPassword = await bcrypt.hash(password, 12)
       existingUser.password = hashedPassword
       existingUser.provider = 'credentials' // or keep the OAuth provider

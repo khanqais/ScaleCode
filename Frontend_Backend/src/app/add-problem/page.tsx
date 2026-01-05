@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle, Crown, TrendingUp } from 'lucide-react'
+import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle, Crown } from 'lucide-react'
 
 export default function AddProblemPage() {
   
@@ -26,7 +26,6 @@ export default function AddProblemPage() {
     plan: string;
     remaining: number;
   } | null>(null)
-  const [loadingUsage, setLoadingUsage] = useState(true)
   
   const [formData, setFormData] = useState({
     title: '',
@@ -66,7 +65,6 @@ export default function AddProblemPage() {
       }
       
       try {
-        setLoadingUsage(true)
         const response = await fetch('/api/problems', {
           method: 'GET',
           headers: {
@@ -79,24 +77,14 @@ export default function AddProblemPage() {
           if (result.success && result.data.problems) {
             const currentCount = result.data.problems.length
             
-            
-            const planResponse = await fetch('/api/subscription/status')
-            const planData = await planResponse.json()
-            
-            let plan = 'free'
-            let limit = 50
-            
-            if (planData.success && planData.subscription) {
-              plan = planData.subscription.plan || 'free'
-            }
-            
+            const plan = session?.user?.subscriptionPlan || 'free'
             
             const limits: Record<string, number> = {
               'free': 100,
               'pro': 2000,
               'pro_max': 4000
             }
-            limit = limits[plan] || 100
+            const limit = limits[plan] || 100
             
             setUsageInfo({
               currentCount,
@@ -109,12 +97,11 @@ export default function AddProblemPage() {
       } catch {
         // Error fetching usage info
       } finally {
-        setLoadingUsage(false)
       }
     }
     
     fetchUsageInfo()
-  }, [user])
+  }, [user, session?.user?.subscriptionPlan])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

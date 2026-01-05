@@ -11,14 +11,12 @@ export default function ErrorPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4">
       <div className="max-w-lg w-full text-center">
-        {/* Error Icon */}
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
             <AlertCircle className="w-10 h-10 text-red-600 dark:text-red-400" />
           </div>
         </div>
 
-        {/* Error Message */}
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
           Oops! Something went wrong
         </h1>
@@ -27,7 +25,6 @@ export default function ErrorPage() {
           We encountered an unexpected error. Don&apos;t worry, our team has been notified and we&apos;re working on it.
         </p>
 
-        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
           <Button
             variant="outline"
@@ -49,7 +46,6 @@ export default function ErrorPage() {
           </Link>
         </div>
 
-        {/* Support Link */}
         <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Need help?{' '}

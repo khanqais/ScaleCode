@@ -551,7 +551,6 @@ export default function RevisionPage() {
         </div>
       )}
 
-      {/* Solution Modal */}
       {showSolutionModal && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
           <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-lg w-full sm:max-w-4xl max-h-[90vh] sm:max-h-[80vh] flex flex-col shadow-xl transition-colors">

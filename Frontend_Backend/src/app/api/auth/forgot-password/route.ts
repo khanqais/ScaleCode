@@ -16,32 +16,26 @@ export async function POST(req: NextRequest) {
 
     await dbConnect();
 
-    // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-      // Don't reveal if email exists for security reasons
       return NextResponse.json(
         { message: 'If an account exists, a reset link has been sent' },
         { status: 200 }
       );
     }
 
-    // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
     const resetTokenHash = crypto
       .createHash('sha256')
       .update(resetToken)
       .digest('hex');
-    const resetTokenExpiry = new Date(Date.now() + 1 * 60 * 60 * 1000); // 1 hour
+    const resetTokenExpiry = new Date(Date.now() + 1 * 60 * 60 * 1000);
 
-    // Save reset token to user
     user.resetToken = resetTokenHash;
     user.resetTokenExpiry = resetTokenExpiry;
     await user.save();
 
-    // For now, just return success. In production, send email via Resend or similar
-    // This prevents the need for nodemailer in a serverless environment
     console.log(`Password reset link: ${process.env.NEXTAUTH_URL}/auth/reset-password/${resetToken}`);
 
     return NextResponse.json(

@@ -25,7 +25,6 @@ export async function GET(
 
     const { userId: targetUserId } = await params
 
-    // Fetch problems for the specific user
     const problems = await Problem.find({ userId: targetUserId })
       .select('title problemStatement solutions createdAt category')
       .sort({ createdAt: -1 })

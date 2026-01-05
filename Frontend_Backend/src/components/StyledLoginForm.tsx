@@ -96,7 +96,6 @@ const StyledForm = () => {
           Continue with
         </h2>
         
-        {/* OAuth Buttons - Top */}
         <div className="flex flex-col gap-2 mb-4">
           <button
             type="button"
@@ -128,7 +127,6 @@ const StyledForm = () => {
           <div className="h-px bg-gray-600/50 flex-1" />
         </div>
         
-        {/* Error/Success Messages */}
         <AnimatePresence mode="wait">
           {error && (
             <motion.div
@@ -188,7 +186,6 @@ const StyledForm = () => {
           </button>
         </form>
 
-        {/* OTP Verification Modal */}
         <AnimatePresence>
           {showOtpModal && (
             <>

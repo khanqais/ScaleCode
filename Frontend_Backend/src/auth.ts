@@ -31,7 +31,6 @@ declare module "next-auth" {
   }
 }
 
-// Extend the JWT type inline
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   providers: [
@@ -66,7 +65,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("Invalid or expired OTP")
         }
 
-        // Clear OTP after successful verification
         user.otp = undefined
         user.otpExpiry = undefined
         await user.save()
@@ -95,7 +93,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const existingUser = await User.findOne({ email: user.email })
         
         if (!existingUser) {
-          // Create new user for OAuth sign in
           const nameParts = user.name?.split(' ') || []
           const firstName = nameParts[0] || ''
           const lastName = nameParts.slice(1).join(' ') || ''
@@ -112,7 +109,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           })
           await newUser.save()
         } else if (!existingUser.provider) {
-          // Update existing user with OAuth info
           existingUser.provider = account.provider
           existingUser.providerId = account.providerAccountId
           if (!existingUser.profileImage) {
@@ -125,7 +121,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        // Initial sign in
         await connectDB()
         const dbUser = await User.findOne({ email: user.email })
         
@@ -141,7 +136,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
       
-      // Handle session update
       if (trigger === "update" && session) {
         token.subscriptionPlan = session.subscriptionPlan || token.subscriptionPlan
         token.subscriptionStatus = session.subscriptionStatus || token.subscriptionStatus
@@ -163,9 +157,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
       if (url.startsWith("/")) return `${baseUrl}${url}`
-      // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url
       return baseUrl
     }
@@ -176,7 +168,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true,

@@ -1,11 +1,8 @@
-/**
- * Migration Script: Add Confidence field to existing problems
- * Run this script if you have existing problems without the Confidence field
- */
+
 
 const mongoose = require('mongoose');
 
-// Make sure to set your MongoDB URI
+
 const MONGODB_URI = process.env.MONGODB_URI || 'your_mongodb_uri_here';
 
 async function migrateProblemConfidence() {
@@ -30,8 +27,7 @@ async function migrateProblemConfidence() {
 
     let updated = 0;
     for (const problem of problemsWithoutConfidence) {
-      // Set Confidence to difficulty as a default
-      // Or you can set it to a default value like 5
+    
       const confidenceValue = problem.difficulty || 5;
       
       await Problem.updateOne(

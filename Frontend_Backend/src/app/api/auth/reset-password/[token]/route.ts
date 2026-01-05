@@ -35,13 +35,11 @@ export async function POST(
 
     await dbConnect();
 
-    // Hash the token to find the user
-    const resetTokenHash = crypto
+  const resetTokenHash = crypto
       .createHash('sha256')
       .update(token)
       .digest('hex');
 
-    // Find user with valid reset token
     const user = await User.findOne({
       resetToken: resetTokenHash,
       resetTokenExpiry: { $gt: new Date() },
@@ -54,11 +52,9 @@ export async function POST(
       );
     }
 
-    // Hash new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Update user password and clear reset token
     user.password = hashedPassword;
     user.resetToken = undefined;
     user.resetTokenExpiry = undefined;

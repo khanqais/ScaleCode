@@ -52,7 +52,7 @@ const BGPattern = ({
 
 	const bgSize = `${size}px ${size}px`;
 	
-	// Use light gray with low opacity for light theme, dark gray for dark theme
+	
 	const patternFill = theme === 'light' ? 'rgba(200, 200, 200, 0.4)' : fill;
 	const backgroundImage = geBgImage(variant, patternFill, size);
 	const bgColor = theme === 'light' ? '#ffffff' : '#000000';

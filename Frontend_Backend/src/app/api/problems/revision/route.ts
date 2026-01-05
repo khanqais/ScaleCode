@@ -70,20 +70,16 @@ export async function GET(request: Request) {
       }))
     );
 
-    // Get statistics
     const stats = getRevisionStats(processedProblems);
 
-    // Filter based on mode
     let filteredProblems;
     switch (mode) {
       case 'urgent':
-        // Only problems with adjusted confidence < 6
         filteredProblems = processedProblems.filter(p => p.adjustedConfidence < 6);
         filteredProblems = sortByPriority(filteredProblems).slice(0, limit);
         break;
       
       case 'needsRevision':
-        // Problems that need revision based on criteria
         filteredProblems = getProblemsNeedingRevision(processedProblems, {
           minConfidence: 7,
           minDaysSinceRevision: 7,
@@ -92,13 +88,11 @@ export async function GET(request: Request) {
         break;
       
       case 'all':
-        // All problems sorted by priority
         filteredProblems = sortByPriority(processedProblems).slice(0, limit);
         break;
       
       case 'priority':
       default:
-        // Smart selection: prioritize low confidence and not recently revised
         filteredProblems = getProblemsNeedingRevision(processedProblems, {
           minConfidence: 7,
           minDaysSinceRevision: 5,
@@ -107,7 +101,6 @@ export async function GET(request: Request) {
         break;
     }
 
-    // Group by confidence level for UI display
     const groupedProblems = groupByConfidenceLevel(filteredProblems);
 
     return NextResponse.json({
@@ -154,7 +147,6 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // Find and update the problem
     const problem = await Problem.findOne({ _id: problemId, userId });
 
     if (!problem) {
@@ -164,7 +156,6 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // Update revision data
     problem.lastRevised = new Date();
     problem.revisionCount = (problem.revisionCount || 0) + 1;
     

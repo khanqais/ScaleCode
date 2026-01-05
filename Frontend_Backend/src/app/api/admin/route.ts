@@ -5,7 +5,6 @@ import connectDB from '@/lib/db'
 
 export async function GET() {
   try {
-    // Connect to database
     await connectDB()
 
     const session = await auth()
@@ -14,16 +13,13 @@ export async function GET() {
       return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin
     const adminIds = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',') || []
     if (!adminIds.includes(session.user.id)) {
       return Response.json({ success: false, error: 'Forbidden' }, { status: 403 })
     }
 
-    // Fetch all problems
     const allProblems = await Problem.find({}).lean()
 
-    // Group by userId
     const userProblemsMap: Record<string, typeof allProblems> = {}
     for (const problem of allProblems) {
       if (!userProblemsMap[problem.userId]) {
@@ -32,7 +28,6 @@ export async function GET() {
       userProblemsMap[problem.userId].push(problem)
     }
 
-    // Fetch user details from database and build stats
     interface UserWithStats {
       userId: string
       email: string
@@ -77,13 +72,11 @@ export async function GET() {
           categoryBreakdown,
         })
       } catch (error) {
-        // Skip users that can't be found (deleted users)
         console.error(`Error fetching user ${userIdKey}:`, error)
         continue
       }
     }
 
-    // Calculate summary stats
     const totalProblems = users.reduce((sum, user) => sum + user.totalProblems, 0)
     const totalUsers = users.length
 

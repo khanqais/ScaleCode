@@ -54,7 +54,7 @@ const CallToAction = () => {
           borderWidth={3}
           disabled={false}
         />
-        {/* Background decoration */}
+       
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-gray-800/90 dark:from-white/90 dark:to-gray-200/90"></div>
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 dark:bg-black/5 rounded-full transform translate-x-16 -translate-y-16"></div>
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 dark:bg-black/5 rounded-full transform -translate-x-12 translate-y-12"></div>

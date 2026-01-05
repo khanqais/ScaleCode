@@ -47,7 +47,7 @@ export default function PlanUsageCard({ currentCount, limit, plan }: PlanUsageCa
 
   return (
     <div className={`rounded-xl border-2 ${config.borderColor} ${config.bgColor} p-6 shadow-lg`}>
-      {/* Header */}
+    
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Icon className={`w-5 h-5 ${config.color}`} />
@@ -65,7 +65,7 @@ export default function PlanUsageCard({ currentCount, limit, plan }: PlanUsageCa
         )}
       </div>
 
-      {/* Usage Stats */}
+     
       <div className="space-y-3">
         <div className="flex justify-between items-baseline">
           <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -79,7 +79,7 @@ export default function PlanUsageCard({ currentCount, limit, plan }: PlanUsageCa
           </span>
         </div>
 
-        {/* Progress Bar */}
+       
         <div className="relative w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
             className={`h-full ${isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-orange-500' : config.progressColor} transition-all duration-500 ease-out`}
@@ -87,7 +87,7 @@ export default function PlanUsageCard({ currentCount, limit, plan }: PlanUsageCa
           />
         </div>
 
-        {/* Remaining */}
+      
         <div className="flex justify-between items-center text-sm">
           <span className="text-gray-600 dark:text-gray-400">
             {remaining > 0 ? (
@@ -108,7 +108,7 @@ export default function PlanUsageCard({ currentCount, limit, plan }: PlanUsageCa
           </span>
         </div>
 
-        {/* Warning Message */}
+       
         {isNearLimit && !isAtLimit && (
           <div className="mt-4 p-3 bg-orange-100 dark:bg-orange-900/30 border border-orange-300 dark:border-orange-700 rounded-lg">
             <p className="text-sm text-orange-800 dark:text-orange-200">

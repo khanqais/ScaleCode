@@ -25,7 +25,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else if (systemPrefersDark) {
       setTheme('dark')
     } else {
-      // Default to dark mode if no preference is set
       setTheme('dark')
     }
     
