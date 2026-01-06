@@ -17,6 +17,10 @@ const problemSchema = new mongoose.Schema({
     required: [true, 'Problem statement is required'],
     trim: true
   },
+  problemImages: [{
+    type: String, // Base64 encoded images or URLs
+    trim: true
+  }],
   solutions: [{
     code: {
       type: String,

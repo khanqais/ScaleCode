@@ -187,6 +187,7 @@ interface Problem {
   _id: string
   title: string
   problemStatement: string
+  problemImages?: string[]
   myCode: string
   intuition: string
   Confidence: number
@@ -406,6 +407,24 @@ export default function RevisionPage() {
                     {problem.problemStatement}
                   </pre>
                 </div>
+
+                {/* Problem Images */}
+                {problem.problemImages && problem.problemImages.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="space-y-4">
+                      {problem.problemImages.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={image}
+                            alt={`Problem diagram ${index + 1}`}
+                            className="w-full max-w-2xl h-auto rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => window.open(image, '_blank')}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

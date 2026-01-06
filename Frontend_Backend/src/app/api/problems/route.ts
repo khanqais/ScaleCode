@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     
-    const { title, problemStatement, myCode, intuition, Confidence, category, tags, solutions } = body;
+    const { title, problemStatement, problemImages, myCode, intuition, Confidence, category, tags, solutions } = body;
 
     
     if (!title || !problemStatement || !Confidence || !category) {
@@ -142,6 +142,7 @@ export async function POST(request: NextRequest) {
       userId,
       title: title.trim(),
       problemStatement: problemStatement.trim(),
+      problemImages: problemImages || [],
       myCode: myCode?.trim() || solutions?.[0]?.code || '',
       intuition: intuition?.trim() || solutions?.[0]?.intuition || '',
       solutions: solutions || [],

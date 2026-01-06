@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
-import { ArrowLeft, Save, X, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Save, X, AlertCircle, ImagePlus, Image as ImageIcon } from 'lucide-react'
 
 interface Solution {
   code: string
@@ -23,6 +23,7 @@ interface Problem {
   category: string
   Confidence: number
   problemStatement: string
+  problemImages?: string[]
   myCode: string
   intuition: string
   solutions?: Solution[]
@@ -137,7 +138,8 @@ export default function EditProblemPage() {
     category: '',
     Confidence: 1,
     problemStatement: '',
-    tags: [] as string[]
+    tags: [] as string[],
+    problemImages: [] as string[]
   })
   const [solutions, setSolutions] = useState<Solution[]>([{
     code: '',
@@ -148,6 +150,8 @@ export default function EditProblemPage() {
     approach: ''
   }])
   const [tagInput, setTagInput] = useState('')
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Fetch problem data
   useEffect(() => {
@@ -184,7 +188,8 @@ export default function EditProblemPage() {
             category: problemData.category || '',
             Confidence: problemData.Confidence || 1,
             problemStatement: problemData.problemStatement || '',
-            tags: problemData.tags || []
+            tags: problemData.tags || [],
+            problemImages: problemData.problemImages || []
           })
           // Load solutions or create from legacy fields
           if (problemData.solutions && problemData.solutions.length > 0) {
@@ -217,6 +222,113 @@ export default function EditProblemPage() {
       ...prev,
       [field]: value
     }))
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploadingImage(true)
+    
+    try {
+      const newImages: string[] = []
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          setError('Please upload only image files')
+          continue
+        }
+        
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          setError('Image size should be less than 5MB')
+          continue
+        }
+        
+        // Convert to base64
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result as string)
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+        
+        newImages.push(base64)
+      }
+      
+      // Limit to max 5 images
+      const totalImages = [...formData.problemImages, ...newImages].slice(0, 5)
+      setFormData({ ...formData, problemImages: totalImages })
+      
+      if (formData.problemImages.length + newImages.length > 5) {
+        setError('Maximum 5 images allowed per problem')
+      }
+    } catch {
+      setError('Failed to upload image')
+    } finally {
+      setUploadingImage(false)
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const removeImage = (index: number) => {
+    setFormData({
+      ...formData,
+      problemImages: formData.problemImages.filter((_, i) => i !== index)
+    })
+  }
+
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items
+    if (!items) return
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i]
+      if (item.type.startsWith('image/')) {
+        e.preventDefault()
+        
+        const file = item.getAsFile()
+        if (!file) continue
+
+        // Check if we already have 5 images
+        if (formData.problemImages.length >= 5) {
+          setError('Maximum 5 images allowed per problem')
+          return
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          setError('Image size should be less than 5MB')
+          return
+        }
+
+        setUploadingImage(true)
+        try {
+          const base64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = () => resolve(reader.result as string)
+            reader.onerror = reject
+            reader.readAsDataURL(file)
+          })
+
+          setFormData(prev => ({
+            ...prev,
+            problemImages: [...prev.problemImages, base64].slice(0, 5)
+          }))
+        } catch {
+          setError('Failed to paste image')
+        } finally {
+          setUploadingImage(false)
+        }
+        break // Only handle first image
+      }
+    }
   }
 
   const handleSave = async () => {
@@ -254,7 +366,8 @@ export default function EditProblemPage() {
           solutions: solutions.filter(sol => sol.code.trim() !== ''),
           // Keep backward compatibility
           myCode: solutions[0]?.code || '',
-          intuition: solutions[0]?.intuition || ''
+          intuition: solutions[0]?.intuition || '',
+          problemImages: formData.problemImages
         })
       })
 
@@ -501,6 +614,70 @@ export default function EditProblemPage() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-vertical"
               placeholder="Describe the problem statement..."
             />
+
+            {/* Problem Images Upload */}
+            <div
+              className="mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg p-1 -m-1"
+              onPaste={handlePaste}
+              tabIndex={0}
+            >
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <ImageIcon className="inline w-4 h-4 mr-1" />
+                Problem Images (Optional)
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                Add images to help explain the problem. <span className="font-medium text-blue-600 dark:text-blue-400">Paste from clipboard (Ctrl+V)</span> or upload. Max 5 images, 5MB each.
+              </p>
+              
+              {/* Image Preview Grid */}
+              {formData.problemImages.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
+                  {formData.problemImages.map((image, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={image}
+                        alt={`Problem image ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Upload Button */}
+              {formData.problemImages.length < 5 && (
+                <div className="flex flex-wrap items-center gap-3">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="image-upload-edit"
+                  />
+                  <label
+                    htmlFor="image-upload-edit"
+                    className={`inline-flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors ${
+                      uploadingImage ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    <ImagePlus className="text-gray-500 dark:text-gray-400" size={20} />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {uploadingImage ? 'Uploading...' : `Add Images (${formData.problemImages.length}/5)`}
+                    </span>
+                  </label>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">or press Ctrl+V to paste</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Multiple Solutions Section */}
