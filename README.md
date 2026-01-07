@@ -89,7 +89,6 @@ Your confidence decays over time, ensuring you revisit problems before forgettin
 - **RESTful API** - Clean API architecture
 
 ### Authentication & Security
-- **Clerk** - Complete authentication solution with webhooks
 - **JWT Tokens** - Secure session management
 - **Protected Routes** - Middleware-based route protection
 
@@ -109,7 +108,7 @@ Your confidence decays over time, ensuring you revisit problems before forgettin
 ### Prerequisites
 - Node.js 18+ 
 - MongoDB database (local or Atlas)
-- Clerk account for authentication
+
 
 ### Installation
 
@@ -307,7 +306,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Striver's A2Z DSA Course** for the comprehensive category structure
 - **Spaced Repetition Research** for the scientific foundation of our algorithm
-- **Clerk** for seamless authentication
+- **NEXTAUTH** for seamless authentication
 - **Vercel** for reliable hosting and edge functions
 - **MongoDB** for flexible data storage
 - **The Developer Community** for continuous feedback and support
