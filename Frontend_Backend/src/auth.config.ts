@@ -27,6 +27,7 @@ export const authConfig: NextAuthConfig = {
       const isLoggedIn = !!auth?.user
       
       const protectedRoutes = [
+        '/admin',
         '/dashboard',
         '/private',
         '/add-problem',

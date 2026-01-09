@@ -16,6 +16,7 @@ export default auth((req) => {
   }
 
   const protectedRoutes = [
+    '/admin',
     '/dashboard',
     '/private',
     '/add-problem',

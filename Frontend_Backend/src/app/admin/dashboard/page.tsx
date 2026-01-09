@@ -24,8 +24,6 @@ interface AdminStats {
   users: UserStat[]
 }
 
-const ADMIN_IDS = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',') || [];
-
 export default function AdminDashboard() {
   const { data: session } = useSession()
   const user = session?.user
@@ -38,12 +36,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (user) {
-     
-      if (!ADMIN_IDS.includes(user.id)) {
-        router.push('/organize')
-        return
-      }
-
       fetchAdminStats()
     }
   }, [user, router])
@@ -91,7 +83,7 @@ export default function AdminDashboard() {
     )
   }
 
-  if (!ADMIN_IDS.includes(user.id)) {
+  if (error === 'Forbidden') {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
