@@ -184,6 +184,7 @@ interface Problem {
   category: string
   Confidence: number
   problemStatement: string
+  problemImages?: string[]
   myCode: string
   intuition: string
   solutions?: Solution[]
@@ -578,6 +579,31 @@ function ProblemDetailPageContent() {
               {problem.problemStatement}
             </pre>
           </div>
+
+          {/* Problem Images */}
+          {problem.problemImages && problem.problemImages.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                <Target className="w-4 h-4" />
+                Problem Images ({problem.problemImages.length})
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {problem.problemImages.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={image}
+                      alt={`Problem diagram ${index + 1}`}
+                      className="w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => window.open(image, '_blank')}
+                    />
+                    <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                      Click to enlarge
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-gray-700 mb-4 sm:mb-6">
