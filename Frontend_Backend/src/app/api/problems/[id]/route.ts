@@ -55,11 +55,15 @@ export async function GET(
       }, { status: 404 });
     }
 
-   
+    // Ensure solutions array exists
+    const problemData = {
+      ...problem.toObject(),
+      solutions: problem.solutions || []
+    }
 
     const response = NextResponse.json({
       success: true,
-      data: problem
+      data: problemData
     });
 
     

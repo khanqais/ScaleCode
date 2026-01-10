@@ -206,7 +206,7 @@ interface Problem {
   lastRevised?: Date
   revisionCount?: number
   createdAt: Date
-  solutions?: Array<{
+  solutions: Array<{
     code: string
     intuition: string
     language: string
