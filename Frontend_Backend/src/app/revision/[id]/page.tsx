@@ -423,27 +423,46 @@ export default function RevisionPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           
           <div className="flex flex-col">
-            <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col transition-colors min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh]">
-              <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 overflow-auto flex-1">
-                <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 transition-colors">Problem Statement</h2>
+            <div className="bg-white dark:bg-slate-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-slate-700 flex flex-col transition-colors min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] shadow-sm hover:shadow-md transition-shadow">
+              {/* Header with Tags */}
+              <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Description</h2>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-medium rounded-full">
+                    {problem.category}
+                  </span>
+                  {problem.revisionCount !== undefined && problem.revisionCount > 0 && (
+                    <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-medium rounded-full">
+                      Revised {problem.revisionCount}x
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              {/* Problem Statement */}
+              <div className="flex-1 overflow-auto p-4 sm:p-6">
                 <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <pre className="whitespace-pre-wrap text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed transition-colors">
+                  <pre className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-inter bg-gray-50 dark:bg-slate-800/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                     {problem.problemStatement}
                   </pre>
                 </div>
 
                 {/* Problem Images */}
                 {problem.problemImages && problem.problemImages.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Examples</h3>
                     <div className="space-y-4">
                       {problem.problemImages.map((image, index) => (
                         <div key={index} className="relative group">
-                          <img
-                            src={image}
-                            alt={`Problem diagram ${index + 1}`}
-                            className="w-full max-w-2xl h-auto rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                            onClick={() => window.open(image, '_blank')}
-                          />
+                          <div className="bg-gray-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700">
+                            <img
+                              src={image}
+                              alt={`Problem example ${index + 1}`}
+                              className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                              onClick={() => window.open(image, '_blank')}
+                            />
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">Click to expand</p>
                         </div>
                       ))}
                     </div>
@@ -646,121 +665,141 @@ export default function RevisionPage() {
       )}
 
       {showSolutionModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-lg w-full sm:max-w-4xl max-h-[90vh] sm:max-h-[80vh] flex flex-col shadow-xl transition-colors">
-            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-3">
-                <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-green-800 dark:text-green-400 transition-colors">✅ Solutions</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-xl w-full sm:max-w-5xl max-h-[95vh] sm:max-h-[90vh] flex flex-col shadow-2xl transition-colors">
+            {/* Header */}
+            <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800 rounded-t-2xl sm:rounded-t-xl flex items-center justify-between">
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Solutions</h2>
                 {problem?.solutions && problem.solutions.length > 0 && (
-                  <span className="text-xs sm:text-sm px-2 sm:px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-full font-medium">
-                    {problem.solutions.length} solution{problem.solutions.length !== 1 ? 's' : ''}
-                  </span>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                    Explore {problem.solutions.length} different approach{problem.solutions.length !== 1 ? 'es' : ''}
+                  </p>
                 )}
               </div>
               <button
                 onClick={() => setShowSolutionModal(false)}
-                className="p-1.5 sm:p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-900 dark:text-white"
+                className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                <X className="w-6 h-6" />
               </button>
             </div>
             
             {problem?.solutions && problem.solutions.length > 0 ? (
               <>
-                {/* Solution Selector */}
+                {/* Solution Tabs */}
                 {problem.solutions.length > 1 && (
-                  <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center gap-2 flex-wrap">
-                    <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">Select solution:</span>
-                    <div className="flex gap-2 flex-wrap">
-                      {problem.solutions.map((_, index) => (
+                  <div className="px-4 sm:px-6 pt-3 sm:pt-4 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                    <div className="flex gap-1 overflow-x-auto pb-3 sm:pb-4 -mb-px">
+                      {problem.solutions.map((sol, index) => (
                         <button
                           key={index}
                           onClick={() => setSelectedSolutionIndex(index)}
-                          className={`px-3 py-1.5 text-xs sm:text-sm rounded-lg font-medium transition-colors ${
+                          className={`px-4 py-2 text-sm font-medium whitespace-nowrap rounded-t-lg transition-all border-b-2 ${
                             selectedSolutionIndex === index
-                              ? 'bg-green-600 text-white'
-                              : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                              ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800'
                           }`}
                         >
-                          Solution {index + 1}
+                          <div className="flex items-center gap-2">
+                            <span>{problem.solutions[index].language?.toUpperCase() || 'SOL'}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-500">
+                              {problem.solutions[index].timeComplexity ? problem.solutions[index].timeComplexity : '-'}
+                            </span>
+                          </div>
                         </button>
                       ))}
                     </div>
                   </div>
                 )}
                 
-                {/* Solution Details */}
-                <div className="flex-1 overflow-auto p-3 sm:p-6">
+                {/* Solution Content */}
+                <div className="flex-1 overflow-auto">
                   {problem.solutions[selectedSolutionIndex] && (
-                    <div className="space-y-6">
-                      <CodeBlock 
-                        code={problem.solutions[selectedSolutionIndex].code} 
-                        language={problem.solutions[selectedSolutionIndex].language || 'cpp'}
-                      />
-                      
-                      {/* Solution Details */}
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-                        {problem.solutions[selectedSolutionIndex].timeComplexity && (
-                          <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700">
-                            <div className="text-[10px] sm:text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">Time Complexity</div>
-                            <div className="text-xs sm:text-sm font-mono text-blue-900 dark:text-blue-300">
-                              {problem.solutions[selectedSolutionIndex].timeComplexity}
-                            </div>
+                    <div className="p-4 sm:p-6">
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Main Code Section */}
+                        <div className="lg:col-span-2 space-y-6">
+                          <div>
+                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Code</h3>
+                            <CodeBlock 
+                              code={problem.solutions[selectedSolutionIndex].code} 
+                              language={problem.solutions[selectedSolutionIndex].language || 'cpp'}
+                            />
                           </div>
-                        )}
+                          
+                          {problem.solutions[selectedSolutionIndex].approach && (
+                            <div>
+                              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Approach</h3>
+                              <div className="p-4 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800">
+                                <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed whitespace-pre-wrap font-medium">
+                                  {problem.solutions[selectedSolutionIndex].approach}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                         
-                        {problem.solutions[selectedSolutionIndex].spaceComplexity && (
-                          <div className="p-3 sm:p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg border border-purple-200 dark:border-purple-700">
-                            <div className="text-[10px] sm:text-xs font-medium text-purple-600 dark:text-purple-400 mb-1">Space Complexity</div>
-                            <div className="text-xs sm:text-sm font-mono text-purple-900 dark:text-purple-300">
-                              {problem.solutions[selectedSolutionIndex].spaceComplexity}
-                            </div>
+                        {/* Sidebar */}
+                        <div className="space-y-4">
+                          {/* Complexity Stats */}
+                          <div className="space-y-3">
+                            {problem.solutions[selectedSolutionIndex].timeComplexity && (
+                              <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800">
+                                <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wide mb-1">Time</div>
+                                <div className="text-lg font-mono font-bold text-blue-900 dark:text-blue-300">
+                                  {problem.solutions[selectedSolutionIndex].timeComplexity}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {problem.solutions[selectedSolutionIndex].spaceComplexity && (
+                              <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/10 rounded-lg border border-purple-200 dark:border-purple-800">
+                                <div className="text-xs font-semibold text-purple-700 dark:text-purple-400 uppercase tracking-wide mb-1">Space</div>
+                                <div className="text-lg font-mono font-bold text-purple-900 dark:text-purple-300">
+                                  {problem.solutions[selectedSolutionIndex].spaceComplexity}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {problem.solutions[selectedSolutionIndex].language && (
+                              <div className="p-4 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-lg border border-slate-300 dark:border-slate-600">
+                                <div className="text-xs font-semibold text-slate-700 dark:text-slate-400 uppercase tracking-wide mb-1">Language</div>
+                                <div className="font-semibold text-slate-900 dark:text-slate-200 capitalize">
+                                  {problem.solutions[selectedSolutionIndex].language}
+                                </div>
+                              </div>
+                            )}
                           </div>
-                        )}
-                        
-                        {problem.solutions[selectedSolutionIndex].language && (
-                          <div className="p-3 sm:p-4 bg-orange-50 dark:bg-orange-900/30 rounded-lg border border-orange-200 dark:border-orange-700">
-                            <div className="text-[10px] sm:text-xs font-medium text-orange-600 dark:text-orange-400 mb-1">Language</div>
-                            <div className="text-xs sm:text-sm font-medium text-orange-900 dark:text-orange-300 capitalize">
-                              {problem.solutions[selectedSolutionIndex].language}
+                          
+                          {/* Intuition */}
+                          {problem.solutions[selectedSolutionIndex].intuition && (
+                            <div className="p-4 bg-teal-50 dark:bg-teal-900/10 rounded-lg border border-teal-200 dark:border-teal-800">
+                              <h4 className="text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wide mb-2">Key Insight</h4>
+                              <p className="text-xs text-teal-900 dark:text-teal-200 leading-relaxed">
+                                {problem.solutions[selectedSolutionIndex].intuition}
+                              </p>
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
-                      
-                      {problem.solutions[selectedSolutionIndex].approach && (
-                        <div className="p-4 sm:p-5 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-700">
-                          <h3 className="text-xs sm:text-sm font-semibold text-indigo-900 dark:text-indigo-300 mb-2">Approach</h3>
-                          <p className="text-xs sm:text-sm text-indigo-800 dark:text-indigo-200 whitespace-pre-wrap leading-relaxed">
-                            {problem.solutions[selectedSolutionIndex].approach}
-                          </p>
-                        </div>
-                      )}
-                      
-                      {problem.solutions[selectedSolutionIndex].intuition && (
-                        <div className="p-4 sm:p-5 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
-                          <h3 className="text-xs sm:text-sm font-semibold text-yellow-900 dark:text-yellow-300 mb-2">Intuition</h3>
-                          <p className="text-xs sm:text-sm text-yellow-800 dark:text-yellow-200 whitespace-pre-wrap leading-relaxed">
-                            {problem.solutions[selectedSolutionIndex].intuition}
-                          </p>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center p-6">
+              <div className="flex-1 flex items-center justify-center p-8">
                 <div className="text-center">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">No solutions available yet</p>
+                  <p className="text-base text-gray-500 dark:text-gray-400">No solutions available yet</p>
                 </div>
               </div>
             )}
             
-            <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+            {/* Footer */}
+            <div className="px-4 sm:px-6 py-4 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 flex justify-end gap-3 rounded-b-2xl sm:rounded-b-xl">
               <button
                 onClick={() => setShowSolutionModal(false)}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
                 Close
               </button>
