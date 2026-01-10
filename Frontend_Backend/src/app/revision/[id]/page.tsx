@@ -6,6 +6,17 @@ import { ArrowLeft, Check, Eye, EyeOff, X, Copy, Code2, Sparkles, Lightbulb, Che
 import axios from 'axios'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import dynamic from 'next/dynamic'
+
+
+const Editor = dynamic(() => import('@monaco-editor/react'), { 
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-full">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
+  )
+})
 
 
 function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string }) {
@@ -195,6 +206,15 @@ interface Problem {
   lastRevised?: Date
   revisionCount?: number
   createdAt: Date
+  solutions?: Array<{
+    code: string
+    intuition: string
+    language: string
+    timeComplexity: string
+    spaceComplexity: string
+    approach: string
+    createdAt: Date
+  }>
 }
 
 export default function RevisionPage() {
@@ -213,6 +233,10 @@ export default function RevisionPage() {
   const [aiHintLoading, setAiHintLoading] = useState(false)
   const [aiHintError, setAiHintError] = useState<string>('')
   const [loading, setLoading] = useState(true)
+  const [editorLanguage, setEditorLanguage] = useState<string>('cpp')
+  const [editorTheme, setEditorTheme] = useState<string>('vs-dark')
+  const [selectedSolutionIndex, setSelectedSolutionIndex] = useState<number>(0)
+
   const [updating, setUpdating] = useState(false)
 
   const fetchProblem = useCallback(async () => {
@@ -432,19 +456,70 @@ export default function RevisionPage() {
          
           <div className="flex flex-col">
             <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col transition-colors min-h-[250px] sm:min-h-[400px] lg:min-h-[500px] max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh]">
-              <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-white transition-colors">Write Your Solution</h2>
+              
+              {/* Editor Header */}
+              <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-white transition-colors">
+                  Write Your Solution
+                </h2>
+                
+                {/* Language Selector */}
+                <div className="flex items-center gap-2">
+                  <select
+                    value={editorLanguage}
+                    onChange={(e) => setEditorLanguage(e.target.value)}
+                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="typescript">TypeScript</option>
+                    <option value="c">C</option>
+                  </select>
+
+                  <select
+                    value={editorTheme}
+                    onChange={(e) => setEditorTheme(e.target.value)}
+                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="vs-dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="hc-black">High Contrast</option>
+                  </select>
+                </div>
               </div>
               
-              <div className="flex-1 overflow-auto">
-                <textarea
+              {/* Monaco Editor */}
+              <div className="flex-1 overflow-hidden">
+                <Editor
+                  height="100%"
+                  language={editorLanguage}
+                  theme={editorTheme}
                   value={userCode}
-                  onChange={(e) => setUserCode(e.target.value)}
-                  className="w-full h-full p-3 sm:p-4 lg:p-6 border-0 resize-none font-mono text-xs sm:text-sm focus:outline-none focus:ring-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
-                  placeholder="// Write your solution here..."
+                  onChange={(value) => setUserCode(value || '')}
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    lineNumbers: 'on',
+                    roundedSelection: false,
+                    scrollBeyondLastLine: false,
+                    readOnly: false,
+                    automaticLayout: true,
+                    tabSize: 2,
+                    wordWrap: 'on',
+                    padding: { top: 16, bottom: 16 },
+                    suggestOnTriggerCharacters: true,
+                    quickSuggestions: true,
+                    folding: true,
+                    bracketPairColorization: { enabled: true },
+                    formatOnPaste: true,
+                    formatOnType: true,
+                  }}
                 />
               </div>
 
+              {/* Editor Footer */}
               <div className="p-2.5 sm:p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 transition-colors">
                 <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 dark:text-gray-400 transition-colors">
                   <span>Lines: {userCode.split('\n').length}</span>
@@ -574,7 +649,14 @@ export default function RevisionPage() {
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
           <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-lg w-full sm:max-w-4xl max-h-[90vh] sm:max-h-[80vh] flex flex-col shadow-xl transition-colors">
             <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-green-800 dark:text-green-400 transition-colors">✅ Your Solution</h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-green-800 dark:text-green-400 transition-colors">✅ Solutions</h2>
+                {problem?.solutions && problem.solutions.length > 0 && (
+                  <span className="text-xs sm:text-sm px-2 sm:px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-full font-medium">
+                    {problem.solutions.length} solution{problem.solutions.length !== 1 ? 's' : ''}
+                  </span>
+                )}
+              </div>
               <button
                 onClick={() => setShowSolutionModal(false)}
                 className="p-1.5 sm:p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-900 dark:text-white"
@@ -583,9 +665,97 @@ export default function RevisionPage() {
               </button>
             </div>
             
-            <div className="flex-1 overflow-auto p-3 sm:p-6">
-              <CodeBlock code={problem.myCode} language="cpp" />
-            </div>
+            {problem?.solutions && problem.solutions.length > 0 ? (
+              <>
+                {/* Solution Selector */}
+                {problem.solutions.length > 1 && (
+                  <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center gap-2 flex-wrap">
+                    <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">Select solution:</span>
+                    <div className="flex gap-2 flex-wrap">
+                      {problem.solutions.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedSolutionIndex(index)}
+                          className={`px-3 py-1.5 text-xs sm:text-sm rounded-lg font-medium transition-colors ${
+                            selectedSolutionIndex === index
+                              ? 'bg-green-600 text-white'
+                              : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                          }`}
+                        >
+                          Solution {index + 1}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Solution Details */}
+                <div className="flex-1 overflow-auto p-3 sm:p-6">
+                  {problem.solutions[selectedSolutionIndex] && (
+                    <div className="space-y-6">
+                      <CodeBlock 
+                        code={problem.solutions[selectedSolutionIndex].code} 
+                        language={problem.solutions[selectedSolutionIndex].language || 'cpp'}
+                      />
+                      
+                      {/* Solution Details */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                        {problem.solutions[selectedSolutionIndex].timeComplexity && (
+                          <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700">
+                            <div className="text-[10px] sm:text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">Time Complexity</div>
+                            <div className="text-xs sm:text-sm font-mono text-blue-900 dark:text-blue-300">
+                              {problem.solutions[selectedSolutionIndex].timeComplexity}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {problem.solutions[selectedSolutionIndex].spaceComplexity && (
+                          <div className="p-3 sm:p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg border border-purple-200 dark:border-purple-700">
+                            <div className="text-[10px] sm:text-xs font-medium text-purple-600 dark:text-purple-400 mb-1">Space Complexity</div>
+                            <div className="text-xs sm:text-sm font-mono text-purple-900 dark:text-purple-300">
+                              {problem.solutions[selectedSolutionIndex].spaceComplexity}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {problem.solutions[selectedSolutionIndex].language && (
+                          <div className="p-3 sm:p-4 bg-orange-50 dark:bg-orange-900/30 rounded-lg border border-orange-200 dark:border-orange-700">
+                            <div className="text-[10px] sm:text-xs font-medium text-orange-600 dark:text-orange-400 mb-1">Language</div>
+                            <div className="text-xs sm:text-sm font-medium text-orange-900 dark:text-orange-300 capitalize">
+                              {problem.solutions[selectedSolutionIndex].language}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {problem.solutions[selectedSolutionIndex].approach && (
+                        <div className="p-4 sm:p-5 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-700">
+                          <h3 className="text-xs sm:text-sm font-semibold text-indigo-900 dark:text-indigo-300 mb-2">Approach</h3>
+                          <p className="text-xs sm:text-sm text-indigo-800 dark:text-indigo-200 whitespace-pre-wrap leading-relaxed">
+                            {problem.solutions[selectedSolutionIndex].approach}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {problem.solutions[selectedSolutionIndex].intuition && (
+                        <div className="p-4 sm:p-5 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
+                          <h3 className="text-xs sm:text-sm font-semibold text-yellow-900 dark:text-yellow-300 mb-2">Intuition</h3>
+                          <p className="text-xs sm:text-sm text-yellow-800 dark:text-yellow-200 whitespace-pre-wrap leading-relaxed">
+                            {problem.solutions[selectedSolutionIndex].intuition}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center p-6">
+                <div className="text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">No solutions available yet</p>
+                </div>
+              </div>
+            )}
             
             <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
               <button

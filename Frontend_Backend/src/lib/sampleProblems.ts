@@ -1,4 +1,3 @@
-// Sample problems for demo/non-logged-in users
 export interface DemoProblem {
   _id: string
   title: string

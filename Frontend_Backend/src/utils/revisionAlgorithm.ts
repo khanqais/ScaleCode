@@ -1,4 +1,3 @@
-// Revision Algorithm with Confidence Decay
 
 export interface Problem {
   _id: string;
@@ -17,27 +16,20 @@ export interface ProblemWithScore extends Problem {
   confidenceDecay: number;
 }
 
-/**
- * Calculate confidence decay based on time since last revision
- * Reduces confidence by 10% every 2 weeks (14 days)
- */
+
 export function calculateConfidenceDecay(lastRevisedDate: Date | string): number {
   const now = new Date();
   const lastRevised = new Date(lastRevisedDate);
   const daysSinceRevision = Math.floor((now.getTime() - lastRevised.getTime()) / (1000 * 60 * 60 * 24));
   
-  // Calculate number of 2-week periods that have passed
   const twoWeekPeriods = Math.floor(daysSinceRevision / 14);
   
-  // 10% decay per 2-week period, capped at 50% decay
   const decayPercentage = Math.min(twoWeekPeriods * 0.10, 0.50);
   
   return decayPercentage;
 }
 
-/**
- * Calculate adjusted confidence after applying time decay
- */
+
 export function calculateAdjustedConfidence(
   originalConfidence: number,
   lastRevisedDate: Date | string
@@ -45,15 +37,11 @@ export function calculateAdjustedConfidence(
   const decay = calculateConfidenceDecay(lastRevisedDate);
   const adjustedConfidence = originalConfidence * (1 - decay);
   
-  // Ensure confidence doesn't go below 1
+  
   return Math.max(1, adjustedConfidence);
 }
 
-/**
- * Calculate priority score for a problem
- * Lower score = Higher priority for revision
- * Score considers: adjusted confidence and days since revision
- */
+
 export function calculatePriorityScore(problem: Problem): number {
   const now = new Date();
   const lastRevised = new Date(problem.lastRevised);
@@ -61,24 +49,20 @@ export function calculatePriorityScore(problem: Problem): number {
   
   const adjustedConfidence = calculateAdjustedConfidence(problem.Confidence, problem.lastRevised);
   
-  // Priority formula:
-  // - Lower confidence = Higher priority (inverse)
-  // - More days since revision = Higher priority
+ 
   const confidenceWeight = 0.7;
   const timeWeight = 0.3;
   
   const confidenceComponent = adjustedConfidence * confidenceWeight;
   const timeComponent = Math.min(daysSinceRevision / 30, 1) * 10 * timeWeight; // Normalize to 0-10 scale
   
-  // Lower score = needs more revision
+
   const priorityScore = confidenceComponent - timeComponent;
   
   return priorityScore;
 }
 
-/**
- * Process problems and add revision metadata
- */
+
 export function processProblemsForRevision(problems: Problem[]): ProblemWithScore[] {
   return problems.map(problem => {
     const now = new Date();
@@ -98,16 +82,12 @@ export function processProblemsForRevision(problems: Problem[]): ProblemWithScor
   });
 }
 
-/**
- * Sort problems by priority (lowest score first = highest priority)
- */
+
 export function sortByPriority(problems: ProblemWithScore[]): ProblemWithScore[] {
   return [...problems].sort((a, b) => a.priorityScore - b.priorityScore);
 }
 
-/**
- * Filter problems that need revision based on criteria
- */
+
 export function getProblemsNeedingRevision(
   problems: ProblemWithScore[],
   options: {
@@ -117,8 +97,8 @@ export function getProblemsNeedingRevision(
   } = {}
 ): ProblemWithScore[] {
   const {
-    minConfidence = 7, // Problems with confidence < 7 need revision
-    minDaysSinceRevision = 7, // Or haven't been revised in 7 days
+    minConfidence = 7, 
+    minDaysSinceRevision = 7, 
     maxProblems = 50
   } = options;
   
@@ -130,9 +110,7 @@ export function getProblemsNeedingRevision(
   return sortByPriority(needsRevision).slice(0, maxProblems);
 }
 
-/**
- * Group problems by confidence level
- */
+
 export function groupByConfidenceLevel(problems: ProblemWithScore[]) {
   return {
     urgent: problems.filter(p => p.adjustedConfidence < 4), // Very low confidence
@@ -142,9 +120,7 @@ export function groupByConfidenceLevel(problems: ProblemWithScore[]) {
   };
 }
 
-/**
- * Get revision statistics
- */
+
 export function getRevisionStats(problems: ProblemWithScore[]) {
   const total = problems.length;
   const groups = groupByConfidenceLevel(problems);

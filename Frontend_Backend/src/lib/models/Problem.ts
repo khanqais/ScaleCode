@@ -18,7 +18,7 @@ const problemSchema = new mongoose.Schema({
     trim: true
   },
   problemImages: [{
-    type: String, // Base64 encoded images or URLs
+    type: String,
     trim: true
   }],
   solutions: [{
@@ -53,7 +53,7 @@ const problemSchema = new mongoose.Schema({
       default: Date.now
     }
   }],
-  // Keep old fields for backward compatibility
+  
   myCode: {
     type: String,
     trim: true
@@ -163,7 +163,6 @@ const problemSchema = new mongoose.Schema({
   'Design',
   'System Design',
   
-  // Company/Contest Specific
   'Interview Questions',
   'Contest Problems',
   'Mock Interview',
@@ -176,7 +175,6 @@ const problemSchema = new mongoose.Schema({
     default: [],
     validate: {
       validator: function(tags: string[]) {
-        // Each tag should be between 1-50 characters
         return tags.every(tag => tag.length >= 1 && tag.length <= 50)
       },
       message: 'Each tag must be between 1 and 50 characters'
@@ -194,7 +192,6 @@ problemSchema.index({ userId: 1, createdAt: -1 });
 problemSchema.index({ userId: 1, category: 1 });
 problemSchema.index({ userId: 1, tags: 1 });
 
-// Clear any cached model to ensure we use the latest schema
 if (mongoose.models.Problem) {
   delete mongoose.models.Problem;
 }

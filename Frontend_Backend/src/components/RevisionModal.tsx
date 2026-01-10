@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 
-// Solution interface
 interface Solution {
   code: string
   intuition: string
@@ -13,7 +12,6 @@ interface Solution {
   createdAt?: string
 }
 
-// Problem interface
 interface Problem {
   _id: string
   userId?: string
@@ -436,7 +434,6 @@ function ComparisonPhase({
         <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Solution Comparison</h3>
         <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Compare your solution with your original solution</p>
         
-        {/* Solution tabs if multiple solutions exist */}
         {hasSolutions && problem.solutions && problem.solutions.length > 1 && (
           <div className="flex flex-wrap gap-2 mt-3">
             {problem.solutions.map((_, index) => (

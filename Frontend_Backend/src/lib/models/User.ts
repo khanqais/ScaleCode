@@ -83,7 +83,6 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes - email is already indexed by unique: true above
 userSchema.index({ provider: 1, providerId: 1 });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
