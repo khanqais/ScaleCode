@@ -8,7 +8,7 @@ import { SnowfallWrapper } from '@/components/SnowfallWrapper'
 const page = () => {
   return (
     <div className="min-h-screen bg-transparent">
-      <SnowfallWrapper />
+      {/* <SnowfallWrapper /> */}
       <Navbar />
       <Hero />
       <Features />
