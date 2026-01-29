@@ -49,17 +49,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         otp: { label: "OTP", type: "text" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.otp) {
-          throw new Error("Email and OTP are required")
-        }
+        const email = credentials?.email as string | undefined
+        const otp = credentials?.otp as string | undefined 
+        if (!email || !otp) {
+    throw new Error("Email and OTP are required")
+  }
+
+
 
         await connectDB()
 
-        const user = await User.findOne({ 
-          email: credentials.email.toLowerCase(),
-          otp: credentials.otp,
-          otpExpiry: { $gt: new Date() }
-        })
+        const user = await User.findOne({
+            email: email.toLowerCase(),
+            otp,
+            otpExpiry: { $gt: new Date() }
+            })
+
         
         if (!user) {
           throw new Error("Invalid or expired OTP")
