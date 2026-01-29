@@ -1,6 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  
+  experimental: {
+    optimizePackageImports: [
+      "framer-motion",
+      "lucide-react",
+      "@monaco-editor/react",
+      "react-syntax-highlighter",
+    ],
+  },
+
+ 
+  compiler: {
+   
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+
   images: {
     remotePatterns: [
       {
@@ -20,7 +36,12 @@ const nextConfig: NextConfig = {
         hostname: "avatars.githubusercontent.com",
       },
     ],
+    
+    formats: ["image/avif", "image/webp"],
   },
+
+  
+  poweredByHeader: false,
 };
 
 export default nextConfig;

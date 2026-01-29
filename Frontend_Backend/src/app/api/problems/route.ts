@@ -14,12 +14,11 @@ async function getUserPlan(userId: string) {
   }
 }
 
-// Get problem limit based on plan - Updated to match your features
 function getProblemLimit(plan: string): number {
   const limits: Record<string, number> = {
-    'free': 100,           // problem_limit feature
-    'pro': 2000,           // problem_limit_pro feature
-    'pro_max': 4000        // problem_limit_max feature
+    'free': 100,          
+    'pro': 2000,           
+    'pro_max': 4000       
   };
   
   return limits[plan] || 100;
@@ -46,14 +45,18 @@ async function ensureUserExists(userId: string, email?: string, firstName?: stri
 
 async function updateUserStats(userId: string) {
   try {
-    
-    const problems = await Problem.find({ userId });
-    const totalProblems = problems.length;
-    const averageConfidence = totalProblems > 0 
-      ? problems.reduce((sum: number, p: { Confidence: number }) => sum + p.Confidence, 0) / totalProblems 
-      : 0;
+    const stats = await Problem.aggregate([
+      { $match: { userId } },
+      {
+        $group: {
+          _id: null,
+          totalProblems: { $sum: 1 },
+          averageConfidence: { $avg: '$Confidence' }
+        }
+      }
+    ]);
 
-    
+    const { totalProblems = 0, averageConfidence = 0 } = stats[0] || {};
 
     await User.findByIdAndUpdate(
       userId,
@@ -64,7 +67,7 @@ async function updateUserStats(userId: string) {
       }
     );
   } catch {
-    // Error updating user stats
+    
   }
 }
 
@@ -82,12 +85,10 @@ export async function POST(request: NextRequest) {
     
     const userId = session.user.id;
 
-    // Get user's current plan and calculate limit
     const userPlan = await getUserPlan(userId);
     const problemLimit = getProblemLimit(userPlan);
     const currentProblemCount = await Problem.countDocuments({ userId });
     
-    // Check if user has reached their limit
     if (currentProblemCount >= problemLimit) {
       return NextResponse.json({
         success: false,

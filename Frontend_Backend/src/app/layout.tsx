@@ -4,19 +4,12 @@ import PageTransition from "@/components/page-transition";
 import SessionProvider from "@/components/SessionProvider";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { IBM_Plex_Sans, Playfair_Display } from "next/font/google";
+import { IBM_Plex_Sans } from "next/font/google";
 
 const ibmPlexSans = IBM_Plex_Sans({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  display: 'swap',
-});
-
-const playfairDisplay = Playfair_Display({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-playfair',
+  display: 'swap'
 });
 
 export const metadata: Metadata = {
@@ -109,7 +102,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>AlgoGrid - Master DSA Patterns & Coding Challenges</title>
+        <title>AlgoGrid - Master DSA Patterns &amp; Coding Challenges</title>
+        {/* Preconnect hints for faster resource loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* DNS prefetch for external services */}
+        <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
+        <link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
         <link rel="icon" type="image/png" href="/logo_black.png" />
         <link rel="apple-touch-icon" href="/logo_black.png" />
         <script
@@ -119,7 +118,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta charSet="UTF-8" />
       </head>
-      <body className="text-black dark:text-white transition-colors">
+      <body className=" font-sans text-black dark:text-white transition-colors">
         <SessionProvider>
           <ThemeProvider>
             <div className="relative z-10 min-h-screen w-full">
