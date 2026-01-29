@@ -97,8 +97,7 @@ export async function POST(request: NextRequest) {
 
       await transporter.sendMail(mailOptions);
       
-      console.log(`✅ Email sent successfully to ${email}`);
-      console.log(`OTP: ${otp}`);
+     
     } catch (emailError) {
       console.error('❌ Failed to send email. Error details:');
       console.error('Error message:', emailError instanceof Error ? emailError.message : 'Unknown error');

@@ -56,7 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         await connectDB()
 
         const user = await User.findOne({ 
-          email: credentials.email,
+          email: credentials.email.toLowerCase(),
           otp: credentials.otp,
           otpExpiry: { $gt: new Date() }
         })
