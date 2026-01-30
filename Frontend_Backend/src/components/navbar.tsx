@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useSession, signOut } from 'next-auth/react'
 import AnimatedThemeSwitch from './AnimatedThemeSwitch'
 import { Button } from '@/components/ui/button'
-import { Plus, LogOut, User } from 'lucide-react'
+import { Plus, LogOut } from 'lucide-react'
 
 function UserButton() {
   const { data: session } = useSession()
@@ -129,17 +129,23 @@ const Navbar = () => {
       >
         <Link href="/" className="flex items-center space-x-3">
           <div className="w-12 h-12 rounded-lg overflow-hidden pointer-events-none select-none">
-            <img 
-              src="/logo_white.png" 
-              alt="AlgoGrid Logo" 
-              className="w-full h-full object-cover dark:hidden" 
+            <Image
+              src="/logo_white.png"
+              alt="AlgoGrid Logo"
+              className="object-cover dark:hidden"
               draggable="false"
+              width={48}
+              height={48}
+              unoptimized
             />
-            <img 
-              src="/logo_black.png" 
-              alt="AlgoGrid Logo" 
-              className="w-full h-full object-cover hidden dark:block" 
+            <Image
+              src="/logo_black.png"
+              alt="AlgoGrid Logo"
+              className="object-cover hidden dark:block"
               draggable="false"
+              width={48}
+              height={48}
+              unoptimized
             />
           </div>
           <span className="text-xl font-bold text-black dark:text-white transition-colors">AlgoGrid</span>

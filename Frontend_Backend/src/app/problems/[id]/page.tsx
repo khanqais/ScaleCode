@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
+import Image from 'next/image'
 import { 
   ArrowLeft, 
   Calendar, 
@@ -589,12 +590,15 @@ function ProblemDetailPageContent() {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {problem.problemImages.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <img
+                  <div key={index} className="relative group w-full aspect-video">
+                    <Image
                       src={image}
                       alt={`Problem diagram ${index + 1}`}
-                      className="w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                      className="object-cover rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       onClick={() => window.open(image, '_blank')}
+                      unoptimized
                     />
                     <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                       Click to enlarge

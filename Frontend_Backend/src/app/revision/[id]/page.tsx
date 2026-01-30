@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, Check, Eye, EyeOff, X, Copy, Code2, Sparkles, Lightbulb, ChevronRight, Loader2 } from 'lucide-react'
+import Image from 'next/image'
 import axios from 'axios'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -455,11 +456,14 @@ export default function RevisionPage() {
                       {problem.problemImages.map((image, index) => (
                         <div key={index} className="relative group">
                           <div className="bg-gray-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700">
-                            <img
+                            <Image
                               src={image}
                               alt={`Problem example ${index + 1}`}
-                              className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                              className="object-cover rounded-lg border border-gray-200 dark:border-slate-700 cursor-pointer hover:opacity-90 transition-opacity"
+                              fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                               onClick={() => window.open(image, '_blank')}
+                              unoptimized
                             />
                           </div>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">Click to expand</p>

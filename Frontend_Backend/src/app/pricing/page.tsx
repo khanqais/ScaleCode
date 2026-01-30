@@ -66,7 +66,7 @@ const plans = [
 ]
 
 const PricingPage = () => {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
 
   return (
     <div className="min-h-screen bg-transparent pb-20">

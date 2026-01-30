@@ -118,7 +118,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta charSet="UTF-8" />
       </head>
-      <body className=" font-sans text-black dark:text-white transition-colors">
+      <body className={`${ibmPlexSans.className} font-sans text-black dark:text-white transition-colors`}>
         <SessionProvider>
           <ThemeProvider>
             <div className="relative z-10 min-h-screen w-full">

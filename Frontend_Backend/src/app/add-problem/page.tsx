@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle, Crown, ImagePlus, X, Image as ImageIcon } from 'lucide-react'
 
@@ -648,11 +649,14 @@ export default function AddProblemPage() {
               {formData.problemImages.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
                   {formData.problemImages.map((image, index) => (
-                    <div key={index} className="relative group">
-                      <img
+                    <div key={index} className="relative group w-full h-24">
+                      <Image
                         src={image}
                         alt={`Problem image ${index + 1}`}
-                        className="w-full h-24 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                        className="object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        unoptimized
                       />
                       <button
                         type="button"
