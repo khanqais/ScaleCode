@@ -4,13 +4,7 @@ import PageTransition from "@/components/page-transition";
 import SessionProvider from "@/components/SessionProvider";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { IBM_Plex_Sans } from "next/font/google";
 
-const ibmPlexSans = IBM_Plex_Sans({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap'
-});
 
 export const metadata: Metadata = {
   title: "AlgoGrid - Master DSA Patterns & Coding Challenges",
@@ -106,6 +100,7 @@ export default function RootLayout({
         
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
         
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
@@ -118,7 +113,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta charSet="UTF-8" />
       </head>
-      <body className={`${ibmPlexSans.className} font-sans font-normal text-black dark:text-white transition-colors`}>
+      <body className={`font-normal text-black dark:text-white transition-colors`}>
         <SessionProvider>
           <ThemeProvider>
             <div className="relative z-10 min-h-screen w-full">

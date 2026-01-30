@@ -223,7 +223,7 @@ html.dark {
 }
 
 body {
-  font-family: var(--font-sans);
+   font-family: var(--font-playfair), 'Playfair Display', serif;
   background: transparent !important;
   font-weight: 400;
 }
