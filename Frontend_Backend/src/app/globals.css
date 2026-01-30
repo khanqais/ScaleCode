@@ -225,6 +225,7 @@ html.dark {
 body {
   font-family: var(--font-sans);
   background: transparent !important;
+  font-weight: 400;
 }
 
 /* Ensure proper contrast for form inputs */
