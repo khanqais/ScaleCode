@@ -128,11 +128,11 @@ const Navbar = () => {
         whileTap={{ scale: 0.95 }}
       >
         <Link href="/" className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-lg overflow-hidden pointer-events-none select-none">
+          <div className="w-12 h-12 rounded-lg overflow-hidden flex items-center justify-center pointer-events-none select-none">
             <Image
               src="/logo_white.png"
               alt="AlgoGrid Logo"
-              className="object-cover dark:hidden"
+              className="object-contain dark:hidden"
               draggable="false"
               width={48}
               height={48}
@@ -141,14 +141,14 @@ const Navbar = () => {
             <Image
               src="/logo_black.png"
               alt="AlgoGrid Logo"
-              className="object-cover hidden dark:block"
+              className="object-contain hidden dark:block"
               draggable="false"
               width={48}
               height={48}
               unoptimized
             />
           </div>
-          <span className="text-xl font-bold text-black dark:text-white transition-colors">AlgoGrid</span>
+          <span className="text-xl font-bold text-black dark:text-white transition-colors leading-none">AlgoGrid</span>
         </Link>
       </motion.div>
 
@@ -190,7 +190,7 @@ const Navbar = () => {
         )}
       </div>
 
-      
+      {/* Mobile Navigation */}
       <div className="md:hidden flex items-center space-x-4">
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <Link href="/add-problem">
