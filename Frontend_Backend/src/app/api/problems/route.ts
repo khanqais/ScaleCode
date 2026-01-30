@@ -267,11 +267,11 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+
+    response.headers.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=60');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
-    
+
     return response;
 
   } catch (error: unknown) {

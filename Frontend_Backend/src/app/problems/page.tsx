@@ -35,27 +35,33 @@ function ProblemsPageContent() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [searchTerm, setSearchTerm] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalProblems, setTotalProblems] = useState(0)
 
-  const fetchProblems = useCallback(async () => {
+  const fetchProblems = useCallback(async (page: number = 1) => {
     if (!user) return
-    
+
     try {
       setLoading(true)
-      const response = await fetch('/api/problems?limit=10000', {
+      const response = await fetch(`/api/problems?page=${page}&limit=20`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       })
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch problems: ${response.status}`)
       }
-      
+
       const result = await response.json()
-      
+
       if (result.success) {
         setAllProblems(result.data.problems || [])
+        setTotalPages(result.data.pagination?.totalPages || 1)
+        setTotalProblems(result.data.pagination?.total || 0)
+        setCurrentPage(page)
         setError('')
       } else {
         setError(result.error || 'Failed to fetch problems')
@@ -69,9 +75,13 @@ function ProblemsPageContent() {
 
   useEffect(() => {
     if (user) {
-      fetchProblems()
+      fetchProblems(1)
     }
   }, [user, fetchProblems])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedCategory, searchTerm])
 
   const availableCategories = [...new Set(allProblems.map((p: Problem) => p.category))] as string[]
 
@@ -136,12 +146,14 @@ function ProblemsPageContent() {
       setSelectedCategory(category)
       router.push(`/problems?category=${encodeURIComponent(category)}`)
     }
+    fetchProblems(1)
   }
 
   const clearAllFilters = () => {
     setSelectedCategory('')
     setSearchTerm('')
     router.push('/problems')
+    fetchProblems(1)
   }
 
   const handleDeleteProblem = async (problemId: string) => {
@@ -158,8 +170,8 @@ function ProblemsPageContent() {
       const result = await response.json()
 
       if (response.ok && result.success) {
-        // Simple refresh - just refetch the data
-        await fetchProblems()
+        // Simple refresh - just refetch the data on current page
+        await fetchProblems(currentPage)
       } else {
         setErrorMessage(result.error || 'Failed to delete problem')
       }
@@ -204,9 +216,9 @@ function ProblemsPageContent() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">Your Problems</h1>
             <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 transition-colors">
-              {selectedCategory 
-                ? `Showing ${filteredProblems.length} ${selectedCategory} problems`
-                : `${filteredProblems.length} total problems`
+              {selectedCategory
+                ? `${totalProblems} ${selectedCategory} problems`
+                : `${totalProblems} total problems`
               }
             </p>
           </div>
@@ -404,6 +416,29 @@ function ProblemsPageContent() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-8 mb-4">
+            <button
+              onClick={() => fetchProblems(currentPage - 1)}
+              disabled={currentPage === 1 || loading}
+              className="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              Page {currentPage} of {totalPages} ({totalProblems} problems)
+            </span>
+            <button
+              onClick={() => fetchProblems(currentPage + 1)}
+              disabled={currentPage === totalPages || loading}
+              className="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
           </div>
         )}
 

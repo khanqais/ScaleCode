@@ -103,10 +103,10 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <title>AlgoGrid - Master DSA Patterns &amp; Coding Challenges</title>
-        {/* Preconnect hints for faster resource loading */}
+        
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* DNS prefetch for external services */}
+        
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
         <link rel="icon" type="image/png" href="/logo_black.png" />

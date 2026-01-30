@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSession, signIn } from 'next-auth/react'
@@ -33,7 +33,6 @@ interface Stats {
   }
 }
 
-// Custom SignIn Button Component
 function SignInButton({ children, className }: { children: React.ReactNode, className?: string }) {
   return (
     <button 
@@ -61,14 +60,15 @@ export default function OrganizePage() {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [initialFetchDone, setInitialFetchDone] = useState(false)
 
   const fetchProblems = useCallback(async () => {
     if (!user) {
        return
     }
-    
+
     try {
-      const response = await fetch(`/api/problems?t=${Date.now()}`)
+      const response = await fetch(`/api/problems?limit=5`)
       const data = await response.json()
       
       if (data.success) {
@@ -83,9 +83,9 @@ export default function OrganizePage() {
 
   const fetchStats = useCallback(async () => {
     if (!user) return
-    
+
     try {
-      const response = await fetch(`/api/users/stats?t=${Date.now()}`)
+      const response = await fetch(`/api/users/stats`)
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
@@ -122,19 +122,23 @@ export default function OrganizePage() {
 
   useEffect(() => {
     if (user) {
-      fetchAllData()
+      fetchAllData().then(() => {
+        setInitialFetchDone(true)
+      })
     }
-  }, [user, router, fetchAllData])
+  }, [user, fetchAllData])
 
   useEffect(() => {
+    if (!initialFetchDone) return
+
     const searchParams = new URLSearchParams(window.location.search)
     const refresh = searchParams.get('refresh')
-    
+
     if (refresh && user) {
       fetchAllData()
       window.history.replaceState({}, '', '/organize')
     }
-  }, [user, fetchAllData])
+  }, [user, fetchAllData, initialFetchDone])
 
   const getConfidenceColor = (confidence: number) => {
     if (confidence <= 3) {
