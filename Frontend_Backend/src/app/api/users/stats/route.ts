@@ -18,12 +18,12 @@ export async function GET() {
     
     const userId = session.user.id;
 
-    // Use MongoDB aggregation for better performance
+    
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
 
     const [statsResult, categoryResult, confidenceResult, recentResult] = await Promise.all([
-      // Main stats aggregation
+      
       Problem.aggregate([
         { $match: { userId } },
         {
@@ -35,12 +35,12 @@ export async function GET() {
           }
         }
       ]),
-      // Category breakdown
+      
       Problem.aggregate([
         { $match: { userId } },
         { $group: { _id: '$category', count: { $sum: 1 } } }
       ]),
-      // Confidence distribution
+      
       Problem.aggregate([
         { $match: { userId } },
         {
@@ -52,14 +52,14 @@ export async function GET() {
           }
         }
       ]),
-      // Recent activity count
+      
       Problem.countDocuments({ userId, createdAt: { $gt: weekAgo } })
     ]);
 
     const mainStats = statsResult[0] || { totalProblems: 0, averageConfidence: 0, categories: [] };
     const confidenceStats = confidenceResult[0] || { low: 0, medium: 0, high: 0 };
     
-    // Convert category aggregation to object
+    
     const categoryStats = categoryResult.reduce((acc: Record<string, number>, item: { _id: string; count: number }) => {
       acc[item._id] = item.count;
       return acc;

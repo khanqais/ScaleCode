@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       
       const hashedPassword = await bcrypt.hash(password, 12)
       existingUser.password = hashedPassword
-      existingUser.provider = 'credentials' // or keep the OAuth provider
+      existingUser.provider = 'credentials' 
       await existingUser.save()
       
       return NextResponse.json({
@@ -57,10 +57,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Hash password
+    
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create new user
+    
     const user = new User({
       email: email.toLowerCase(),
       password: hashedPassword,

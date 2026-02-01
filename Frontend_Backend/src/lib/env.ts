@@ -11,7 +11,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).optional().default('development'),
 })
 
-// Validate environment variables at startup
+
 export function validateEnv() {
   try {
     const parsed = envSchema.safeParse(process.env)
@@ -28,5 +28,5 @@ export function validateEnv() {
   }
 }
 
-// Export validated environment variables
+
 export const env = envSchema.parse(process.env)

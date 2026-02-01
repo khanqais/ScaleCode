@@ -131,7 +131,7 @@ export default function AdminDashboard() {
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Header */}
+        {}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
             Admin Dashboard
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        {/* Stats Cards */}
+        {}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Users Table */}
+        {}
         <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white transition-colors flex items-center gap-2">
@@ -263,7 +263,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* User Problems Modal */}
+      {}
       {selectedUser && (
         <UserProblemsModal
           userId={selectedUser.id}

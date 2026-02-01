@@ -18,7 +18,7 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
-      "src/components/prism.js", // Ignore the minified prism.js file
+      "src/components/prism.js", 
     ],
   },
 ];

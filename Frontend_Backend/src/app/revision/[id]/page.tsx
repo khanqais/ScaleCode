@@ -61,7 +61,7 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Failed to copy
+      
     }
   }
 
@@ -248,7 +248,7 @@ export default function RevisionPage() {
         setNewConfidence(response.data.data.Confidence)
       }
     } catch {
-      // Error fetching problem
+      
     } finally {
       setLoading(false)
     }
@@ -425,7 +425,7 @@ export default function RevisionPage() {
           
           <div className="flex flex-col">
             <div className="bg-white dark:bg-slate-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-slate-700 flex flex-col transition-colors min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] shadow-sm hover:shadow-md transition-shadow">
-              {/* Header with Tags */}
+              {}
               <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Description</h2>
                 <div className="flex items-center gap-2 flex-wrap">
@@ -440,7 +440,7 @@ export default function RevisionPage() {
                 </div>
               </div>
               
-              {/* Problem Statement */}
+              {}
               <div className="flex-1 overflow-auto p-4 sm:p-6">
                 <div className="prose prose-sm max-w-none dark:prose-invert">
                   <pre className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-inter bg-gray-50 dark:bg-slate-800/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
@@ -448,7 +448,7 @@ export default function RevisionPage() {
                   </pre>
                 </div>
 
-                {/* Problem Images */}
+                {}
                 {problem.problemImages && problem.problemImages.length > 0 && (
                   <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Examples</h3>
@@ -480,13 +480,13 @@ export default function RevisionPage() {
           <div className="flex flex-col">
             <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col transition-colors min-h-[250px] sm:min-h-[400px] lg:min-h-[500px] max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh]">
               
-              {/* Editor Header */}
+              {}
               <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                 <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-white transition-colors">
                   Write Your Solution
                 </h2>
                 
-                {/* Language Selector */}
+                {}
                 <div className="flex items-center gap-2">
                   <select
                     value={editorLanguage}
@@ -513,7 +513,7 @@ export default function RevisionPage() {
                 </div>
               </div>
               
-              {/* Monaco Editor */}
+              {}
               <div className="flex-1 overflow-hidden">
                 <Editor
                   height="100%"
@@ -542,7 +542,7 @@ export default function RevisionPage() {
                 />
               </div>
 
-              {/* Editor Footer */}
+              {}
               <div className="p-2.5 sm:p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 transition-colors">
                 <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 dark:text-gray-400 transition-colors">
                   <span>Lines: {userCode.split('\n').length}</span>
@@ -671,7 +671,7 @@ export default function RevisionPage() {
       {showSolutionModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
           <div className="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-xl w-full sm:max-w-5xl max-h-[95vh] sm:max-h-[90vh] flex flex-col shadow-2xl transition-colors">
-            {/* Header */}
+            {}
             <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800 rounded-t-2xl sm:rounded-t-xl flex items-center justify-between">
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Solutions</h2>
@@ -691,7 +691,7 @@ export default function RevisionPage() {
             
             {problem?.solutions && problem.solutions.length > 0 ? (
               <>
-                {/* Solution Tabs */}
+                {}
                 {problem.solutions.length > 1 && (
                   <div className="px-4 sm:px-6 pt-3 sm:pt-4 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
                     <div className="flex gap-1 overflow-x-auto pb-3 sm:pb-4 -mb-px">
@@ -717,12 +717,12 @@ export default function RevisionPage() {
                   </div>
                 )}
                 
-                {/* Solution Content */}
+                {}
                 <div className="flex-1 overflow-auto">
                   {problem.solutions[selectedSolutionIndex] && (
                     <div className="p-4 sm:p-6">
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Main Code Section */}
+                        {}
                         <div className="lg:col-span-2 space-y-6">
                           <div>
                             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Code</h3>
@@ -744,9 +744,9 @@ export default function RevisionPage() {
                           )}
                         </div>
                         
-                        {/* Sidebar */}
+                        {}
                         <div className="space-y-4">
-                          {/* Complexity Stats */}
+                          {}
                           <div className="space-y-3">
                             {problem.solutions[selectedSolutionIndex].timeComplexity && (
                               <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -776,7 +776,7 @@ export default function RevisionPage() {
                             )}
                           </div>
                           
-                          {/* Intuition */}
+                          {}
                           {problem.solutions[selectedSolutionIndex].intuition && (
                             <div className="p-4 bg-teal-50 dark:bg-teal-900/10 rounded-lg border border-teal-200 dark:border-teal-800">
                               <h4 className="text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wide mb-2">Key Insight</h4>
@@ -799,7 +799,7 @@ export default function RevisionPage() {
               </div>
             )}
             
-            {/* Footer */}
+            {}
             <div className="px-4 sm:px-6 py-4 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 flex justify-end gap-3 rounded-b-2xl sm:rounded-b-xl">
               <button
                 onClick={() => setShowSolutionModal(false)}
@@ -812,11 +812,11 @@ export default function RevisionPage() {
         </div>
       )}
 
-      {/* AI Hint Modal */}
+      {}
       {showAIHintModal && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
           <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-lg w-full sm:max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-xl transition-colors">
-            {/* Header */}
+            {}
             <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
               <div className="flex items-center gap-2 sm:gap-3">
                 <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
@@ -835,7 +835,7 @@ export default function RevisionPage() {
               </button>
             </div>
 
-            {/* Hint Level Selector */}
+            {}
             <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
               <p className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Choose hint level:</p>
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -890,7 +890,7 @@ export default function RevisionPage() {
               </div>
             </div>
             
-            {/* Hint Content */}
+            {}
             <div className="flex-1 overflow-auto p-4 sm:p-6">
               {aiHintLoading ? (
                 <div className="flex flex-col items-center justify-center py-8 sm:py-12">
@@ -946,7 +946,7 @@ export default function RevisionPage() {
               )}
             </div>
             
-            {/* Footer */}
+            {}
             <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                 💡 Try solving before getting more hints!

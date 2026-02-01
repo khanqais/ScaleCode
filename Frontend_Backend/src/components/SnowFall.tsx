@@ -1,4 +1,4 @@
-// components/snowfall-wrapper.tsx
+
 'use client'
 import Snowfall from "react-snowfall"
 

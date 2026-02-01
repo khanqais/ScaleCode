@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: false // Not required for OAuth users
+    required: false 
   },
   firstName: {
     type: String,
@@ -24,11 +24,11 @@ const userSchema = new mongoose.Schema({
     type: String
   },
   provider: {
-    type: String, // 'credentials', 'google', 'github'
+    type: String, 
     default: 'credentials'
   },
   providerId: {
-    type: String // OAuth provider's user ID
+    type: String 
   },
   subscriptionPlan: {
     type: String,

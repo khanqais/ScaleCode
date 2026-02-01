@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-// AI Hint API Route
-// This route generates progressive hints for DSA problems using Google's Gemini API
+
+
 
 interface HintRequest {
   problemTitle: string

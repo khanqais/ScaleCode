@@ -91,7 +91,7 @@ const PricingPage = () => {
           </motion.p>
         </div>
         
-        {/* Pricing Cards */}
+        {}
         <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
@@ -159,7 +159,7 @@ const PricingPage = () => {
           ))}
         </div>
         
-        {/* Additional Info Section */}
+        {}
         <div className="mt-12 md:mt-16 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             All plans include secure payment processing through Stripe

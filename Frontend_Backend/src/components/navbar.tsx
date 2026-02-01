@@ -190,7 +190,7 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* Mobile Navigation */}
+      {}
       <div className="md:hidden flex items-center space-x-4">
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <Link href="/add-problem">

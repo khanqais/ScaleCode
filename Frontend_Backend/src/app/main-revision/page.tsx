@@ -59,7 +59,7 @@ const RevisionPage = () => {
         setRevisionData(response.data.data)
       }
     } catch {
-      // Error fetching revision problems
+      
     } finally {
       setLoading(false)
     }

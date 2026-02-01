@@ -13,7 +13,7 @@ async function migrateProblemConfidence() {
 
     const Problem = mongoose.model('Problem', new mongoose.Schema({}, { strict: false }));
 
-    // Find problems without Confidence field
+    
     const problemsWithoutConfidence = await Problem.find({
       Confidence: { $exists: false }
     });
@@ -50,7 +50,7 @@ async function migrateProblemConfidence() {
     console.log(`✅ Successfully migrated ${updated} problems`);
     console.log('🎉 Migration complete!');
 
-    // Verify
+    
     const remaining = await Problem.countDocuments({ Confidence: { $exists: false } });
     console.log(`📊 Problems without Confidence: ${remaining}`);
 
@@ -62,7 +62,7 @@ async function migrateProblemConfidence() {
   }
 }
 
-// Run if called directly
+
 if (require.main === module) {
   migrateProblemConfidence();
 }

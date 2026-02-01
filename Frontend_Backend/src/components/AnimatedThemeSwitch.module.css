@@ -149,7 +149,7 @@
   transition: var(--transition);
 }
 
-/* Actions */
+
 
 .checkbox:checked + .container {
   background-color: var(--container-night-bg);

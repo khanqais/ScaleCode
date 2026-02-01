@@ -34,59 +34,59 @@ interface Problem {
 }
 
 const categories = [
-  // Step 1: Basics
+  
   'Basic Maths',
   'Basic Recursion',
   'Basic Hashing',
   
-  // Step 2: Sorting
+  
   'Sorting Algorithms',
   
-  // Step 3: Arrays
+  
   'Arrays',
   
-  // Step 4: Binary Search
+  
   'Binary Search',
   
-  // Step 5: Strings
+  
   'Strings',
   
-  // Step 6: Linked List
+  
   'Linked List',
   'Doubly Linked List',
   
-  // Step 7: Recursion Patterns
+  
   'Recursion',
   'Subsequences',
   'Backtracking',
   
-  // Step 8: Bit Manipulation
+  
   'Bit Manipulation',
   
-  // Step 9: Stack and Queues
+  
   'Stack',
   'Queue',
   'Monotonic Stack',
   
-  // Step 10: Sliding Window & Two Pointer
+  
   'Sliding Window',
   'Two Pointers',
   
-  // Step 11: Heaps
+  
   'Heap',
   'Priority Queue',
   
-  // Step 12: Greedy
+  
   'Greedy Algorithms',
   
-  // Step 13: Binary Trees
+  
   'Binary Tree',
   'Tree Traversal',
   
-  // Step 14: Binary Search Trees
+  
   'Binary Search Tree',
   
-  // Step 15: Graphs
+  
   'Graph',
   'BFS',
   'DFS',
@@ -94,7 +94,7 @@ const categories = [
   'Minimum Spanning Tree',
   'Topological Sort',
   
-  // Step 16: Dynamic Programming
+  
   'Dynamic Programming',
   'DP on Arrays',
   'DP on Grids',
@@ -102,10 +102,10 @@ const categories = [
   'DP on Trees',
   'DP on Subsequences',
   
-  // Step 17: Tries
+  
   'Trie',
   
-  // Additional Important Categories
+  
   'Mathematical',
   'Geometry',
   'Number Theory',
@@ -115,7 +115,7 @@ const categories = [
   'Design',
   'System Design',
   
-  // Company/Contest Specific
+  
   'Interview Questions',
   'Contest Problems',
   'Mock Interview'
@@ -133,7 +133,7 @@ export default function EditProblemPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   
-  // Form state
+  
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -154,7 +154,7 @@ export default function EditProblemPage() {
   const [uploadingImage, setUploadingImage] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Fetch problem data
+  
   useEffect(() => {
     if (!isLoaded || !user || !params.id) return
 
@@ -192,7 +192,7 @@ export default function EditProblemPage() {
             tags: problemData.tags || [],
             problemImages: problemData.problemImages || []
           })
-          // Load solutions or create from legacy fields
+          
           if (problemData.solutions && problemData.solutions.length > 0) {
             setSolutions(problemData.solutions)
           } else if (problemData.myCode) {
@@ -237,19 +237,19 @@ export default function EditProblemPage() {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
         
-        // Validate file type
+        
         if (!file.type.startsWith('image/')) {
           setError('Please upload only image files')
           continue
         }
         
-        // Validate file size (max 5MB)
+        
         if (file.size > 5 * 1024 * 1024) {
           setError('Image size should be less than 5MB')
           continue
         }
         
-        // Convert to base64
+        
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader()
           reader.onload = () => resolve(reader.result as string)
@@ -260,7 +260,7 @@ export default function EditProblemPage() {
         newImages.push(base64)
       }
       
-      // Limit to max 5 images
+      
       const totalImages = [...formData.problemImages, ...newImages].slice(0, 5)
       setFormData({ ...formData, problemImages: totalImages })
       
@@ -271,7 +271,7 @@ export default function EditProblemPage() {
       setError('Failed to upload image')
     } finally {
       setUploadingImage(false)
-      // Reset file input
+      
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -297,13 +297,13 @@ export default function EditProblemPage() {
         const file = item.getAsFile()
         if (!file) continue
 
-        // Check if we already have 5 images
+        
         if (formData.problemImages.length >= 5) {
           setError('Maximum 5 images allowed per problem')
           return
         }
 
-        // Validate file size (max 5MB)
+        
         if (file.size > 5 * 1024 * 1024) {
           setError('Image size should be less than 5MB')
           return
@@ -327,7 +327,7 @@ export default function EditProblemPage() {
         } finally {
           setUploadingImage(false)
         }
-        break // Only handle first image
+        break 
       }
     }
   }
@@ -365,7 +365,7 @@ export default function EditProblemPage() {
         body: JSON.stringify({
           ...formData,
           solutions: solutions.filter(sol => sol.code.trim() !== ''),
-          // Keep backward compatibility
+          
           myCode: solutions[0]?.code || '',
           intuition: solutions[0]?.intuition || '',
           problemImages: formData.problemImages
@@ -375,7 +375,7 @@ export default function EditProblemPage() {
       const result = await response.json()
       
       if (result.success) {
-        // Redirect back to problem detail page
+        
         router.push(`/problems/${problem._id}`)
       } else {
         setError(result.error || 'Failed to update problem')
@@ -442,7 +442,7 @@ export default function EditProblemPage() {
       <Navbar />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <Link
@@ -475,7 +475,7 @@ export default function EditProblemPage() {
           </div>
         </div>
 
-        {/* Error Message */}
+        {}
         {error && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
             <div className="flex items-center gap-2">
@@ -485,9 +485,9 @@ export default function EditProblemPage() {
           </div>
         )}
 
-        {/* Form */}
+        {}
         <div className="space-y-6">
-          {/* Title */}
+          {}
           <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Problem Title
@@ -502,7 +502,7 @@ export default function EditProblemPage() {
             />
           </div>
 
-          {/* Category and Confidence */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -540,7 +540,7 @@ export default function EditProblemPage() {
             </div>
           </div>
 
-          {/* Tags */}
+          {}
           <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Tags (Optional)
@@ -603,7 +603,7 @@ export default function EditProblemPage() {
             )}
           </div>
 
-          {/* Problem Statement */}
+          {}
           <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Problem Statement
@@ -616,7 +616,7 @@ export default function EditProblemPage() {
               placeholder="Describe the problem statement..."
             />
 
-            {/* Problem Images Upload */}
+            {}
             <div
               className="mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg p-1 -m-1"
               onPaste={handlePaste}
@@ -630,7 +630,7 @@ export default function EditProblemPage() {
                 Add images to help explain the problem. <span className="font-medium text-blue-600 dark:text-blue-400">Paste from clipboard (Ctrl+V)</span> or upload. Max 5 images, 5MB each.
               </p>
               
-              {/* Image Preview Grid */}
+              {}
               {formData.problemImages.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
                   {formData.problemImages.map((image, index) => (
@@ -655,7 +655,7 @@ export default function EditProblemPage() {
                 </div>
               )}
               
-              {/* Upload Button */}
+              {}
               {formData.problemImages.length < 5 && (
                 <div className="flex flex-wrap items-center gap-3">
                   <input
@@ -684,7 +684,7 @@ export default function EditProblemPage() {
             </div>
           </div>
 
-          {/* Multiple Solutions Section */}
+          {}
           <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Solutions ({solutions.length})</h2>
@@ -820,7 +820,7 @@ export default function EditProblemPage() {
           </div>
         </div>
 
-        {/* Bottom Actions */}
+        {}
         <div className="mt-8 flex items-center justify-end gap-3">
           <Link
             href={`/problems/${params.id}`}

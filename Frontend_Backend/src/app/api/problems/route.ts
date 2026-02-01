@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Validate at least one solution exists
+    
     if (!solutions || solutions.length === 0) {
       if (!myCode) {
         return NextResponse.json({

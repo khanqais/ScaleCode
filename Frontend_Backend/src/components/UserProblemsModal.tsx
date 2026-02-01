@@ -205,7 +205,7 @@ export default function UserProblemsModal({
                                 {expandedSolution?.problemId === problem.id &&
                                   expandedSolution?.solutionIndex === index && (
                                     <div className="px-3 py-3 space-y-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                                      {/* Code */}
+                                      {}
                                       <div>
                                         <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
                                           Code
@@ -215,7 +215,7 @@ export default function UserProblemsModal({
                                         </pre>
                                       </div>
 
-                                      {/* Approach */}
+                                      {}
                                       {solution.approach && (
                                         <div>
                                           <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">

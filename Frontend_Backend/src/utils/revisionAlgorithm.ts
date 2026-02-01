@@ -54,7 +54,7 @@ export function calculatePriorityScore(problem: Problem): number {
   const timeWeight = 0.3;
   
   const confidenceComponent = adjustedConfidence * confidenceWeight;
-  const timeComponent = Math.min(daysSinceRevision / 30, 1) * 10 * timeWeight; // Normalize to 0-10 scale
+  const timeComponent = Math.min(daysSinceRevision / 30, 1) * 10 * timeWeight; 
   
 
   const priorityScore = confidenceComponent - timeComponent;
@@ -113,10 +113,10 @@ export function getProblemsNeedingRevision(
 
 export function groupByConfidenceLevel(problems: ProblemWithScore[]) {
   return {
-    urgent: problems.filter(p => p.adjustedConfidence < 4), // Very low confidence
+    urgent: problems.filter(p => p.adjustedConfidence < 4), 
     high: problems.filter(p => p.adjustedConfidence >= 4 && p.adjustedConfidence < 6),
     medium: problems.filter(p => p.adjustedConfidence >= 6 && p.adjustedConfidence < 8),
-    low: problems.filter(p => p.adjustedConfidence >= 8) // Doesn't need much revision
+    low: problems.filter(p => p.adjustedConfidence >= 8) 
   };
 }
 

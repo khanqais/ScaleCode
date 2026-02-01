@@ -17,7 +17,7 @@ export async function GET(
       return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin
+    
     const adminIds = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',') || []
     if (!adminIds.includes(session.user.id)) {
       return Response.json({ success: false, error: 'Forbidden' }, { status: 403 })

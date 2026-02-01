@@ -496,7 +496,7 @@ function ComparisonPhase({
             </button>
           </div>
           
-          {/* Show intuition if exists */}
+          {}
           {activeSolution.intuition && (
             <div className="bg-yellow-50 dark:bg-yellow-900/30 border-b border-yellow-400 p-3">
               <p className="text-xs font-semibold text-yellow-800 dark:text-yellow-200 mb-1">Approach:</p>
@@ -512,7 +512,7 @@ function ComparisonPhase({
         </div>
       </div>
 
-      {/* Comparison Actions */}
+      {}
       <div className="p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
           Time taken: <span className="font-mono font-medium">{formatTime(elapsedTime)}</span>

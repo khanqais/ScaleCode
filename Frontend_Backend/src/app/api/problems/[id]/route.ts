@@ -22,7 +22,7 @@ async function updateUserStats(userId: string) {
       }
     );
   } catch {
-    // Error updating user stats
+    
   }
 }
 
@@ -55,7 +55,7 @@ export async function GET(
       }, { status: 404 });
     }
 
-    // Ensure solutions array exists
+    
     const problemData = {
       ...problem.toObject(),
       solutions: problem.solutions || []

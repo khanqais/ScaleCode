@@ -75,11 +75,11 @@ function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Failed to copy
+      
     }
   }
 
-  // Custom dark theme for syntax highlighter
+  
   const customStyle = {
     ...atomDark,
     'pre[class*="language-"]': {
@@ -581,7 +581,7 @@ function ProblemDetailPageContent() {
             </pre>
           </div>
 
-          {/* Problem Images */}
+          {}
           {problem.problemImages && problem.problemImages.length > 0 && (
             <div className="mt-6">
               <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
@@ -620,7 +620,7 @@ function ProblemDetailPageContent() {
 
           {problem.solutions && problem.solutions.length > 0 ? (
             <div>
-              {/* Solution Tabs */}
+              {}
               {problem.solutions.length > 1 && (
                 <div className="flex flex-wrap gap-2 mb-4 border-b border-gray-200 dark:border-gray-700 pb-3">
                   {problem.solutions.map((_, index) => (
@@ -639,10 +639,10 @@ function ProblemDetailPageContent() {
                 </div>
               )}
 
-              {/* Selected Solution Display */}
+              {}
               {problem.solutions[selectedSolutionIndex] && (
                 <div>
-                  {/* Complexity and Language Info */}
+                  {}
                   <div className="flex flex-wrap gap-3 mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Language:</span>
@@ -668,7 +668,7 @@ function ProblemDetailPageContent() {
                     )}
                   </div>
 
-                  {/* Intuition/Approach */}
+                  {}
                   {problem.solutions[selectedSolutionIndex].intuition && (
                     <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-3 sm:p-4 rounded-r-lg mb-4">
                       <div className="flex items-center gap-2 mb-2">
@@ -681,7 +681,7 @@ function ProblemDetailPageContent() {
                     </div>
                   )}
 
-                  {/* Code Block */}
+                  {}
                   <CodeBlock 
                     code={problem.solutions[selectedSolutionIndex].code} 
                     language={problem.solutions[selectedSolutionIndex].language} 

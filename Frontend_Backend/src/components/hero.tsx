@@ -4,16 +4,13 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { GlowingEffect } from '@/components/ui/glowing-effect'
 
-/**
- * Hero component optimized for performance.
- * Uses CSS animations instead of framer-motion to reduce TBT.
- */
+
 const Hero = () => {
   return (
     <div 
       className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
     >
-      {/* Logo icon with hover effect */}
+      {}
       <div 
         className="mb-8 sm:mb-12 transition-transform duration-300 hover:scale-110 hover:rotate-3"
       >
@@ -29,14 +26,14 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Main heading with staggered animation */}
+      {}
       <h1 
         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black dark:text-white mb-6 sm:mb-8 max-w-4xl leading-tight animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100"
       >
         Remember every algorithm, forever
       </h1>
 
-      {/* Description with staggered animation */}
+      {}
       <p 
         className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl leading-relaxed px-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200"
       >
@@ -45,7 +42,7 @@ const Hero = () => {
         Never lose track of your progress again.
       </p>
 
-      {/* CTA Button with hover animation */}
+      {}
       <div 
         className="flex flex-col sm:flex-row gap-4 items-center animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300"
       >

@@ -27,7 +27,7 @@ function ProblemsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
-  // Simple state management instead of SWR
+  
   const [allProblems, setAllProblems] = useState<Problem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -170,7 +170,7 @@ function ProblemsPageContent() {
       const result = await response.json()
 
       if (response.ok && result.success) {
-        // Simple refresh - just refetch the data on current page
+        
         await fetchProblems(currentPage)
       } else {
         setErrorMessage(result.error || 'Failed to delete problem')
@@ -231,7 +231,7 @@ function ProblemsPageContent() {
 
         {availableCategories.length > 0 && (
           <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
-            {/* Search */}
+            {}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
               <input
@@ -419,7 +419,7 @@ function ProblemsPageContent() {
           </div>
         )}
 
-        {/* Pagination Controls */}
+        {}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-8 mb-4">
             <button

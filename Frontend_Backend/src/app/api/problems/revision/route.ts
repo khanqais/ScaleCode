@@ -123,7 +123,7 @@ export async function GET(request: Request) {
   }
 }
 
-// Update last revised date when a problem is revised
+
 export async function PATCH(request: Request) {
   try {
     await connectDB();

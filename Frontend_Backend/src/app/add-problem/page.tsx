@@ -60,19 +60,19 @@ export default function AddProblemPage() {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
         
-        // Validate file type
+        
         if (!file.type.startsWith('image/')) {
           setError('Please upload only image files')
           continue
         }
         
-        // Validate file size (max 5MB)
+        
         if (file.size > 5 * 1024 * 1024) {
           setError('Image size should be less than 5MB')
           continue
         }
         
-        // Convert to base64
+        
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader()
           reader.onload = () => resolve(reader.result as string)
@@ -83,7 +83,7 @@ export default function AddProblemPage() {
         newImages.push(base64)
       }
       
-      // Limit to max 5 images
+      
       const totalImages = [...formData.problemImages, ...newImages].slice(0, 5)
       setFormData({ ...formData, problemImages: totalImages })
       
@@ -94,7 +94,7 @@ export default function AddProblemPage() {
       setError('Failed to upload image')
     } finally {
       setUploadingImage(false)
-      // Reset file input
+      
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -120,13 +120,13 @@ export default function AddProblemPage() {
         const file = item.getAsFile()
         if (!file) continue
 
-        // Check if we already have 5 images
+        
         if (formData.problemImages.length >= 5) {
           setError('Maximum 5 images allowed per problem')
           return
         }
 
-        // Validate file size (max 5MB)
+        
         if (file.size > 5 * 1024 * 1024) {
           setError('Image size should be less than 5MB')
           return
@@ -150,7 +150,7 @@ export default function AddProblemPage() {
         } finally {
           setUploadingImage(false)
         }
-        break // Only handle first image
+        break 
       }
     }
   }
@@ -206,7 +206,7 @@ export default function AddProblemPage() {
           }
         }
       } catch {
-        // Error fetching usage info
+        
       } finally {
       }
     }
@@ -355,85 +355,10 @@ export default function AddProblemPage() {
         </div>
 
         
-        {/* Your Progress Box - Commented Out */}
-        {/* {usageInfo && !loadingUsage && (
-          <div className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-100 dark:border-gray-600">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                  <TrendingUp className="text-blue-600 dark:text-blue-400 w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                    Your Progress
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                    <span className="capitalize font-medium">{usageInfo.plan}</span> Plan
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-around sm:justify-end gap-4 sm:gap-6">
-                <div className="text-center">
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400">
-                    {usageInfo.currentCount}
-                  </p>
-                  <p className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400">Created</p>
-                </div>
-                
-                <div className="h-8 sm:h-12 w-px bg-gray-300 dark:bg-gray-600"></div>
-                
-                <div className="text-center">
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600 dark:text-green-400">
-                    {usageInfo.remaining}
-                  </p>
-                  <p className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400">Remaining</p>
-                </div>
-                
-                <div className="h-8 sm:h-12 w-px bg-gray-300 dark:bg-gray-600 hidden sm:block"></div>
-                
-                <div className="text-center hidden sm:block">
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-600 dark:text-gray-400">
-                    {usageInfo.limit}
-                  </p>
-                  <p className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400">Total Limit</p>
-                </div>
-              </div>
-            </div>
-            
-           
-            <div className="mt-4">
-              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
-                <span>Usage</span>
-                <span>{Math.round((usageInfo.currentCount / usageInfo.limit) * 100)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
-                <div 
-                  className={`h-2.5 rounded-full transition-all ${
-                    usageInfo.remaining <= 5 
-                      ? 'bg-red-500' 
-                      : usageInfo.remaining <= 20 
-                      ? 'bg-yellow-500' 
-                      : 'bg-green-500'
-                  }`}
-                  style={{ width: `${Math.min((usageInfo.currentCount / usageInfo.limit) * 100, 100)}%` }}
-                ></div>
-              </div>
-              
-              {usageInfo.remaining <= 5 && usageInfo.plan === 'free' && (
-                <p className="mt-2 text-sm text-orange-600 dark:text-orange-400 flex items-center gap-1">
-                  <AlertCircle size={16} />
-                  Running low on problems! Consider upgrading to{' '}
-                  <Link href="/pricing" className="underline font-semibold hover:text-orange-700">
-                    Pro or Pro Max
-                  </Link>
-                </p>
-              )}
-            </div>
-          </div>
-        )} */}
+        {}
+        {}
   
-        {/* Limit Reached Warning */}
+        {}
         {usageInfo && usageInfo.remaining <= 0 && (
           <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
@@ -631,7 +556,7 @@ export default function AddProblemPage() {
               />
             </div>
 
-            {/* Problem Images Upload */}
+            {}
             <div
               onPaste={handlePaste}
               tabIndex={0}
@@ -645,7 +570,7 @@ export default function AddProblemPage() {
                 Add images to help explain the problem. <span className="font-medium text-blue-600 dark:text-blue-400">Paste from clipboard (Ctrl+V)</span> or upload. Max 5 images, 5MB each.
               </p>
               
-              {/* Image Preview Grid */}
+              {}
               {formData.problemImages.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
                   {formData.problemImages.map((image, index) => (
@@ -670,7 +595,7 @@ export default function AddProblemPage() {
                 </div>
               )}
               
-              {/* Upload Button */}
+              {}
               {formData.problemImages.length < 5 && (
                 <div className="flex flex-wrap items-center gap-3">
                   <input
@@ -699,7 +624,7 @@ export default function AddProblemPage() {
             </div>
           </div>
 
-          {/* Multiple Solutions Section */}
+          {}
           <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
