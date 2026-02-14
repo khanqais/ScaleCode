@@ -170,7 +170,7 @@ export default function OrganizePage() {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8">
+        <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8 pt-32">
           <div className="max-w-md mx-auto">
             <Brain className="w-16 h-16 mx-auto mb-6 text-gray-400 dark:text-gray-600" />
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors">
@@ -192,7 +192,7 @@ export default function OrganizePage() {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pt-32">
           <div className="animate-pulse">
             <div className="mb-6 sm:mb-8">
               <div className="h-8 bg-gray-200 rounded w-48 mb-4"></div>
@@ -234,7 +234,7 @@ export default function OrganizePage() {
     <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pt-35">
         
         {error && (
           <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">

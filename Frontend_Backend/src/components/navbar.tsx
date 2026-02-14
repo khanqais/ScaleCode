@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -114,53 +115,95 @@ const Navbar = () => {
   const { data: session, status } = useSession()
   const pathname = usePathname()
   const isSignedIn = status === 'authenticated'
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  return (
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY
+      setIsScrolled(scrollPosition > 50)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const navContent = (
     <motion.nav
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="flex items-center justify-between p-6 max-w-7xl mx-auto bg-transparent transition-colors"
+      className={`fixed left-0 right-0 z-50 pointer-events-none ${
+        isScrolled 
+          ? 'top-3 px-4 sm:px-6 md:px-8' 
+          : 'top-0 px-0'
+      }`}
+      style={{ 
+        background: 'transparent',
+        transition: 'top 300ms, padding 300ms'
+      }}
     >
-      <motion.div 
-        className="flex items-center space-x-3"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <div 
+        className={`pointer-events-auto ${
+          isScrolled
+            ? 'max-w-3xl mx-auto backdrop-blur-xl shadow-2xl shadow-black/20 rounded-full px-6 py-2.5 border border-gray-700/50'
+            : 'max-w-7xl mx-auto px-6 py-6'
+        }`}
+        style={{
+          backgroundColor: isScrolled 
+            ? 'rgba(17, 24, 39, 0.9)' // gray-900 with 90% opacity
+            : 'transparent',
+          transition: 'all 300ms ease-in-out'
+        }}
       >
-        <Link href="/" className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-lg overflow-hidden flex items-center justify-center pointer-events-none select-none">
-            <Image
-              src="/logo_white.png"
-              alt="AlgoGrid Logo"
-              className="object-contain dark:hidden"
-              draggable="false"
-              width={48}
-              height={48}
-              unoptimized
-            />
-            <Image
-              src="/logo_black.png"
-              alt="AlgoGrid Logo"
-              className="object-contain hidden dark:block"
-              draggable="false"
-              width={48}
-              height={48}
-              unoptimized
-            />
-          </div>
-          <span className="text-xl font-bold text-black dark:text-white transition-colors leading-none">AlgoGrid</span>
-        </Link>
-      </motion.div>
+        <div className="flex items-center justify-between">
+        <motion.div 
+          className="flex items-center space-x-3"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Link href="/" className="flex items-center space-x-3">
+            <div className={`rounded-lg overflow-hidden flex items-center justify-center pointer-events-none select-none transition-all duration-300 ${
+              isScrolled ? 'w-8 h-8' : 'w-12 h-12'
+            }`}>
+              <Image
+                src="/logo_white.png"
+                alt="AlgoGrid Logo"
+                className={`object-contain ${isScrolled ? 'hidden' : 'dark:hidden'}`}
+                draggable="false"
+                width={48}
+                height={48}
+                unoptimized
+              />
+              <Image
+                src="/logo_black.png"
+                alt="AlgoGrid Logo"
+                className={`object-contain ${isScrolled ? 'block' : 'hidden dark:block'}`}
+                draggable="false"
+                width={48}
+                height={48}
+                unoptimized
+              />
+            </div>
+            <span className={`font-bold transition-all duration-300 leading-none ${
+              isScrolled ? 'text-base text-white' : 'text-xl text-black dark:text-white'
+            }`}>AlgoGrid</span>
+          </Link>
+        </motion.div>
 
-      <div className="hidden md:flex items-center space-x-8">
+      <div className={`hidden md:flex items-center ${isScrolled ? 'space-x-4' : 'space-x-8'}`}>
         {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <motion.div whileHover={{ scale: 1.05 }}>
             <Link href="/add-problem">
               <Button 
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                className={`flex items-center gap-2 text-white font-medium transition-colors ${isScrolled ? 'bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded-full text-sm' : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 py-2 rounded-lg'}`}
                 aria-label="Add a new problem"
               >
-                <Plus size={18} aria-hidden="true" />
+                <Plus size={isScrolled ? 16 : 18} aria-hidden="true" />
                 Add Problem
               </Button>
             </Link>
@@ -171,16 +214,18 @@ const Navbar = () => {
         
         {isSignedIn ? (
           <div className="flex items-center space-x-4">
-            <span className="text-black dark:text-white font-medium transition-colors">
-              Hello, {session?.user?.firstName || session?.user?.name?.split(' ')[0] || 'User'}!
-            </span>
+            {!isScrolled && (
+              <span className="text-black dark:text-white font-medium transition-colors">
+                Hello, {session?.user?.firstName || session?.user?.name?.split(' ')[0] || 'User'}!
+              </span>
+            )}
             <UserButton />
           </div>
         ) : (
           <motion.div whileHover={{ scale: 1.05 }}>
             <Link href="/login">
               <Button 
-                className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+                className={`font-medium transition-colors ${isScrolled ? 'bg-white text-black hover:bg-gray-200 px-4 py-1.5 rounded-full text-sm' : 'bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200'}`}
                 aria-label="Sign in to your account"
               >
                 Log in
@@ -219,7 +264,19 @@ const Navbar = () => {
           </Link>
         )}
       </div>
+      </div>
+      </div>
     </motion.nav>
+  )
+
+  if (!mounted) return null
+
+  return (
+    <>
+      {/* Spacer to prevent content from hiding behind fixed navbar */}
+      <div className="h-24" />
+      {createPortal(navContent, document.body)}
+    </>
   )
 }
 

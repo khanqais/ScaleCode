@@ -190,7 +190,7 @@ const RevisionPage = () => {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8">
+        <div className="flex items-center justify-center min-h-[70vh] text-center px-4 py-8 pt-32">
           <div className="max-w-md mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 transition-colors">
               Please sign in to access revisions
@@ -208,7 +208,7 @@ const RevisionPage = () => {
     <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pt-32">
         
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">

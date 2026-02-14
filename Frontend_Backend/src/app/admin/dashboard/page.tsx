@@ -72,7 +72,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh]">
+        <div className="flex items-center justify-center min-h-[70vh] pt-32">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Please sign in
@@ -87,7 +87,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh]">
+        <div className="flex items-center justify-center min-h-[70vh] pt-32">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Access Denied
@@ -105,7 +105,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh]">
+        <div className="flex items-center justify-center min-h-[70vh] pt-32">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pt-32">
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-xl p-6">
             <h2 className="text-lg font-bold text-red-900 dark:text-red-100 mb-2">Error</h2>
             <p className="text-red-700 dark:text-red-300">{error}</p>
@@ -130,7 +130,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pt-32">
         {}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">

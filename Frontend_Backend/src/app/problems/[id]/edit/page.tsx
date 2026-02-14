@@ -402,7 +402,7 @@ export default function EditProblemPage() {
     return (
       <div className="min-h-screen bg-transparent">
         <Navbar />
-        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4">
+        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4 pt-32">
           <AlertCircle className="w-16 h-16 text-red-500" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Authentication Required</h2>
           <p className="text-gray-600 dark:text-gray-400">Please sign in to edit problems.</p>
@@ -421,7 +421,7 @@ export default function EditProblemPage() {
     return (
       <div className="min-h-screen bg-transparent">
         <Navbar />
-        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4">
+        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4 pt-32">
           <AlertCircle className="w-16 h-16 text-red-500" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Error</h2>
           <p className="text-gray-600 dark:text-gray-400">{error}</p>
@@ -441,7 +441,7 @@ export default function EditProblemPage() {
     <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pt-32">
         {}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">

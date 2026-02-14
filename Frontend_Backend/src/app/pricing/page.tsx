@@ -71,7 +71,7 @@ const PricingPage = () => {
   return (
     <div className="min-h-screen bg-transparent pb-20">
       <Navbar/>
-      <main className="container mx-auto px-4 py-3 md:py-16 max-w-7xl">
+      <main className="container mx-auto px-4 py-3 md:py-16 max-w-7xl pt-32">
         
         <div className="text-center mb-12 md:mb-16">
           <motion.h1 

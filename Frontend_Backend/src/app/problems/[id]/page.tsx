@@ -349,7 +349,7 @@ function ProblemDetailPageContent() {
     return (
       <div className="min-h-screen bg-transparent">
         <Navbar />
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pt-32">
           <div className="animate-pulse">
             <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
@@ -374,7 +374,7 @@ function ProblemDetailPageContent() {
     return (
       <div className="min-h-screen bg-transparent">
         <Navbar />
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pt-32">
           <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
             <button
               onClick={() => router.back()}
@@ -412,7 +412,7 @@ function ProblemDetailPageContent() {
     <div className="min-h-screen bg-transparent transition-colors">
       <Navbar />
       
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pt-32">
         <div className="flex items-start justify-between mb-6 sm:mb-8 gap-4">
           <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
             <button

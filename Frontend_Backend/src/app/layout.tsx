@@ -116,7 +116,7 @@ export default function RootLayout({
       <body className={`font-normal text-black dark:text-white transition-colors`}>
         <SessionProvider>
           <ThemeProvider>
-            <div className="relative z-10 min-h-screen w-full">
+            <div className="relative min-h-screen w-full">
               <PageTransition>
                 {children}
                 <ConditionalFooter />

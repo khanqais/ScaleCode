@@ -8,10 +8,11 @@ const page = () => {
   return (
     <div className="min-h-screen bg-transparent">
       <Navbar />
-      <Hero />
-      <Features />
-      <CallToAction />
-      
+      <div className="pt-4">
+        <Hero />
+        <Features />
+        <CallToAction />
+      </div>
     </div>
   )
 }
