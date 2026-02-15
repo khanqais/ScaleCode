@@ -121,12 +121,12 @@ export default function OrganizePage() {
   }
 
   useEffect(() => {
-    if (user) {
+    if (user?.email) {
       fetchAllData().then(() => {
         setInitialFetchDone(true)
       })
     }
-  }, [user, fetchAllData])
+  }, [user?.email, fetchAllData])
 
   useEffect(() => {
     if (!initialFetchDone) return

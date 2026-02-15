@@ -74,10 +74,10 @@ function ProblemsPageContent() {
   }, [user])
 
   useEffect(() => {
-    if (user) {
+    if (user?.email) {
       fetchProblems(1)
     }
-  }, [user, fetchProblems])
+  }, [user?.email, fetchProblems])
 
   useEffect(() => {
     setCurrentPage(1)
