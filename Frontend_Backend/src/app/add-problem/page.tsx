@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle, Crown, ImagePlus, X, Image as ImageIcon } from 'lucide-react'
+import { ArrowLeft, Save, Code, Brain, FileText, CheckCircle, AlertCircle, Crown, ImagePlus, X, Image as ImageIcon, Link2, Loader2 } from 'lucide-react'
 
 export default function AddProblemPage() {
   
@@ -27,6 +27,8 @@ export default function AddProblemPage() {
     plan: string;
     remaining: number;
   } | null>(null)
+  const [problemUrl, setProblemUrl] = useState('')
+  const [parsingUrl, setParsingUrl] = useState(false)
   
   const [formData, setFormData] = useState({
     title: '',
@@ -48,8 +50,55 @@ export default function AddProblemPage() {
   const [uploadingImage, setUploadingImage] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const handleParseProblemUrl = async () => {
+    const trimmedUrl = problemUrl.trim()
+    if (!trimmedUrl) {
+      setError('Please paste a problem URL first')
+      return
+    }
+
+    setParsingUrl(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/problems/parse-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: trimmedUrl })
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        setError(result.error || 'Failed to parse the problem URL')
+        return
+      }
+
+      const parsedData = result.data as {
+        title?: string;
+        problemStatement?: string;
+        suggestedCategory?: string;
+        suggestedTags?: string[];
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        title: parsedData.title?.trim() || prev.title,
+        problemStatement: parsedData.problemStatement?.trim() || prev.problemStatement,
+        category: parsedData.suggestedCategory || prev.category,
+        tags: Array.from(new Set([...(prev.tags || []), ...((parsedData.suggestedTags || []).filter(Boolean))])).slice(0, 10)
+      }))
+    } catch {
+      setError('Failed to parse URL. Please try again.')
+    } finally {
+      setParsingUrl(false)
+    }
+  }
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+    const { files } = e.target
     if (!files || files.length === 0) return
 
     setUploadingImage(true)
@@ -394,6 +443,36 @@ export default function AddProblemPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Paste Problem URL (LeetCode or GeeksForGeeks)
+                </label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <input
+                      type="url"
+                      value={problemUrl}
+                      onChange={(e) => setProblemUrl(e.target.value)}
+                      className="w-full pl-9 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://leetcode.com/problems/two-sum/"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleParseProblemUrl}
+                    disabled={parsingUrl}
+                    className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {parsingUrl ? <Loader2 className="animate-spin" size={16} /> : null}
+                    {parsingUrl ? 'Fetching...' : 'Auto Fill'}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  This auto-fills title, problem statement, category, and tags. Then add your confidence and solution.
+                </p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Problem Title
