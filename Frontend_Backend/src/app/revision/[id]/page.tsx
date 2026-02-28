@@ -20,6 +20,113 @@ const Editor = dynamic(() => import('@monaco-editor/react'), {
 })
 
 
+// ─── Problem Statement Renderer ─────────────────────────────────────────────
+function ProblemStatementRenderer({ text }: { text: string }) {
+  type Section =
+    | { type: 'text'; content: string }
+    | { type: 'example'; title: string; lines: string[] }
+    | { type: 'constraints'; lines: string[] }
+
+  // Parse raw text into typed sections
+  const sections: Section[] = []
+  let txtBuf: string[] = []
+  let curExample: { title: string; lines: string[] } | null = null
+  let inConstraints = false
+  let constraintsBuf: string[] = []
+
+  for (const raw of text.split('\n')) {
+    const line = raw
+
+    if (/^Example\s+\d+\s*:/i.test(line.trim())) {
+      // flush text buffer
+      if (txtBuf.length) { sections.push({ type: 'text', content: txtBuf.join('\n').trim() }); txtBuf = [] }
+      // flush previous example
+      if (curExample) sections.push({ type: 'example', title: curExample.title, lines: curExample.lines })
+      curExample = { title: line.trim(), lines: [] }
+      inConstraints = false
+    } else if (/^Constraints?\s*:/i.test(line.trim())) {
+      if (txtBuf.length) { sections.push({ type: 'text', content: txtBuf.join('\n').trim() }); txtBuf = [] }
+      if (curExample) { sections.push({ type: 'example', title: curExample.title, lines: curExample.lines }); curExample = null }
+      inConstraints = true
+    } else if (inConstraints) {
+      constraintsBuf.push(line)
+    } else if (curExample) {
+      curExample.lines.push(line)
+    } else {
+      txtBuf.push(line)
+    }
+  }
+
+  // flush remainders
+  if (txtBuf.length) sections.push({ type: 'text', content: txtBuf.join('\n').trim() })
+  if (curExample) sections.push({ type: 'example', title: curExample.title, lines: curExample.lines })
+  if (constraintsBuf.length) sections.push({ type: 'constraints', lines: constraintsBuf })
+
+  const LABEL_RE = /^(Input|Output|Explanation|Note|Follow[- ]up)\s*:\s*(.*)/i
+
+  const renderExLine = (line: string, idx: number) => {
+    if (line.trim() === '') return <div key={idx} className="h-1.5" />
+    const m = line.match(LABEL_RE)
+    if (m) {
+      return (
+        <div key={idx} className="flex gap-2 leading-relaxed">
+          <span className="font-bold text-white flex-shrink-0">{m[1]}:</span>
+          <span className="font-mono text-gray-300 break-all">{m[2]}</span>
+        </div>
+      )
+    }
+    return (
+      <div key={idx} className="font-mono text-gray-300 text-sm leading-relaxed pl-0">
+        {line}
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4 text-sm">
+      {sections.map((sec, i) => {
+        if (sec.type === 'text') {
+          return (
+            <div key={i} className="space-y-2">
+              {sec.content.split('\n\n').filter(p => p.trim()).map((para, j) => (
+                <p key={j} className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{para.trim()}</p>
+              ))}
+            </div>
+          )
+        }
+        if (sec.type === 'example') {
+          const lines = sec.lines.filter((l, idx) => !(idx === 0 && l.trim() === ''))
+          return (
+            <div key={i} className="rounded-lg overflow-hidden border border-gray-600 dark:border-gray-600">
+              <div className="px-3 py-1.5 bg-gray-600 dark:bg-gray-700">
+                <span className="font-bold text-white text-xs tracking-wide">{sec.title}</span>
+              </div>
+              <div className="px-4 py-3 bg-[#1e1e2e] space-y-0.5">
+                {lines.map((l, idx) => renderExLine(l, idx))}
+              </div>
+            </div>
+          )
+        }
+        if (sec.type === 'constraints') {
+          const items = sec.lines.filter(l => l.trim())
+          if (!items.length) return null
+          return (
+            <div key={i} className="pt-1">
+              <div className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Constraints</div>
+              <ul className="space-y-1">
+                {items.map((l, j) => (
+                  <li key={j} className="font-mono text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{l}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+        return null
+      })}
+    </div>
+  )
+}
+
 function CodeBlock({ code, language = 'cpp' }: { code: string; language?: string }) {
   const [copied, setCopied] = useState(false)
 
@@ -382,22 +489,6 @@ export default function RevisionPage() {
   const hasTestCases = problem?.testCases && problem.testCases.length > 0 && problem.cppCodeTemplate
   const canRunCode = hasTestCases && editorLanguage === 'cpp' && userCode.trim().length > 0
 
-  const getConfidenceLabel = (conf: number) => {
-    if (conf <= 3) return 'Need to relearn'
-    if (conf <= 5) return 'Shaky understanding'
-    if (conf <= 7) return 'Decent grasp'
-    if (conf <= 9) return 'Strong understanding'
-    return 'Complete mastery'
-  }
-
-  const getConfidenceColor = (conf: number) => {
-    if (conf <= 3) return 'bg-red-500'
-    if (conf <= 5) return 'bg-orange-500'
-    if (conf <= 7) return 'bg-yellow-500'
-    if (conf <= 9) return 'bg-blue-500'
-    return 'bg-green-500'
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black transition-colors">
@@ -425,416 +516,286 @@ export default function RevisionPage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: sliderStyles }} />
-      <div className="min-h-screen bg-transparent transition-colors">
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 transition-colors">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between max-w-7xl mx-auto gap-3 lg:gap-4">
-          <div className="flex items-start sm:items-center gap-3 sm:gap-4">
-            <button
-              onClick={() => router.push('/problems')}
-              className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-900 dark:text-white flex-shrink-0"
-            >
-              <ArrowLeft className="w-5 h-5 sm:w-5 sm:h-5" />
-            </button>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white transition-colors truncate">{problem.title}</h1>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
-                <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full transition-colors">
-                  {problem.category}
+      <div className="h-screen flex flex-col bg-gray-50 dark:bg-slate-950 overflow-hidden transition-colors">
+
+        {/* ── Top Bar ── */}
+        <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-5 py-2.5 transition-colors">
+          <div className="flex items-center justify-between max-w-screen-2xl mx-auto gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <button
+                onClick={() => router.push('/problems')}
+                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-white flex-shrink-0"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <h1 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white truncate">{problem.title}</h1>
+              <span className="hidden sm:inline-flex px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-medium rounded-full flex-shrink-0">
+                {problem.category}
+              </span>
+              {problem.revisionCount !== undefined && problem.revisionCount > 0 && (
+                <span className="hidden md:inline-flex px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-medium rounded-full flex-shrink-0">
+                  {problem.revisionCount}×
                 </span>
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 transition-colors">
-                  Confidence: {problem.Confidence}/10
-                </span>
-              </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <button
+                onClick={() => { setShowAIHintModal(true); if (!aiHint) handleGetAIHint(1) }}
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all text-xs font-medium shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">AI Hint</span>
+              </button>
+
+              <button
+                onClick={() => setShowIntuitionModal(!showIntuitionModal)}
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-800/40 transition-colors text-xs font-medium"
+              >
+                {showIntuitionModal ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">Intuition</span>
+              </button>
+
+              <button
+                onClick={() => setShowSolutionModal(!showSolutionModal)}
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/40 transition-colors text-xs font-medium"
+              >
+                {showSolutionModal ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">Solution</span>
+              </button>
             </div>
           </div>
-          
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
-            <button
-              onClick={() => {
-                setShowAIHintModal(true)
-                if (!aiHint) {
-                  handleGetAIHint(1)
-                }
-              }}
-              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all text-xs sm:text-sm shadow-md hover:shadow-lg"
-            >
-              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">AI</span> Hint
-            </button>
-            
-            <button
-              onClick={() => setShowIntuitionModal(!showIntuitionModal)}
-              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-800/40 transition-colors text-xs sm:text-sm"
-            >
-              {showIntuitionModal ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-              <span className="hidden xs:inline">{showIntuitionModal ? 'Hide' : 'Show'}</span> Intuition
-            </button>
-            
-            <button
-              onClick={() => setShowSolutionModal(!showSolutionModal)}
-              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/40 transition-colors text-xs sm:text-sm"
-            >
-              {showSolutionModal ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-              <span className="hidden xs:inline">{showSolutionModal ? 'Hide' : 'Show'}</span> Solution
-            </button>
-            
-            <button
-              onClick={handleComplete}
-              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium"
-            >
-              <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Complete</span>
-            </button>
-          </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          
-          <div className="flex flex-col">
-            <div className="bg-white dark:bg-slate-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-slate-700 flex flex-col transition-colors min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] shadow-sm hover:shadow-md transition-shadow">
-              {}
-              <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Description</h2>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-medium rounded-full">
-                    {problem.category}
-                  </span>
-                  {problem.revisionCount !== undefined && problem.revisionCount > 0 && (
-                    <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-medium rounded-full">
-                      Revised {problem.revisionCount}x
-                    </span>
-                  )}
-                </div>
+        {/* ── Main Content ── */}
+        <div className="flex-1 overflow-hidden p-2.5 sm:p-3 lg:p-4 min-h-0">
+          <div className="h-full grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-3 lg:gap-4">
+
+            {/* Left: Problem Statement */}
+            <div className="flex flex-col min-h-0 bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
+              <div className="flex-shrink-0 px-4 py-2.5 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+                <span className="text-sm font-bold text-gray-900 dark:text-white">Problem Statement</span>
               </div>
-              
-              {}
-              <div className="flex-1 overflow-auto p-4 sm:p-6">
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <pre className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-inter bg-gray-50 dark:bg-slate-800/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
-                    {problem.problemStatement}
-                  </pre>
-                </div>
-
-                {}
+              <div className="flex-1 overflow-auto p-4 sm:p-5">
+                <ProblemStatementRenderer text={problem.problemStatement} />
                 {problem.problemImages && problem.problemImages.length > 0 && (
-                  <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Examples</h3>
-                    <div className="space-y-4">
-                      {problem.problemImages.map((image, index) => (
-                        <div key={index} className="relative group">
-                          <div className="bg-gray-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700">
-                            <Image
-                              src={image}
-                              alt={`Problem example ${index + 1}`}
-                              className="object-cover rounded-lg border border-gray-200 dark:border-slate-700 cursor-pointer hover:opacity-90 transition-opacity"
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              onClick={() => window.open(image, '_blank')}
-                              unoptimized
-                            />
-                          </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">Click to expand</p>
+                  <div className="mt-5 pt-5 border-t border-gray-200 dark:border-slate-700 space-y-4">
+                    {problem.problemImages.map((image, index) => (
+                      <div key={index}>
+                        <div className="bg-gray-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700 relative" style={{ minHeight: '180px' }}>
+                          <Image
+                            src={image}
+                            alt={`Example ${index + 1}`}
+                            className="object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            onClick={() => window.open(image, '_blank')}
+                            unoptimized
+                          />
                         </div>
-                      ))}
-                    </div>
+                        <p className="text-xs text-gray-400 mt-1 text-center">Click to expand</p>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
             </div>
-          </div>
 
-         
-          <div className="flex flex-col">
-            <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col transition-colors min-h-[250px] sm:min-h-[400px] lg:min-h-[500px] max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh]">
-              
-              {}
-              <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-white transition-colors">
-                  Write Your Solution
-                </h2>
-                
-                {}
-                <div className="flex items-center gap-2">
-                  <select
-                    value={editorLanguage}
-                    onChange={(e) => setEditorLanguage(e.target.value)}
-                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="cpp">C++</option>
-                    <option value="java">Java</option>
-                    <option value="python">Python</option>
-                    <option value="javascript">JavaScript</option>
-                    <option value="typescript">TypeScript</option>
-                    <option value="c">C</option>
-                  </select>
+            {/* Right: Editor + Test Results stacked */}
+            <div className="flex flex-col min-h-0 gap-2.5 sm:gap-3">
 
-                  <select
-                    value={editorTheme}
-                    onChange={(e) => setEditorTheme(e.target.value)}
-                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="vs-dark">Dark</option>
-                    <option value="light">Light</option>
-                    <option value="hc-black">High Contrast</option>
-                  </select>
-                </div>
-              </div>
-              
-              {}
-              <div className="flex-1 overflow-hidden">
-                <Editor
-                  height="100%"
-                  language={editorLanguage}
-                  theme={editorTheme}
-                  value={userCode}
-                  onChange={(value) => setUserCode(value || '')}
-                  options={{
-                    minimap: { enabled: false },
-                    fontSize: 14,
-                    lineNumbers: 'on',
-                    roundedSelection: false,
-                    scrollBeyondLastLine: false,
-                    readOnly: false,
-                    automaticLayout: true,
-                    tabSize: 2,
-                    wordWrap: 'on',
-                    padding: { top: 16, bottom: 16 },
-                    suggestOnTriggerCharacters: true,
-                    quickSuggestions: true,
-                    folding: true,
-                    bracketPairColorization: { enabled: true },
-                    formatOnPaste: true,
-                    formatOnType: true,
-                  }}
-                />
-              </div>
-
-              {}
-              <div className="p-2.5 sm:p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 transition-colors">
-                <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 dark:text-gray-400 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <span>Lines: {userCode.split('\n').length}</span>
-                    <span>Characters: {userCode.length}</span>
+              {/* Editor */}
+              <div className={`flex flex-col min-h-0 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors ${(testResults || runError || compileError || runningCode) ? 'flex-[2]' : 'flex-1'}`}>
+                <div className="flex-shrink-0 px-3 py-2.5 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-gray-900">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">Write Your Solution</span>
+                  <div className="flex items-center gap-1.5">
+                    <select
+                      value={editorLanguage}
+                      onChange={(e) => setEditorLanguage(e.target.value)}
+                      className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="cpp">C++</option>
+                      <option value="java">Java</option>
+                      <option value="python">Python</option>
+                      <option value="javascript">JavaScript</option>
+                      <option value="typescript">TypeScript</option>
+                      <option value="c">C</option>
+                    </select>
+                    <select
+                      value={editorTheme}
+                      onChange={(e) => setEditorTheme(e.target.value)}
+                      className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="vs-dark">Dark</option>
+                      <option value="light">Light</option>
+                      <option value="hc-black">High Contrast</option>
+                    </select>
                   </div>
+                </div>
+
+                <div className="flex-1 overflow-hidden min-h-0">
+                  <Editor
+                    height="100%"
+                    language={editorLanguage}
+                    theme={editorTheme}
+                    value={userCode}
+                    onChange={(value) => setUserCode(value || '')}
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      lineNumbers: 'on',
+                      roundedSelection: false,
+                      scrollBeyondLastLine: false,
+                      readOnly: false,
+                      automaticLayout: true,
+                      tabSize: 2,
+                      wordWrap: 'on',
+                      padding: { top: 12, bottom: 12 },
+                      suggestOnTriggerCharacters: true,
+                      quickSuggestions: true,
+                      folding: true,
+                      bracketPairColorization: { enabled: true },
+                      formatOnPaste: true,
+                      formatOnType: true,
+                    }}
+                  />
+                </div>
+
+                <div className="flex-shrink-0 px-3 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {userCode.split('\n').length} lines · {userCode.length} chars
+                  </span>
                   {hasTestCases && (
                     <button
                       onClick={handleRunCode}
                       disabled={!canRunCode || runningCode}
-                      className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-medium rounded-lg transition-colors shadow-sm"
-                      title={editorLanguage !== 'cpp' ? 'Code execution is currently supported for C++ only' : 'Run code against test cases'}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white text-xs font-medium rounded-lg transition-colors"
+                      title={editorLanguage !== 'cpp' ? 'C++ only' : 'Run against test cases'}
                     >
-                      {runningCode ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Play className="w-3.5 h-3.5" />
-                      )}
-                      {runningCode ? 'Running...' : 'Run Code'}
+                      {runningCode ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
+                      {runningCode ? 'Running…' : 'Run Code'}
                     </button>
                   )}
                 </div>
               </div>
+
+              {/* Test Results — shown inline below editor */}
+              {(testResults || runError || compileError || runningCode) && (
+                <div className="flex-1 min-h-0 flex flex-col bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+                  <div className="flex-shrink-0 px-3 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-gray-900 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Code2 className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">Test Results</span>
+                    </div>
+                    {testResults && (
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                        testResults.every(r => r.passed)
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                          : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                      }`}>
+                        {testResults.filter(r => r.passed).length}/{testResults.length} Passed
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex-1 overflow-auto p-3 space-y-2.5">
+                    {runningCode && (
+                      <div className="flex items-center justify-center py-6 gap-2">
+                        <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Compiling and running…</p>
+                      </div>
+                    )}
+                    {compileError && (
+                      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <X className="w-3.5 h-3.5 text-red-500" />
+                          <span className="text-xs font-semibold text-red-700 dark:text-red-400">Compilation Error</span>
+                        </div>
+                        <pre className="text-xs text-red-600 dark:text-red-300 whitespace-pre-wrap font-mono bg-red-100/50 dark:bg-red-900/30 p-2 rounded overflow-x-auto max-h-36 overflow-y-auto">
+                          {compileError}
+                        </pre>
+                      </div>
+                    )}
+                    {runError && (
+                      <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <X className="w-3.5 h-3.5 text-orange-500" />
+                          <span className="text-xs font-semibold text-orange-700 dark:text-orange-400">Error</span>
+                        </div>
+                        <pre className="text-xs text-orange-600 dark:text-orange-300 whitespace-pre-wrap font-mono bg-orange-100/50 dark:bg-orange-900/30 p-2 rounded overflow-x-auto max-h-36 overflow-y-auto">
+                          {runError}
+                        </pre>
+                      </div>
+                    )}
+                    {testResults && testResults.map((result) => (
+                      <div
+                        key={result.testCase}
+                        className={`rounded-lg border p-3 ${
+                          result.passed
+                            ? 'border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10'
+                            : 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 mb-2">
+                          {result.passed
+                            ? <Check className="w-3.5 h-3.5 text-green-500" />
+                            : <X className="w-3.5 h-3.5 text-red-500" />}
+                          <span className={`text-xs font-semibold ${result.passed ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
+                            Test {result.testCase} — {result.passed ? 'Passed' : 'Failed'}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div>
+                            <div className="text-gray-400 font-medium mb-1">Input</div>
+                            <pre className="bg-gray-100 dark:bg-gray-800 p-1.5 rounded font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200 max-h-20 overflow-y-auto">{result.input}</pre>
+                          </div>
+                          <div>
+                            <div className="text-gray-400 font-medium mb-1">Expected</div>
+                            <pre className="bg-gray-100 dark:bg-gray-800 p-1.5 rounded font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200 max-h-20 overflow-y-auto">{result.expectedOutput}</pre>
+                          </div>
+                          <div>
+                            <div className="text-gray-400 font-medium mb-1">Output</div>
+                            <pre className={`p-1.5 rounded font-mono whitespace-pre-wrap max-h-20 overflow-y-auto ${result.passed ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'}`}>
+                              {result.actualOutput || '(empty)'}
+                            </pre>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* ─── Test Results Panel ─── */}
-        {(testResults || runError || compileError || runningCode) && (
-          <div className="mt-4 sm:mt-6 bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
-              <div className="flex items-center justify-between">
-                <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Code2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                  Test Results
-                </h2>
-                {testResults && (
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      testResults.every(r => r.passed)
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                        : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                    }`}>
-                      {testResults.filter(r => r.passed).length}/{testResults.length} Passed
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="p-4 sm:p-6">
-              {/* Running indicator */}
-              {runningCode && (
-                <div className="flex items-center justify-center py-8 gap-3">
-                  <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Compiling and running your code...</p>
-                </div>
-              )}
-
-              {/* Compilation Error */}
-              {compileError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <X className="w-4 h-4 text-red-500" />
-                    <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">Compilation Error</h3>
-                  </div>
-                  <pre className="text-xs text-red-600 dark:text-red-300 whitespace-pre-wrap font-mono bg-red-100/50 dark:bg-red-900/30 p-3 rounded-md overflow-x-auto max-h-48 overflow-y-auto">
-                    {compileError}
-                  </pre>
-                </div>
-              )}
-
-              {/* Runtime Error */}
-              {runError && (
-                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <X className="w-4 h-4 text-orange-500" />
-                    <h3 className="text-sm font-semibold text-orange-700 dark:text-orange-400">Error</h3>
-                  </div>
-                  <pre className="text-xs text-orange-600 dark:text-orange-300 whitespace-pre-wrap font-mono bg-orange-100/50 dark:bg-orange-900/30 p-3 rounded-md overflow-x-auto max-h-48 overflow-y-auto">
-                    {runError}
-                  </pre>
-                </div>
-              )}
-
-              {/* Test Case Results */}
-              {testResults && testResults.length > 0 && (
-                <div className="space-y-3">
-                  {testResults.map((result) => (
-                    <div
-                      key={result.testCase}
-                      className={`rounded-lg border p-4 transition-colors ${
-                        result.passed
-                          ? 'border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10'
-                          : 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-3">
-                        {result.passed ? (
-                          <Check className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <X className="w-4 h-4 text-red-500" />
-                        )}
-                        <span className={`text-sm font-semibold ${
-                          result.passed ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'
-                        }`}>
-                          Test Case {result.testCase} — {result.passed ? 'Passed' : 'Failed'}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                        <div>
-                          <div className="text-gray-500 dark:text-gray-400 font-medium mb-1">Input</div>
-                          <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200 max-h-24 overflow-y-auto">
-                            {result.input}
-                          </pre>
-                        </div>
-                        <div>
-                          <div className="text-gray-500 dark:text-gray-400 font-medium mb-1">Expected</div>
-                          <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200 max-h-24 overflow-y-auto">
-                            {result.expectedOutput}
-                          </pre>
-                        </div>
-                        <div>
-                          <div className="text-gray-500 dark:text-gray-400 font-medium mb-1">Output</div>
-                          <pre className={`p-2 rounded-md font-mono whitespace-pre-wrap max-h-24 overflow-y-auto ${
-                            result.passed
-                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
-                              : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
-                          }`}>
-                            {result.actualOutput || '(empty)'}
-                          </pre>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        
-        <div className="mt-4 sm:mt-6 p-3 sm:p-4 lg:p-6 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 shadow-md sm:shadow-lg">
-          <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-center text-gray-800 dark:text-white">Rate Your Understanding</h2>
-          
-          
-          <div className="flex items-center justify-center gap-3 sm:gap-4 lg:gap-6 mb-3 sm:mb-4">
-            <div className="text-center">
-              <div className="text-[10px] sm:text-xs font-medium text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">Current</div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-700 dark:text-gray-300">{problem.Confidence}/10</div>
-              {problem.revisionCount !== undefined && problem.revisionCount > 0 && (
-                <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1">
-                  Revised {problem.revisionCount}x
-                </div>
-              )}
-            </div>
-
-            <div className="text-lg sm:text-xl lg:text-2xl text-gray-400">→</div>
-
-            <div className="text-center">
-              <div className="text-[10px] sm:text-xs font-medium text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">New</div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400">{newConfidence}/10</div>
-            </div>
-          </div>
-
-          
-          <div className="mb-3 sm:mb-4">
-            <div className="relative px-1 sm:px-0">
+        {/* ── Bottom Confidence Bar ── */}
+        <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-2.5 transition-colors">
+          <div className="flex items-center gap-3 sm:gap-4 max-w-screen-2xl mx-auto">
+            <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 hidden sm:block">Confidence</span>
+            <div className="flex-1">
               <input
                 type="range"
                 min="1"
                 max="10"
                 value={newConfidence}
                 onChange={(e) => setNewConfidence(parseInt(e.target.value))}
-                className="w-full h-2.5 sm:h-3 rounded-full appearance-none cursor-pointer slider-thumb touch-pan-x"
+                className="w-full h-2 rounded-full appearance-none cursor-pointer slider-thumb"
                 style={{
-                  background: `linear-gradient(to right, 
-                    #ef4444 0%, 
-                    #f97316 20%, 
-                    #f59e0b 35%, 
-                    #eab308 50%, 
-                    #84cc16 65%, 
-                    #22c55e 80%, 
-                    #10b981 100%)`
+                  background: `linear-gradient(to right, #ef4444 0%, #f97316 20%, #f59e0b 35%, #eab308 50%, #84cc16 65%, #22c55e 80%, #10b981 100%)`
                 }}
               />
             </div>
-            
-            <div className="flex justify-between text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1.5 sm:mt-2 px-1">
-              <span className="font-medium">Need to relearn</span>
-              <span className="font-medium">Complete mastery</span>
-            </div>
+            <span className="text-xs font-bold text-gray-700 dark:text-gray-300 flex-shrink-0 w-8 text-center tabular-nums">{newConfidence}/10</span>
+            <button
+              onClick={handleComplete}
+              disabled={updating}
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+            >
+              <Check className="w-3.5 h-3.5" />
+              {updating ? 'Saving…' : 'Complete'}
+            </button>
           </div>
-
-          
-          <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 rounded-lg bg-gray-800 dark:bg-gray-900 text-white shadow-md">
-            <div className="flex items-start sm:items-center gap-2 sm:gap-3">
-              <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1 sm:mt-0 ${getConfidenceColor(newConfidence)}`}></div>
-              <div className="flex-1 min-w-0">
-                <div className="font-bold text-xs sm:text-sm mb-0.5">{getConfidenceLabel(newConfidence)}</div>
-                <div className="text-[10px] sm:text-xs text-gray-300 leading-relaxed">
-                  {newConfidence <= 3 ? 'This problem will appear again soon in your revision queue' :
-                   newConfidence <= 5 ? 'This problem will be scheduled for review in 1 week' :
-                   newConfidence <= 7 ? 'This problem will be scheduled for review in 2 weeks' :
-                   'This problem is well understood and will be reviewed less frequently'}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          
-          <button
-            onClick={handleComplete}
-            disabled={updating}
-            className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all font-semibold text-sm sm:text-base shadow-md sm:shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg flex items-center justify-center gap-2"
-          >
-            <Check className="w-5 h-5 sm:w-6 sm:h-6" />
-            <span className="hidden sm:inline">{updating ? 'Saving...' : 'Complete Revision & Update Confidence'}</span>
-            <span className="sm:hidden">{updating ? 'Saving...' : 'Complete Revision'}</span>
-          </button>
         </div>
-      </div>
       </div>
 
       
