@@ -70,7 +70,8 @@ Your confidence decays over time, ensuring you revisit problems before forgettin
 - **Responsive Design**: Perfect experience on all devices
 
 ### Architecture
-<img width="1367" height="790" alt="image" src="https://github.com/user-attachments/assets/0cbf7443-754c-4441-a91e-ab9b2c425c07" />
+<img width="1082" height="1260" alt="Diagram" src="https://github.com/user-attachments/assets/7e50b557-c7db-4c35-9bd4-eb1f7ee62f9c" />
+
 
 
 ## 🛠️ Tech Stack
