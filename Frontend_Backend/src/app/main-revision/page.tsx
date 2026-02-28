@@ -54,9 +54,9 @@ const RevisionPage = () => {
           limit: 50
         }
       })
-      
-      if (response.data.success) {
-        setRevisionData(response.data.data)
+      const resData = response.data as { success: boolean; data: RevisionData }
+      if (resData.success) {
+        setRevisionData(resData.data)
       }
     } catch {
       

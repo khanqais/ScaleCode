@@ -9,8 +9,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import dynamic from 'next/dynamic'
 
-
-const Editor = dynamic(() => import('@monaco-editor/react'), { 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Editor = dynamic<any>(() => import('@monaco-editor/react'), { 
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-full">
@@ -32,7 +32,7 @@ function ProblemStatementRenderer({ text }: { text: string }) {
   let txtBuf: string[] = []
   let curExample: { title: string; lines: string[] } | null = null
   let inConstraints = false
-  let constraintsBuf: string[] = []
+  const constraintsBuf: string[] = []
 
   for (const raw of text.split('\n')) {
     const line = raw
@@ -370,8 +370,9 @@ export default function RevisionPage() {
   const fetchProblem = useCallback(async () => {
     try {
       const response = await axios.get(`/api/problems/${problemId}`)
-      if (response.data.success) {
-        const data = response.data.data
+      const resData = response.data as { success: boolean; data: Problem }
+      if (resData.success) {
+        const data = resData.data
         setProblem(data)
         setNewConfidence(data.Confidence)
         // Pre-populate editor with C++ template if available and editor is empty
@@ -403,8 +404,8 @@ export default function RevisionPage() {
         problemId,
         confidence: newConfidence
       })
-
-      if (response.data.success) {
+      const resData = response.data as { success: boolean }
+      if (resData.success) {
         alert('✅ Revision completed! Confidence updated.')
         router.push('/main-revision')
       }
@@ -430,15 +431,16 @@ export default function RevisionPage() {
         userCode: userCode || undefined,
         hintLevel: level
       })
-      
-      if (response.data.success) {
-        setAiHint(response.data.data.hint)
+      const resData = response.data as { success: boolean; data: { hint: string }; error?: string }
+      if (resData.success) {
+        setAiHint(resData.data.hint)
       } else {
-        setAiHintError(response.data.error || 'Failed to generate hint')
+        setAiHintError(resData.error || 'Failed to generate hint')
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data?.error) {
-        setAiHintError(error.response.data.error)
+      const axiosErr = error as { response?: { data?: { error?: string } } }
+      if (axiosErr?.response?.data?.error) {
+        setAiHintError(axiosErr.response.data.error)
       } else {
         setAiHintError('Failed to get AI hint. Please try again.')
       }
@@ -461,7 +463,14 @@ export default function RevisionPage() {
         userCode,
       })
 
-      const data = response.data
+      const data = response.data as {
+        success: boolean
+        error?: string
+        compileError?: string
+        runtimeError?: string
+        exitCode?: number
+        results?: TestCaseResult[]
+      }
 
       if (!data.success) {
         if (data.error === 'Compilation Error') {
@@ -474,10 +483,11 @@ export default function RevisionPage() {
         return
       }
 
-      setTestResults(data.results)
+      setTestResults(data.results ?? null)
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data?.error) {
-        setRunError(error.response.data.error)
+      const axiosErr = error as { response?: { data?: { error?: string } } }
+      if (axiosErr?.response?.data?.error) {
+        setRunError(axiosErr.response.data.error)
       } else {
         setRunError('Failed to run code. Please try again.')
       }
@@ -639,7 +649,7 @@ export default function RevisionPage() {
                     language={editorLanguage}
                     theme={editorTheme}
                     value={userCode}
-                    onChange={(value) => setUserCode(value || '')}
+                    onChange={(value: string | undefined) => setUserCode(value ?? '')}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
