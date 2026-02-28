@@ -13,6 +13,8 @@ export interface ParsedProblem {
   topics: string[];
   sourceUrl: string;
   platform: 'leetcode' | 'geeksforgeeks' | 'unknown';
+  cppCodeTemplate?: string;
+  testCases?: { input: string; expectedOutput: string; rawInput: string }[];
 }
 
 // ─── Category Mapping ─────────────────────────────────────────────────────────
@@ -120,6 +122,7 @@ async function scrapeLeetCode(url: string): Promise<ParsedProblem> {
           topicTags { name }
           exampleTestcases
           hints
+          codeSnippets { lang langSlug code }
         }
       }
     `,
@@ -148,6 +151,7 @@ async function scrapeLeetCode(url: string): Promise<ParsedProblem> {
         difficulty: string;
         topicTags: { name: string }[];
         exampleTestcases: string;
+        codeSnippets: { lang: string; langSlug: string; code: string }[];
       } | null;
     };
     errors?: { message: string }[];
@@ -218,6 +222,47 @@ async function scrapeLeetCode(url: string): Promise<ParsedProblem> {
 
   const topics = q.topicTags.map(t => t.name);
 
+  // Extract C++ code template from codeSnippets
+  const cppSnippet = q.codeSnippets?.find(s => s.langSlug === 'cpp');
+  const cppCodeTemplate = cppSnippet?.code || '';
+
+  // Count parameters from the C++ function signature to split exampleTestcases
+  let paramCount = 1;
+  if (cppCodeTemplate) {
+    const sigMatch = cppCodeTemplate.match(/public:\s*\n\s*[\s\S]*?\(([^)]*)\)/);
+    if (sigMatch && sigMatch[1].trim()) {
+      // Count commas outside of template brackets
+      let depth = 0;
+      let commas = 0;
+      for (const ch of sigMatch[1]) {
+        if (ch === '<') depth++;
+        else if (ch === '>') depth--;
+        else if (ch === ',' && depth === 0) commas++;
+      }
+      paramCount = commas + 1;
+    }
+  }
+
+  // Split exampleTestcases into per-test-case rawInput using parameter count
+  const rawLines = (q.exampleTestcases || '').split('\n').filter(l => l.trim() !== '');
+  const rawTestCaseGroups: string[][] = [];
+  for (let i = 0; i < rawLines.length; i += paramCount) {
+    const group = rawLines.slice(i, i + paramCount);
+    if (group.length === paramCount) {
+      rawTestCaseGroups.push(group);
+    }
+  }
+
+  // Build structured test cases by matching HTML examples with raw inputs
+  const testCases: { input: string; expectedOutput: string; rawInput: string }[] = [];
+  for (let i = 0; i < examples.length; i++) {
+    testCases.push({
+      input: examples[i].input,
+      expectedOutput: examples[i].output,
+      rawInput: rawTestCaseGroups[i] ? rawTestCaseGroups[i].join('\n') : '',
+    });
+  }
+
   return {
     title: q.title,
     problemStatement,
@@ -227,6 +272,8 @@ async function scrapeLeetCode(url: string): Promise<ParsedProblem> {
     topics,
     sourceUrl: url,
     platform: 'leetcode',
+    cppCodeTemplate,
+    testCases,
   };
 }
 
@@ -397,7 +444,11 @@ export async function POST(request: NextRequest) {
       data: {
         title: parsed.title,
         problemStatement: fullProblemStatement,
-        testCases: parsed.examples,
+        testCases: parsed.testCases || parsed.examples.map(ex => ({
+          input: ex.input,
+          expectedOutput: ex.output,
+          rawInput: '',
+        })),
         constraints: parsed.constraints,
         difficulty: parsed.difficulty,
         topics: parsed.topics,
@@ -405,6 +456,7 @@ export async function POST(request: NextRequest) {
         suggestedCategory,
         platform: parsed.platform,
         sourceUrl: parsed.sourceUrl,
+        cppCodeTemplate: parsed.cppCodeTemplate || '',
       },
     });
   } catch (error: unknown) {

@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     
-    const { title, problemStatement, problemImages, myCode, intuition, Confidence, category, tags, solutions } = body;
+    const { title, problemStatement, problemImages, myCode, intuition, Confidence, category, tags, solutions, testCases, cppCodeTemplate } = body;
 
     
     if (!title || !problemStatement || !Confidence || !category) {
@@ -150,6 +150,8 @@ export async function POST(request: NextRequest) {
       Confidence: parseInt(Confidence),
       category,
       tags: tags || [],
+      testCases: testCases || [],
+      cppCodeTemplate: cppCodeTemplate || '',
     });
 
     

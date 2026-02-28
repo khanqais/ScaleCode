@@ -180,6 +180,15 @@ const problemSchema = new mongoose.Schema({
       message: 'Each tag must be between 1 and 50 characters'
     }
   },
+  testCases: [{
+    input: { type: String, default: '' },
+    expectedOutput: { type: String, default: '' },
+    rawInput: { type: String, default: '' },
+  }],
+  cppCodeTemplate: {
+    type: String,
+    default: ''
+  },
   isPublic: {
     type: Boolean,
     default: false

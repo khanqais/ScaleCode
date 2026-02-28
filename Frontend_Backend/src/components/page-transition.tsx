@@ -31,10 +31,11 @@ const PageTransition = ({ children }: PageTransitionProps) => {
       className={`w-full transition-opacity duration-200 ease-out ${
         isTransitioning ? 'opacity-0' : 'opacity-100'
       }`}
-      style={{
-        
-        transform: isTransitioning ? 'translateY(-8px)' : 'translateY(0)',
+      style={isTransitioning ? {
+        transform: 'translateY(-8px)',
         transition: 'opacity 200ms ease-out, transform 200ms ease-out',
+      } : {
+        transition: 'opacity 200ms ease-out',
       }}
     >
       {displayChildren}

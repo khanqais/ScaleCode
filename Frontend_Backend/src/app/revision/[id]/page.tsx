@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Check, Eye, EyeOff, X, Copy, Code2, Sparkles, Lightbulb, ChevronRight, Loader2 } from 'lucide-react'
+import { ArrowLeft, Check, Eye, EyeOff, X, Copy, Code2, Sparkles, Lightbulb, ChevronRight, Loader2, Play } from 'lucide-react'
 import Image from 'next/image'
 import axios from 'axios'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -216,6 +216,21 @@ interface Problem {
     approach: string
     createdAt: Date
   }>
+  testCases?: Array<{
+    input: string
+    expectedOutput: string
+    rawInput: string
+  }>
+  cppCodeTemplate?: string
+}
+
+interface TestCaseResult {
+  testCase: number
+  input: string
+  expectedOutput: string
+  actualOutput: string
+  passed: boolean
+  error?: string
 }
 
 export default function RevisionPage() {
@@ -239,20 +254,32 @@ export default function RevisionPage() {
   const [selectedSolutionIndex, setSelectedSolutionIndex] = useState<number>(0)
 
   const [updating, setUpdating] = useState(false)
+  const [runningCode, setRunningCode] = useState(false)
+  const [testResults, setTestResults] = useState<TestCaseResult[] | null>(null)
+  const [runError, setRunError] = useState<string>('')
+  const [compileError, setCompileError] = useState<string>('')
+  const [templateLoaded, setTemplateLoaded] = useState(false)
 
   const fetchProblem = useCallback(async () => {
     try {
       const response = await axios.get(`/api/problems/${problemId}`)
       if (response.data.success) {
-        setProblem(response.data.data)
-        setNewConfidence(response.data.data.Confidence)
+        const data = response.data.data
+        setProblem(data)
+        setNewConfidence(data.Confidence)
+        // Pre-populate editor with C++ template if available and editor is empty
+        if (data.cppCodeTemplate && !templateLoaded) {
+          setUserCode(data.cppCodeTemplate)
+          setEditorLanguage('cpp')
+          setTemplateLoaded(true)
+        }
       }
     } catch {
       
     } finally {
       setLoading(false)
     }
-  }, [problemId])
+  }, [problemId, templateLoaded])
 
   useEffect(() => {
     if (problemId) {
@@ -312,6 +339,48 @@ export default function RevisionPage() {
       setAiHintLoading(false)
     }
   }
+
+  const handleRunCode = async () => {
+    if (!problem || !userCode.trim()) return
+
+    setRunningCode(true)
+    setTestResults(null)
+    setRunError('')
+    setCompileError('')
+
+    try {
+      const response = await axios.post('/api/run-code', {
+        problemId: problem._id,
+        userCode,
+      })
+
+      const data = response.data
+
+      if (!data.success) {
+        if (data.error === 'Compilation Error') {
+          setCompileError(data.compileError || 'Compilation failed')
+        } else if (data.error === 'Runtime Error') {
+          setRunError(`Runtime Error (exit code ${data.exitCode}): ${data.runtimeError || 'Unknown error'}`)
+        } else {
+          setRunError(data.error || 'Failed to run code')
+        }
+        return
+      }
+
+      setTestResults(data.results)
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        setRunError(error.response.data.error)
+      } else {
+        setRunError('Failed to run code. Please try again.')
+      }
+    } finally {
+      setRunningCode(false)
+    }
+  }
+
+  const hasTestCases = problem?.testCases && problem.testCases.length > 0 && problem.cppCodeTemplate
+  const canRunCode = hasTestCases && editorLanguage === 'cpp' && userCode.trim().length > 0
 
   const getConfidenceLabel = (conf: number) => {
     if (conf <= 3) return 'Need to relearn'
@@ -545,13 +614,145 @@ export default function RevisionPage() {
               {}
               <div className="p-2.5 sm:p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 transition-colors">
                 <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 dark:text-gray-400 transition-colors">
-                  <span>Lines: {userCode.split('\n').length}</span>
-                  <span>Characters: {userCode.length}</span>
+                  <div className="flex items-center gap-3">
+                    <span>Lines: {userCode.split('\n').length}</span>
+                    <span>Characters: {userCode.length}</span>
+                  </div>
+                  {hasTestCases && (
+                    <button
+                      onClick={handleRunCode}
+                      disabled={!canRunCode || runningCode}
+                      className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-medium rounded-lg transition-colors shadow-sm"
+                      title={editorLanguage !== 'cpp' ? 'Code execution is currently supported for C++ only' : 'Run code against test cases'}
+                    >
+                      {runningCode ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Play className="w-3.5 h-3.5" />
+                      )}
+                      {runningCode ? 'Running...' : 'Run Code'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* ─── Test Results Panel ─── */}
+        {(testResults || runError || compileError || runningCode) && (
+          <div className="mt-4 sm:mt-6 bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Code2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                  Test Results
+                </h2>
+                {testResults && (
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      testResults.every(r => r.passed)
+                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                        : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                    }`}>
+                      {testResults.filter(r => r.passed).length}/{testResults.length} Passed
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6">
+              {/* Running indicator */}
+              {runningCode && (
+                <div className="flex items-center justify-center py-8 gap-3">
+                  <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Compiling and running your code...</p>
+                </div>
+              )}
+
+              {/* Compilation Error */}
+              {compileError && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <X className="w-4 h-4 text-red-500" />
+                    <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">Compilation Error</h3>
+                  </div>
+                  <pre className="text-xs text-red-600 dark:text-red-300 whitespace-pre-wrap font-mono bg-red-100/50 dark:bg-red-900/30 p-3 rounded-md overflow-x-auto max-h-48 overflow-y-auto">
+                    {compileError}
+                  </pre>
+                </div>
+              )}
+
+              {/* Runtime Error */}
+              {runError && (
+                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <X className="w-4 h-4 text-orange-500" />
+                    <h3 className="text-sm font-semibold text-orange-700 dark:text-orange-400">Error</h3>
+                  </div>
+                  <pre className="text-xs text-orange-600 dark:text-orange-300 whitespace-pre-wrap font-mono bg-orange-100/50 dark:bg-orange-900/30 p-3 rounded-md overflow-x-auto max-h-48 overflow-y-auto">
+                    {runError}
+                  </pre>
+                </div>
+              )}
+
+              {/* Test Case Results */}
+              {testResults && testResults.length > 0 && (
+                <div className="space-y-3">
+                  {testResults.map((result) => (
+                    <div
+                      key={result.testCase}
+                      className={`rounded-lg border p-4 transition-colors ${
+                        result.passed
+                          ? 'border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10'
+                          : 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        {result.passed ? (
+                          <Check className="w-4 h-4 text-green-500" />
+                        ) : (
+                          <X className="w-4 h-4 text-red-500" />
+                        )}
+                        <span className={`text-sm font-semibold ${
+                          result.passed ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'
+                        }`}>
+                          Test Case {result.testCase} — {result.passed ? 'Passed' : 'Failed'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div>
+                          <div className="text-gray-500 dark:text-gray-400 font-medium mb-1">Input</div>
+                          <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200 max-h-24 overflow-y-auto">
+                            {result.input}
+                          </pre>
+                        </div>
+                        <div>
+                          <div className="text-gray-500 dark:text-gray-400 font-medium mb-1">Expected</div>
+                          <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200 max-h-24 overflow-y-auto">
+                            {result.expectedOutput}
+                          </pre>
+                        </div>
+                        <div>
+                          <div className="text-gray-500 dark:text-gray-400 font-medium mb-1">Output</div>
+                          <pre className={`p-2 rounded-md font-mono whitespace-pre-wrap max-h-24 overflow-y-auto ${
+                            result.passed
+                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+                              : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+                          }`}>
+                            {result.actualOutput || '(empty)'}
+                          </pre>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         
         <div className="mt-4 sm:mt-6 p-3 sm:p-4 lg:p-6 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 shadow-md sm:shadow-lg">

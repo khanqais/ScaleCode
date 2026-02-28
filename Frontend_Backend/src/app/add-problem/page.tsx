@@ -36,7 +36,9 @@ export default function AddProblemPage() {
     Confidence: 5,
     category: 'Graph',
     tags: [] as string[],
-    problemImages: [] as string[]
+    problemImages: [] as string[],
+    testCases: [] as { input: string; expectedOutput: string; rawInput: string }[],
+    cppCodeTemplate: ''
   })
   const [solutions, setSolutions] = useState([{
     code: '',
@@ -81,6 +83,8 @@ export default function AddProblemPage() {
         problemStatement?: string;
         suggestedCategory?: string;
         suggestedTags?: string[];
+        testCases?: { input: string; expectedOutput: string; rawInput: string }[];
+        cppCodeTemplate?: string;
       }
 
       setFormData(prev => ({
@@ -88,7 +92,9 @@ export default function AddProblemPage() {
         title: parsedData.title?.trim() || prev.title,
         problemStatement: parsedData.problemStatement?.trim() || prev.problemStatement,
         category: parsedData.suggestedCategory || prev.category,
-        tags: Array.from(new Set([...(prev.tags || []), ...((parsedData.suggestedTags || []).filter(Boolean))])).slice(0, 10)
+        tags: Array.from(new Set([...(prev.tags || []), ...((parsedData.suggestedTags || []).filter(Boolean))])).slice(0, 10),
+        testCases: parsedData.testCases || prev.testCases,
+        cppCodeTemplate: parsedData.cppCodeTemplate || prev.cppCodeTemplate
       }))
     } catch {
       setError('Failed to parse URL. Please try again.')
@@ -294,7 +300,8 @@ export default function AddProblemPage() {
         Confidence: formData.Confidence,
         category: formData.category,
         tags: formData.tags,
-       
+        testCases: formData.testCases,
+        cppCodeTemplate: formData.cppCodeTemplate,
         myCode: solutions[0]?.code || '',
         intuition: solutions[0]?.intuition || ''
       }
