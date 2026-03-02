@@ -10,18 +10,17 @@ import {
   normalizeForComparison,
 } from '@/utils/cppDriver';
 
-// ─── Wandbox API (100% free, no API key, no rate limits) ─────────────────────
-// https://github.com/melpon/wandbox/blob/master/kennel2/API.md
+
 const WANDBOX_URL = 'https://wandbox.org/api/compile.json';
 
 interface WandboxResponse {
-  status: string;            // "0" on success
-  program_output?: string;   // stdout
-  program_error?: string;    // stderr from program
-  compiler_error?: string;   // compiler errors/warnings
-  compiler_message?: string; // full compiler messages
-  signal?: string;           // e.g. "Killed" on TLE
-  program_message?: string;  // combined program output
+  status: string;           
+  program_output?: string;  
+  program_error?: string;    
+  compiler_error?: string;   
+  compiler_message?: string; 
+  signal?: string;           
+  program_message?: string;  
 }
 
 interface TestCaseResult {
@@ -33,7 +32,7 @@ interface TestCaseResult {
   error?: string;
 }
 
-// ─── POST /api/run-code ───────────────────────────────────────────────────────
+
 
 export async function POST(request: NextRequest) {
   try {
