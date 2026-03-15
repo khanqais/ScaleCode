@@ -4,6 +4,7 @@ import PageTransition from "@/components/page-transition";
 import SessionProvider from "@/components/SessionProvider";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 
 export const metadata: Metadata = {
@@ -124,6 +125,7 @@ export default function RootLayout({
             </div>
           </ThemeProvider>
         </SessionProvider>
+        <SpeedInsights /> 
       </body>
     </html>
   );
