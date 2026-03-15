@@ -300,6 +300,16 @@ const sliderStyles = `
       height: 24px;
     }
   }
+
+  /* On desktop, the editor wrapper should flex-grow to fill available space
+     instead of using the fixed mobile height from clamp() */
+  @media (min-width: 1024px) {
+    .editor-height-wrapper {
+      height: 100% !important;
+      flex: 1;
+      min-height: 0;
+    }
+  }
 `;
 
 interface Problem {
@@ -526,7 +536,8 @@ export default function RevisionPage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: sliderStyles }} />
-      <div className="h-screen flex flex-col bg-gray-50 dark:bg-slate-950 overflow-hidden transition-colors">
+      {/* Mobile: scrollable flex column. Desktop: fixed h-screen split-pane */}
+      <div className="min-h-screen lg:h-screen flex flex-col bg-gray-50 dark:bg-slate-950 lg:overflow-hidden transition-colors">
 
         {/* ── Top Bar ── */}
         <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-5 py-2.5 transition-colors">
@@ -578,15 +589,17 @@ export default function RevisionPage() {
         </div>
 
         {/* ── Main Content ── */}
-        <div className="flex-1 overflow-hidden p-2.5 sm:p-3 lg:p-4 min-h-0">
-          <div className="h-full grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-3 lg:gap-4">
+        {/* Mobile: normal flow (scrollable). Desktop: flex-1 overflow-hidden fixed panes */}
+        <div className="lg:flex-1 lg:overflow-hidden p-2.5 sm:p-3 lg:p-4 lg:min-h-0">
+          <div className="lg:h-full grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-3 lg:gap-4">
 
             {/* Left: Problem Statement */}
-            <div className="flex flex-col min-h-0 bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
+            {/* Mobile: natural height (auto). Desktop: fill available height with scroll inside */}
+            <div className="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors lg:min-h-0">
               <div className="flex-shrink-0 px-4 py-2.5 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
                 <span className="text-sm font-bold text-gray-900 dark:text-white">Problem Statement</span>
               </div>
-              <div className="flex-1 overflow-auto p-4 sm:p-5">
+              <div className="lg:flex-1 lg:overflow-auto p-4 sm:p-5">
                 <ProblemStatementRenderer text={problem.problemStatement} />
                 {problem.problemImages && problem.problemImages.length > 0 && (
                   <div className="mt-5 pt-5 border-t border-gray-200 dark:border-slate-700 space-y-4">
@@ -612,10 +625,11 @@ export default function RevisionPage() {
             </div>
 
             {/* Right: Editor + Test Results stacked */}
-            <div className="flex flex-col min-h-0 gap-2.5 sm:gap-3">
+            <div className="flex flex-col gap-2.5 sm:gap-3 lg:min-h-0">
 
               {/* Editor */}
-              <div className={`flex flex-col min-h-0 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors ${(testResults || runError || compileError || runningCode) ? 'flex-[2]' : 'flex-1'}`}>
+              {/* Mobile: fixed height so editor is always visible. Desktop: flex to fill remaining space */}
+              <div className={`flex flex-col bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors lg:min-h-0 ${(testResults || runError || compileError || runningCode) ? 'lg:flex-[2]' : 'lg:flex-1'}`}>
                 <div className="flex-shrink-0 px-3 py-2.5 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-gray-900">
                   <span className="text-sm font-semibold text-gray-900 dark:text-white">Write Your Solution</span>
                   <div className="flex items-center gap-1.5">
@@ -643,7 +657,8 @@ export default function RevisionPage() {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-hidden min-h-0">
+                {/* Monaco editor: fixed height on mobile via clamp, flex-fill on desktop via .editor-height-wrapper */}
+                <div className="editor-height-wrapper overflow-hidden" style={{ height: 'clamp(300px, 45vh, 500px)' }}>
                   <Editor
                     height="100%"
                     language={editorLanguage}
@@ -691,7 +706,7 @@ export default function RevisionPage() {
 
               {/* Test Results — shown inline below editor */}
               {(testResults || runError || compileError || runningCode) && (
-                <div className="flex-1 min-h-0 flex flex-col bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+                <div className="lg:flex-1 lg:min-h-0 flex flex-col bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
                   <div className="flex-shrink-0 px-3 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-gray-900 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Code2 className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
