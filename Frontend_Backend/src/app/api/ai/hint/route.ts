@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
-import { GoogleGenerativeAI } from '@google/generative-ai'
-
-
-
 
 interface HintRequest {
   problemTitle: string
   problemStatement: string
   category: string
   userCode?: string
-  hintLevel: 1 | 2 | 3 
+  hintLevel: 1 | 2 | 3
 }
 
 export async function POST(request: NextRequest) {
@@ -23,10 +19,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const apiKey = process.env.GEMINI_API_KEY
+    const apiKey = process.env.GROQ_API
     if (!apiKey) {
       return NextResponse.json(
-        { success: false, error: 'AI service not configured. Please add GEMINI_API_KEY to your environment variables.' },
+        { success: false, error: 'AI service not configured. Please add GROQ_API to your environment variables.' },
         { status: 500 }
       )
     }
@@ -43,13 +39,33 @@ export async function POST(request: NextRequest) {
 
     const prompt = buildHintPrompt(problemTitle, problemStatement, category, userCode, hintLevel)
 
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 1024,
+      }),
+    })
 
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const hintText = response.text()
-    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error?.message || `Groq API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const hintText = data.choices?.[0]?.message?.content
+
     if (!hintText) {
       return NextResponse.json(
         { success: false, error: 'AI could not generate a hint. Please try again.' },
