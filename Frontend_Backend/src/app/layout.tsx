@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import PageTransition from "@/components/page-transition";
 import SessionProvider from "@/components/SessionProvider";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 
 export const metadata: Metadata = {
@@ -98,11 +104,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <title>AlgoGrid - Master DSA Patterns &amp; Coding Challenges</title>
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
-        
+
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
         <link rel="icon" type="image/png" href="/logo_black.png" />
@@ -114,7 +116,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta charSet="UTF-8" />
       </head>
-      <body className={`font-normal text-black dark:text-white transition-colors`}>
+      <body className={`${playfairDisplay.className} font-normal text-black dark:text-white transition-colors`}>
         <SessionProvider>
           <ThemeProvider>
             <div className="relative min-h-screen w-full">

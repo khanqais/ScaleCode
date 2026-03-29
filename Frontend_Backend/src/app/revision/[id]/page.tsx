@@ -563,7 +563,7 @@ export default function RevisionPage() {
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <button
                 onClick={() => { setShowAIHintModal(true); if (!aiHint) handleGetAIHint(1) }}
-                className="flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all text-xs font-medium shadow-sm"
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-white-500 to-pink-500 text-white rounded-lg hover:from-white-600 hover:to-pink-600 transition-all text-xs font-medium shadow-sm"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">AI Hint</span>
@@ -1006,9 +1006,7 @@ export default function RevisionPage() {
             {}
             <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </div>
+               
                 <div>
                   <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-white">AI Hint Assistant</h2>
                   <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Get progressive hints without spoiling the solution</p>
