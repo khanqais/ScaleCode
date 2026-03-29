@@ -319,6 +319,13 @@ export default function AddProblemPage() {
       if (response.ok && result.success) {
         setSuccess(true)
         
+        if (result.data?._id && formData.cppCodeTemplate) {
+          fetch('/api/problems/generate-tests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ problemId: result.data._id }),
+          }).catch(() => {})
+        }
         
         if (result.usage) {
           setUsageInfo({
