@@ -14,48 +14,28 @@ function buildTestCasePrompt(
   title: string,
   problemStatement: string,
   signatureInfo: string,
-  existingExamples: string,
+  formatExample: string,
   paramCount: number,
   existingCount: number
 ): string {
-  const targetCount = Math.max(7 - existingCount, 4);
+  const targetCount = Math.min(Math.max(10 - existingCount, 7), 10);
 
-  return `Generate exactly ${targetCount} additional edge-case test cases for this competitive programming problem.
+  return `Generate ${targetCount} edge-case test cases for: ${title}
 
-PROBLEM: ${title}
-
-STATEMENT:
 ${problemStatement}
+${signatureInfo ? `\nSignature: ${signatureInfo}` : ''}
 
-${signatureInfo ? `FUNCTION SIGNATURE:\n${signatureInfo}\n` : ''}
-EXISTING TEST CASES (use as format reference — do NOT repeat these):
-${existingExamples}
+Format reference (match this exactly):
+${formatExample}
 
-REQUIREMENTS:
-1. Generate exactly ${targetCount} NEW test cases that are DIFFERENT from all existing ones.
-2. Each test case MUST have exactly three fields:
-   - "input": Human-readable display string matching the style of existing examples (e.g. "nums = [2,7,11,15], target = 9")
-   - "expectedOutput": The CORRECT output as a string (e.g. "[0,1]"). You MUST solve the problem yourself to compute this correctly.
-   - "rawInput": LeetCode-style raw input with EXACTLY ${paramCount} line(s) separated by \\n, one per function parameter in order. Arrays use [1,2,3], strings use "abc", integers are plain numbers, booleans are true/false.
-3. Edge cases to cover:
-   - Minimum valid input size (e.g. smallest allowed array length)
-   - Single element or two-element inputs where applicable
-   - All identical elements
-   - Negative numbers and zeros where applicable
-   - Already sorted / reverse sorted inputs where applicable
-   - Boundary constraint values
-   - Cases that commonly cause off-by-one or overflow errors
-4. Keep all arrays/inputs small (≤ 15 elements) so outputs are verifiable.
-5. The expectedOutput MUST be mathematically correct. Double-check by mentally running the algorithm.
+Rules:
+- "input": human-readable (e.g. "nums = [1,2], target = 3")
+- "expectedOutput": correct answer as string — solve it yourself
+- "rawInput": EXACTLY ${paramCount} line(s) joined by \\n, one per param. Arrays=[1,2,3], strings="abc", ints=plain numbers
+- Cover: min size, max size (≤15 elements), zeros, negatives, duplicates, sorted/reverse, off-by-one edges
+- All expectedOutput values MUST be correct
 
-CRITICAL: rawInput must have EXACTLY ${paramCount} line(s) per test case, separated by \\n. This directly maps to the function parameters in order.
-
-Return ONLY valid JSON with this exact structure, no markdown fences, no explanation:
-{
-  "testCases": [
-    { "input": "...", "expectedOutput": "...", "rawInput": "..." }
-  ]
-}`;
+{"testCases":[{"input":"...","expectedOutput":"...","rawInput":"..."}]}`;
 }
 
 export async function POST(request: NextRequest) {
@@ -88,10 +68,16 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
-    const problem = await Problem.findOne({
-      _id: problemId,
-      userId: session.user.id,
-    });
+    const problem = await Problem.findOne(
+      { _id: problemId, userId: session.user.id },
+    )
+      .select('title problemStatement testCases cppCodeTemplate')
+      .lean<{
+        title: string;
+        problemStatement: string;
+        testCases: { input: string; expectedOutput: string; rawInput: string }[];
+        cppCodeTemplate: string;
+      }>();
 
     if (!problem) {
       return NextResponse.json(
@@ -100,39 +86,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const cppTemplate = problem.cppCodeTemplate as string;
-    const existingTestCases = (problem.testCases || []) as Array<{
-      input: string;
-      expectedOutput: string;
-      rawInput: string;
-    }>;
+    const existingTestCases = problem.testCases || [];
 
     let signatureInfo = '';
     let paramCount = 1;
 
-    if (cppTemplate) {
-      const sig = parseCppSignature(cppTemplate);
+    if (problem.cppCodeTemplate) {
+      const sig = parseCppSignature(problem.cppCodeTemplate);
       if (sig) {
         paramCount = sig.params.length;
         signatureInfo = `${sig.returnType} ${sig.functionName}(${sig.params.map(p => `${p.type} ${p.name}`).join(', ')})
-
-Parameters (${paramCount} total — rawInput must have exactly ${paramCount} line(s), one per parameter):
-${sig.params.map((p, i) => `  Line ${i + 1}: ${p.name} (type: ${p.type})`).join('\n')}
-Return type: ${sig.returnType}`;
+Params (${paramCount}): ${sig.params.map((p, i) => `line${i + 1}=${p.name}:${p.type}`).join(', ')}`;
       }
     }
 
-    const existingExamplesStr = existingTestCases.length > 0
-      ? existingTestCases.map((tc, i) =>
-          `Test Case ${i + 1}:\n  input: "${tc.input}"\n  expectedOutput: "${tc.expectedOutput}"\n  rawInput: "${tc.rawInput.replace(/\n/g, '\\n')}"`
-        ).join('\n\n')
+    const firstExample = existingTestCases[0];
+    const formatExample = firstExample
+      ? `{"input":"${firstExample.input}","expectedOutput":"${firstExample.expectedOutput}","rawInput":"${firstExample.rawInput.replace(/\n/g, '\\n')}"}`
       : 'No existing test cases.';
 
     const prompt = buildTestCasePrompt(
-      problem.title as string,
-      problem.problemStatement as string,
+      problem.title,
+      problem.problemStatement,
       signatureInfo,
-      existingExamplesStr,
+      formatExample,
       paramCount,
       existingTestCases.length
     );
@@ -148,15 +125,15 @@ Return type: ${sig.returnType}`;
         messages: [
           {
             role: 'system',
-            content: 'You are a precise test case generator for competitive programming problems. You always return valid JSON only. You solve each problem carefully to ensure expectedOutput values are correct.',
+            content: 'Precise test case generator. Return valid JSON only. Solve each problem to ensure correct expectedOutput.',
           },
           {
             role: 'user',
             content: prompt,
           },
         ],
-        temperature: 0.3,
-        max_tokens: 2048,
+        temperature: 0.2,
+        max_tokens: 4096,
         response_format: { type: 'json_object' },
       }),
       signal: AbortSignal.timeout(30000),

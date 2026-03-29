@@ -1,7 +1,4 @@
-// ─── C++ Driver Code Generator ────────────────────────────────────────────────
-// Generates a complete C++ program that wraps the user's Solution class
-// with input parsing, function invocation, and output formatting
-// for automated testing against LeetCode-style test cases.
+
 
 export interface FunctionSignature {
   returnType: string;
@@ -9,19 +6,9 @@ export interface FunctionSignature {
   params: { type: string; name: string }[];
 }
 
-// ─── Signature Parsing ────────────────────────────────────────────────────────
 
-/**
- * Parse a C++ function signature from a LeetCode code template.
- * E.g. from:
- *   class Solution {
- *   public:
- *       vector<int> twoSum(vector<int>& nums, int target) { }
- *   };
- * Extracts: { returnType: "vector<int>", functionName: "twoSum", params: [...] }
- */
 export function parseCppSignature(cppTemplate: string): FunctionSignature | null {
-  // Extract the function line between "public:" and the first "{"
+  
   const match = cppTemplate.match(/public:\s*\n\s*([\s\S]*?)\s*\{/);
   if (!match) return null;
 
@@ -36,14 +23,14 @@ function parseSignatureLine(sig: string): FunctionSignature | null {
   const beforeParen = sig.substring(0, parenIdx).trim();
   const paramsStr = sig.substring(parenIdx + 1, sig.lastIndexOf(')')).trim();
 
-  // Split return type and function name
+  
   const lastSpaceIdx = findLastSpaceOutsideTemplates(beforeParen);
   if (lastSpaceIdx === -1) return null;
 
   const returnType = beforeParen.substring(0, lastSpaceIdx).trim();
   const functionName = beforeParen.substring(lastSpaceIdx + 1).trim();
 
-  // Parse parameters
+  
   const params: { type: string; name: string }[] = [];
   if (paramsStr) {
     const paramParts = splitByCommaRespectingTemplates(paramsStr);
@@ -148,8 +135,7 @@ const TYPE_FORMATTERS: Record<string, string> = {
   'TreeNode*': '__formatTreeNode',
 };
 
-// ─── C++ Helper Code ──────────────────────────────────────────────────────────
-// All input parsers and output formatters, plus ListNode/TreeNode structs.
+
 
 const CPP_HELPERS = `#include <bits/stdc++.h>
 using namespace std;
@@ -582,9 +568,11 @@ export function parseOutput(stdout: string, testCaseCount: number): string[] {
   return stdout.split(delimiter).map(s => s.trim()).slice(0, testCaseCount);
 }
 
-/**
- * Normalize output for comparison: trim, remove all whitespace, lowercase.
- */
 export function normalizeForComparison(output: string): string {
-  return output.trim().replace(/\s+/g, '').toLowerCase();
+  const stripped = output.trim().replace(/\s+/g, '').toLowerCase();
+  const num = Number(stripped);
+  if (stripped !== '' && !isNaN(num)) {
+    return String(num);
+  }
+  return stripped;
 }

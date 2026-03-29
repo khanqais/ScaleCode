@@ -36,7 +36,7 @@ interface TestCaseResult {
 
 export async function POST(request: NextRequest) {
   try {
-    // Auth check
+    
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate test cases exist
+    
     const testCases = problem.testCases as Array<{
       input: string;
       expectedOutput: string;
@@ -86,7 +86,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Filter to test cases that have rawInput
     const validTestCases = testCases.filter(tc => tc.rawInput && tc.expectedOutput);
     if (validTestCases.length === 0) {
       return NextResponse.json(
@@ -95,7 +94,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse function signature from stored C++ template
     const cppTemplate = problem.cppCodeTemplate as string;
     if (!cppTemplate) {
       return NextResponse.json(
@@ -112,7 +110,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate the full C++ program
     let fullProgram: string;
     try {
       fullProgram = generateCppProgram(userCode, signature);
@@ -123,10 +120,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Build stdin
     const stdin = buildStdin(validTestCases);
 
-    // Execute via Wandbox API
     let wandboxResult: WandboxResponse;
     try {
       const wandboxRes = await fetch(WANDBOX_URL, {
@@ -178,7 +173,6 @@ export async function POST(request: NextRequest) {
       }, { status: 200 });
     }
 
-    // Check for runtime errors / signals
     if (wandboxResult.signal) {
       const sig = wandboxResult.signal.toLowerCase();
       if (sig.includes('kill') || sig.includes('timeout')) {
@@ -196,7 +190,6 @@ export async function POST(request: NextRequest) {
       }, { status: 200 });
     }
 
-    // Non-zero exit status with no signal
     if (wandboxResult.status !== '0' && wandboxResult.status !== undefined) {
       const statusNum = parseInt(wandboxResult.status);
       if (statusNum !== 0 && !isNaN(statusNum)) {
