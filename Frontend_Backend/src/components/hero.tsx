@@ -8,11 +8,11 @@ import { GlowingEffect } from '@/components/ui/glowing-effect'
 const Hero = () => {
   return (
     <div 
-      className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
+      className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
     >
       {}
       <div 
-        className="mb-8 sm:mb-12 transition-transform duration-300 hover:scale-110 hover:rotate-3"
+        className="mb-4 sm:mb-6 transition-transform duration-300 hover:scale-110 hover:rotate-3"
       >
         <div className="w-20 h-20 sm:w-24 sm:h-24 bg-black dark:bg-white rounded-3xl flex items-center justify-center shadow-lg relative overflow-hidden">
           <GlowingEffect 
@@ -28,14 +28,14 @@ const Hero = () => {
 
       {}
       <h1 
-        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black dark:text-white mb-6 sm:mb-8 max-w-4xl leading-tight animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100"
+        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black dark:text-white mb-3 sm:mb-4 max-w-4xl leading-tight animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100"
       >
         Remember every algorithm, forever
       </h1>
 
       {}
       <p 
-        className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl leading-relaxed px-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200"
+        className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 sm:mb-8 max-w-2xl leading-relaxed px-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200"
       >
         Save and revise your LeetCode, HackerRank, and coding platform solutions. 
         Group them by topics, difficulty, or custom categories. 
