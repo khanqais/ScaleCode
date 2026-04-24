@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import PageTransition from "@/components/page-transition";
 import SessionProvider from "@/components/SessionProvider";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SpeedInsights } from "@vercel/speed-insights/next"
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 
 export const metadata: Metadata = {
@@ -107,6 +101,12 @@ export default function RootLayout({
 
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display&display=swap"
+        />
         <link rel="icon" type="image/png" href="/logo_black.png" />
         <link rel="apple-touch-icon" href="/logo_black.png" />
         <script
@@ -116,7 +116,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta charSet="UTF-8" />
       </head>
-      <body className={`${playfairDisplay.className} font-normal text-black dark:text-white transition-colors`}>
+      <body className="font-normal text-black dark:text-white transition-colors">
         <SessionProvider>
           <ThemeProvider>
             <div className="relative min-h-screen w-full">

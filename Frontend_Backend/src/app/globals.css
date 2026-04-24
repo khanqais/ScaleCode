@@ -75,8 +75,8 @@
   --sidebar-accent-foreground: white;
   --sidebar-border: #e5e5e5;
   --sidebar-ring: #333333;
-  --font-sans: Montserrat, sans-serif;
-  --font-serif: Georgia, serif;
+  --font-sans: "Montserrat", sans-serif;
+  --font-serif: "Playfair Display", serif;
   --font-mono: Fira Code, monospace;
   --radius: 0.35rem;
   --shadow-2xs: 0px 4px 6px 0px hsl(0 0% 0% / 0.06);
@@ -125,8 +125,8 @@
   --sidebar-accent-foreground: black;
   --sidebar-border: #1a1a1a;
   --sidebar-ring: #cccccc;
-  --font-sans: Montserrat, sans-serif;
-  --font-serif: Georgia, serif;
+  --font-sans: "Montserrat", sans-serif;
+  --font-serif: "Playfair Display", serif;
   --font-mono: Fira Code, monospace;
   --radius: 0.35rem;
   --shadow-2xs: 0px 4px 6px 0px hsl(0 0% 100% / 0.06);
@@ -223,7 +223,8 @@ html.dark {
 }
 
 body {
-   font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
   background: transparent !important;
   font-weight: 400;
 }

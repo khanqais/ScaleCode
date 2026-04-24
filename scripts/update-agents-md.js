@@ -4,12 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-/**
- * Auto-update AGENTS.md files after git commits
- * Scans all AGENTS.md files in the project and updates their RECENT CHANGES section
- */
 
-// ANSI color codes
 const colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
