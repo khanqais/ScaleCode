@@ -289,13 +289,7 @@ function ProblemsPageContent() {
               )}
             </div>
 
-            {selectedCategory && (
-              <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2 sm:p-3">
-                <p className="text-blue-800 dark:text-blue-300 text-xs sm:text-sm">
-                  <strong>Active Filter:</strong> Showing problems in &ldquo;{selectedCategory}&rdquo; category
-                </p>
-              </div>
-            )}
+            
           </div>
         )}
 
