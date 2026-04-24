@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, Suspense, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/navbar'
 import { ButtonColorful } from '@/components/ui/button-colorful'
@@ -25,19 +25,40 @@ function ProblemsPageContent() {
   const { data: session } = useSession()
   const user = session?.user
   const router = useRouter()
-  const searchParams = useSearchParams()
   
   
   const [allProblems, setAllProblems] = useState<Problem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    if (typeof window === 'undefined') {
+      return ''
+    }
+
+    return new URLSearchParams(window.location.search).get('category') || ''
+  })
   const [searchTerm, setSearchTerm] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalProblems, setTotalProblems] = useState(0)
+
+  const updateCategoryInUrl = useCallback((category: string) => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const params = new URLSearchParams(window.location.search)
+    if (category) {
+      params.set('category', category)
+    } else {
+      params.delete('category')
+    }
+
+    const nextUrl = params.toString() ? `/problems?${params.toString()}` : '/problems'
+    window.history.replaceState(null, '', nextUrl)
+  }, [])
 
   const fetchProblems = useCallback(async (page: number = 1) => {
     if (!user) return
@@ -105,14 +126,16 @@ function ProblemsPageContent() {
   }, [allProblems, selectedCategory, searchTerm])
 
   useEffect(() => {
-    const categoryFromUrl = searchParams.get('category')
-    if (categoryFromUrl) {
-      const decodedCategory = decodeURIComponent(categoryFromUrl)
-      setSelectedCategory(decodedCategory)
-    } else {
-      setSelectedCategory('')
+    const syncCategoryFromUrl = () => {
+      const category = new URLSearchParams(window.location.search).get('category') || ''
+      setSelectedCategory(category)
     }
-  }, [searchParams])
+
+    window.addEventListener('popstate', syncCategoryFromUrl)
+    return () => {
+      window.removeEventListener('popstate', syncCategoryFromUrl)
+    }
+  }, [])
 
   const handleStartRevision = (problemId: string) => {
     router.push(`/revision/${problemId}`)
@@ -139,21 +162,15 @@ function ProblemsPageContent() {
   }
 
   const handleCategoryFilter = (category: string) => {
-    if (selectedCategory === category) {
-      setSelectedCategory('')
-      router.push('/problems')
-    } else {
-      setSelectedCategory(category)
-      router.push(`/problems?category=${encodeURIComponent(category)}`)
-    }
-    fetchProblems(1)
+    const nextCategory = selectedCategory === category ? '' : category
+    setSelectedCategory(nextCategory)
+    updateCategoryInUrl(nextCategory)
   }
 
   const clearAllFilters = () => {
     setSelectedCategory('')
     setSearchTerm('')
-    router.push('/problems')
-    fetchProblems(1)
+    updateCategoryInUrl('')
   }
 
   const handleDeleteProblem = async (problemId: string) => {
@@ -448,16 +465,5 @@ function ProblemsPageContent() {
 }
 
 export default function ProblemsPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-transparent">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh]">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
-        </div>
-      </div>
-    }>
-      <ProblemsPageContent />
-    </Suspense>
-  )
+  return <ProblemsPageContent />
 }
