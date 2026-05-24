@@ -377,7 +377,7 @@ function ProblemDetailPageContent() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pt-32">
           <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
             <button
-              onClick={() => router.back()}
+              onClick={() => router.push('/problems')}
               className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" />
@@ -416,7 +416,7 @@ function ProblemDetailPageContent() {
         <div className="flex items-start justify-between mb-6 sm:mb-8 gap-4">
           <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
             <button
-              onClick={() => router.back()}
+              onClick={() => router.push('/problems')}
               className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0 mt-1"
             >
               <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" />

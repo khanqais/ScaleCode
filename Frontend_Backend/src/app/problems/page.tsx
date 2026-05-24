@@ -41,8 +41,8 @@ function ProblemsPageContent() {
   const [searchTerm, setSearchTerm] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [totalProblems, setTotalProblems] = useState(0)
+  const itemsPerPage = 6
+  const fetchLimit = 500
 
   const updateCategoryInUrl = useCallback((category: string) => {
     if (typeof window === 'undefined') {
@@ -60,12 +60,12 @@ function ProblemsPageContent() {
     window.history.replaceState(null, '', nextUrl)
   }, [])
 
-  const fetchProblems = useCallback(async (page: number = 1) => {
+  const fetchProblems = useCallback(async () => {
     if (!user) return
 
     try {
       setLoading(true)
-      const response = await fetch(`/api/problems?page=${page}&limit=20`, {
+      const response = await fetch(`/api/problems?page=1&limit=${fetchLimit}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -80,9 +80,6 @@ function ProblemsPageContent() {
 
       if (result.success) {
         setAllProblems(result.data.problems || [])
-        setTotalPages(result.data.pagination?.totalPages || 1)
-        setTotalProblems(result.data.pagination?.total || 0)
-        setCurrentPage(page)
         setError('')
       } else {
         setError(result.error || 'Failed to fetch problems')
@@ -92,11 +89,11 @@ function ProblemsPageContent() {
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [user, fetchLimit])
 
   useEffect(() => {
     if (user?.email) {
-      fetchProblems(1)
+      fetchProblems()
     }
   }, [user?.email, fetchProblems])
 
@@ -124,6 +121,19 @@ function ProblemsPageContent() {
 
     return filtered
   }, [allProblems, selectedCategory, searchTerm])
+
+  const totalVisible = filteredProblems.length
+  const totalPages = Math.max(1, Math.ceil(totalVisible / itemsPerPage))
+  const paginatedProblems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredProblems.slice(startIndex, startIndex + itemsPerPage)
+  }, [filteredProblems, currentPage, itemsPerPage])
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [currentPage, totalPages])
 
   useEffect(() => {
     const syncCategoryFromUrl = () => {
@@ -188,7 +198,7 @@ function ProblemsPageContent() {
 
       if (response.ok && result.success) {
         
-        await fetchProblems(currentPage)
+        await fetchProblems()
       } else {
         setErrorMessage(result.error || 'Failed to delete problem')
       }
@@ -234,8 +244,8 @@ function ProblemsPageContent() {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">Your Problems</h1>
             <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 transition-colors">
               {selectedCategory
-                ? `${totalProblems} ${selectedCategory} problems`
-                : `${totalProblems} total problems`
+                ? `${totalVisible} ${selectedCategory} problems`
+                : `${totalVisible} total problems`
               }
             </p>
           </div>
@@ -328,7 +338,7 @@ function ProblemsPageContent() {
           </div>
         ) : (
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredProblems.map((problem: Problem) => (
+            {paginatedProblems.map((problem: Problem) => (
               <div key={problem._id} className="relative bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 transition-all">
                 <GlowingEffect 
                   proximity={150} 
@@ -434,17 +444,17 @@ function ProblemsPageContent() {
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-8 mb-4">
             <button
-              onClick={() => fetchProblems(currentPage - 1)}
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
               disabled={currentPage === 1 || loading}
               className="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              Page {currentPage} of {totalPages} ({totalProblems} problems)
+              Page {currentPage} of {totalPages} ({totalVisible} problems)
             </span>
             <button
-              onClick={() => fetchProblems(currentPage + 1)}
+              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
               disabled={currentPage === totalPages || loading}
               className="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
