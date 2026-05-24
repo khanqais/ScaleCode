@@ -74,7 +74,7 @@ function parseConstraints(problemStatement: string): ConstraintBounds {
 
   // Element value bounds: -10^9 <= nums[i] <= 10^9  OR  0 <= val <= 100
   const valuePattern =
-    /(-?[\d\s\^\*]+)\s*<=?\s*(?:nums?\[i\]|[a-z]+\[i\]|val(?:ues?)?|node(?:\.val)?|arr\[i\])\s*<=?\s*(-?[\d\s\^\*\+]+)/gi;
+    /(-?[\d\s\^\*]+)\s*<=?\s*(?:nums?\[i\]|[a-z]+\[i\]|val(?:ues?)?|node(?:\.val|->data|\.data)?|arr\[i\])\s*<=?\s*(-?[\d\s\^\*\+]+)/gi;
   let vm: RegExpExecArray | null;
   while ((vm = valuePattern.exec(constraintsSection)) !== null) {
     const lo = evalExpr(vm[1]);
@@ -127,7 +127,7 @@ function buildConstraintSummary(bounds: ConstraintBounds): string {
 function buildCoverageChecklist(bounds: ConstraintBounds, sig: FunctionSignature | null): string {
   const hasArray = sig?.params.some(p => p.type.includes('vector')) ?? false;
   const hasString = sig?.params.some(p => p.type === 'string') ?? false;
-  const hasTree = sig?.params.some(p => p.type.includes('TreeNode')) ?? false;
+  const hasTree = sig?.params.some(p => /TreeNode|Node/.test(p.type)) ?? false;
   const hasLinkedList = sig?.params.some(p => p.type.includes('ListNode')) ?? false;
 
   const categories: string[] = [
@@ -176,6 +176,12 @@ function buildCoverageChecklist(bounds: ConstraintBounds, sig: FunctionSignature
   return categories.join('\n');
 }
 
+function needsListCycleEncoding(problemStatement: string, sig: FunctionSignature | null): boolean {
+  const hasLinkedList = sig?.params.some(p => p.type.includes('ListNode')) ?? false;
+  if (!hasLinkedList) return false;
+  return /\bcycle\b|\bpos\b|tail\s*'?s\s*next|next\s*pointer/i.test(problemStatement);
+}
+
 function buildUserPrompt(
   title: string,
   problemStatement: string,
@@ -185,13 +191,23 @@ function buildUserPrompt(
   constraintSummary: string,
   coverageChecklist: string
 ): string {
+  const useCycleEncoding = needsListCycleEncoding(problemStatement, sig);
   const sigLine = sig
     ? `${sig.returnType} ${sig.functionName}(${sig.params.map(p => `${p.type} ${p.name}`).join(', ')})`
     : 'Unknown signature';
 
   const rawInputFormat = sig
-    ? sig.params.map((p, i) => `  Line ${i + 1}: ${p.name} (${p.type})`).join('\n')
+    ? sig.params.map((p, i) => {
+      if (useCycleEncoding && p.type.includes('ListNode')) {
+        return `  Line ${i + 1}: ${p.name} (${p.type}) as [1,2,3]|pos`;
+      }
+      return `  Line ${i + 1}: ${p.name} (${p.type})`;
+    }).join('\n')
     : `  ${paramCount} line(s), one per parameter`;
+
+  const cycleNote = useCycleEncoding
+    ? '\nSpecial format for linked-list cycle problems: use a single line like [3,2,0,-4]|1 where the number after | is pos (0-indexed). Use -1 for no cycle.'
+    : '';
 
   return `Generate test cases for the following DSA problem.
 
@@ -205,6 +221,7 @@ ${sigLine}
 
 rawInput format (EXACTLY ${paramCount} line(s) per test case):
 ${rawInputFormat}
+${cycleNote}
 
 ━━━ PARSED CONSTRAINTS ━━━
 ${constraintSummary}
@@ -220,6 +237,7 @@ ${coverageChecklist}
 - "input": human-readable string, e.g. "nums = [1,2,3], target = 6"
 - "expectedOutput": the CORRECT answer — trace through the algorithm step by step before writing it
 - "rawInput": lines joined by literal \\n character. Arrays=[1,2,3], strings="hello", ints=42, bools=true/false
+- For cycle problems, ListNode rawInput must be [values]|pos (pos is -1 if no cycle)
 - Do NOT violate the constraints (e.g., if values must be ≥ 0, do not use negatives)
 - Do NOT generate duplicate test cases
 
@@ -304,7 +322,9 @@ function validateTestCases(
     // Constraint-aware validation: if negatives not allowed, ensure array inputs don't have them
     if (!bounds.allowNegatives) {
       // Check array-like lines for negative numbers
-      const arrayLines = lines.filter(l => l.trim().startsWith('['));
+      const arrayLines = lines
+        .map(l => l.split('|')[0].trim())
+        .filter(l => l.startsWith('['));
       const hasNegative = arrayLines.some(l => /\[-?\d*-\d/.test(l) || /,\s*-\d/.test(l) || l.startsWith('[-'));
       if (hasNegative) return false;
     }
@@ -525,13 +545,23 @@ function buildRetryPrompt(
   constraintSummary: string,
   missedCategories: string[]
 ): string {
+  const useCycleEncoding = needsListCycleEncoding(problemStatement, sig);
   const sigLine = sig
     ? `${sig.returnType} ${sig.functionName}(${sig.params.map(p => `${p.type} ${p.name}`).join(', ')})`
     : 'Unknown signature';
 
   const rawInputFormat = sig
-    ? sig.params.map((p, i) => `  Line ${i + 1}: ${p.name} (${p.type})`).join('\n')
+    ? sig.params.map((p, i) => {
+      if (useCycleEncoding && p.type.includes('ListNode')) {
+        return `  Line ${i + 1}: ${p.name} (${p.type}) as [1,2,3]|pos`;
+      }
+      return `  Line ${i + 1}: ${p.name} (${p.type})`;
+    }).join('\n')
     : `  ${paramCount} line(s)`;
+
+  const cycleNote = useCycleEncoding
+    ? '\nSpecial format: use [values]|pos for ListNode inputs (pos is -1 if no cycle).'
+    : '';
 
   return `Generate ONLY the following missing test case categories for the problem: ${title}
 
@@ -540,6 +570,7 @@ ${problemStatement.slice(0, 800)}
 Signature: ${sigLine}
 rawInput format (${paramCount} lines):
 ${rawInputFormat}
+${cycleNote}
 
 Constraints: ${constraintSummary}
 

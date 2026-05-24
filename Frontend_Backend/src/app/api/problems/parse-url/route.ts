@@ -103,6 +103,299 @@ function mapTopicToCategory(topics: string[]): string {
   return 'Arrays'; // sensible fallback
 }
 
+function normalizeText(text: string): string {
+  return text
+    .replace(/\r/g, '')
+    .replace(/\t/g, ' ')
+    .replace(/\u00A0/g, ' ')
+    .replace(/[ \u00A0]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function addSectionBreaks(text: string): string {
+  return text
+    .replace(/\s*(Examples?:|Example\s*\d+\s*:|Input\s*:|Output\s*:|Explanation\s*:|Constraints\s*:|Note\s*:)/gi, '\n$1 ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function cleanupGfgText(text: string): string {
+  let cleaned = text;
+  const cutoff = cleaned.search(/Expected Complexities|Company Tags|Topic Tags|Related Interview|Related Articles|Editorial|Comments|Submissions/i);
+  if (cutoff > 0) cleaned = cleaned.slice(0, cutoff).trim();
+  cleaned = cleaned.replace(/\bLog\s*In\b[\s\S]*/i, '').trim();
+  return cleaned;
+}
+
+function looksLikeJsonBlob(text: string): boolean {
+  const lowered = text.toLowerCase();
+  if (lowered.includes('"problem_type"') || lowered.includes('"problem_level"') || lowered.includes('custom_input_format')) {
+    return true;
+  }
+
+  const quoteCount = (text.match(/"/g) || []).length;
+  const braceCount = (text.match(/[{}]/g) || []).length;
+  if (quoteCount > 40 && braceCount > 10 && text.length > 500) return true;
+
+  return false;
+}
+
+function looksLikeSolutionSnippet(text: string): boolean {
+  return /class\s+Solution\b/i.test(text) && /\w+\s+\w+\s*\([^)]*\)/.test(text);
+}
+
+function normalizeCppTemplate(raw: string): string {
+  if (!raw) return '';
+  let text = raw;
+  if (/<\/?[a-z][\s\S]*?>/i.test(text)) {
+    text = cheerio.load(text).text();
+  }
+  text = text.replace(/\r/g, '').replace(/\u00A0/g, ' ').trim();
+  const match = text.match(/class\s+Solution\s*\{[\s\S]*?\};/);
+  if (!match) return '';
+  const snippet = match[0].replace(/public:\s*/i, 'public:\n    ');
+  return snippet.trim();
+}
+
+function isLikelyProblemStatement(text: string): boolean {
+  return text.length > 80 && /(You are given|Given\b|Input\s*:|Output\s*:|Constraints\s*:|Example\s*\d*\s*:|Examples\s*:|Note\s*:)/i.test(text);
+}
+
+function decodeJsonEscapedString(raw: string): string {
+  try {
+    return JSON.parse(`"${raw}"`);
+  } catch {
+    return raw
+      .replace(/\\"/g, '"')
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t')
+      .replace(/\\r/g, '\r')
+      .replace(/\\u([0-9a-fA-F]{4})/g, (_, code) => String.fromCharCode(parseInt(code, 16)));
+  }
+}
+
+function extractJsonValue(html: string, key: string): string {
+  const regex = new RegExp(`"${key}"\\s*:\\s*"((?:\\\\.|[^"\\\\])*)"`, 'i');
+  const match = html.match(regex);
+  if (!match) return '';
+  return decodeJsonEscapedString(match[1]);
+}
+
+function getScriptJson(html: string, scriptId: string): unknown | null {
+  const regex = new RegExp(`<script[^>]*id=["']${scriptId}["'][^>]*>([\s\S]*?)<\/script>`, 'i');
+  const match = html.match(regex);
+  if (!match) return null;
+  try {
+    return JSON.parse(match[1].trim());
+  } catch {
+    return null;
+  }
+}
+
+function extractCppFromObject(obj: unknown, found: { best: string; count: number }): void {
+  if (found.count > 20000) return;
+  found.count += 1;
+
+  if (typeof obj === 'string') {
+    if (!looksLikeSolutionSnippet(obj)) return;
+    const template = normalizeCppTemplate(obj);
+    if (template && template.length > found.best.length) {
+      found.best = template;
+    }
+    return;
+  }
+
+  if (Array.isArray(obj)) {
+    for (const item of obj) extractCppFromObject(item, found);
+    return;
+  }
+
+  if (obj && typeof obj === 'object') {
+    for (const value of Object.values(obj as Record<string, unknown>)) {
+      extractCppFromObject(value, found);
+    }
+  }
+}
+
+function extractFromObject(obj: unknown, found: { best: string; count: number }): void {
+  if (found.count > 20000) return;
+  found.count += 1;
+
+  if (typeof obj === 'string') {
+    const asText = obj.includes('<') ? normalizeText(cheerio.load(obj).text()) : normalizeText(obj);
+    if (asText && !looksLikeJsonBlob(asText) && isLikelyProblemStatement(asText) && asText.length > found.best.length) {
+      found.best = asText;
+    }
+    return;
+  }
+
+  if (Array.isArray(obj)) {
+    for (const item of obj) extractFromObject(item, found);
+    return;
+  }
+
+  if (obj && typeof obj === 'object') {
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      if (typeof value === 'string') {
+        const keyMatch = /problem_statement|problemstatement|problem_description|problemdescription|problem_content|problemcontent|problemtext|questiontext|statement|description/i.test(key);
+        const asText = value.includes('<') ? normalizeText(cheerio.load(value).text()) : normalizeText(value);
+        if (keyMatch && asText && !looksLikeJsonBlob(asText) && isLikelyProblemStatement(asText) && asText.length > found.best.length) {
+          found.best = asText;
+        }
+      }
+
+      extractFromObject(value, found);
+    }
+  }
+}
+
+function extractFromNextData(html: string): string {
+  const data = getScriptJson(html, '__NEXT_DATA__');
+  if (!data) return '';
+  const found = { best: '', count: 0 };
+  extractFromObject(data, found);
+  return found.best;
+}
+
+function extractCppFromNextData(html: string): string {
+  const data = getScriptJson(html, '__NEXT_DATA__');
+  if (!data) return '';
+  const found = { best: '', count: 0 };
+  extractCppFromObject(data, found);
+  return found.best;
+}
+
+function extractGfgStatementFromApiData(data: unknown): string {
+  const found = { best: '', count: 0 };
+  extractFromObject(data, found);
+  return found.best;
+}
+
+function extractGfgCppTemplateFromApiData(data: unknown): string {
+  const found = { best: '', count: 0 };
+  extractCppFromObject(data, found);
+  return found.best;
+}
+
+function extractGfgSlug(url: string): string {
+  const match = url.match(/geeksforgeeks\.org\/problems\/([^/]+)/i);
+  return match?.[1] || '';
+}
+
+function extractGfgCppTemplate($: cheerio.CheerioAPI, html: string): string {
+  let candidate = '';
+  $('pre, code').each((_, el) => {
+    const text = $(el).text();
+    if (!looksLikeSolutionSnippet(text)) return;
+    if (text.length > candidate.length) candidate = text;
+  });
+
+  let template = normalizeCppTemplate(candidate);
+  if (template) return template;
+
+  template = extractCppFromNextData(html);
+  if (template) return template;
+
+  const regexMatch = html.match(/class\s+Solution\s*\{[\s\S]*?\};/);
+  if (regexMatch) {
+    template = normalizeCppTemplate(regexMatch[0]);
+    if (template) return template;
+  }
+
+  return '';
+}
+
+function extractGfgFromEmbeddedJson(html: string): string {
+  const keys = [
+    'problem_statement',
+    'problemStatement',
+    'problem_description',
+    'problemDescription',
+    'problem_content',
+    'problemContent',
+    'problemText',
+    'questionText',
+    'question',
+  ];
+
+  for (const key of keys) {
+    const raw = extractJsonValue(html, key);
+    if (!raw) continue;
+    const fragmentText = normalizeText(cheerio.load(raw).text());
+    if (!fragmentText || looksLikeJsonBlob(fragmentText)) continue;
+    if (!isLikelyProblemStatement(fragmentText)) continue;
+    return fragmentText;
+  }
+
+  return '';
+}
+
+function extractGfgProblemStatement($: cheerio.CheerioAPI, title: string, html: string): string {
+  const nextDataStatement = extractFromNextData(html);
+  if (nextDataStatement) {
+    const cleaned = cleanupGfgText(nextDataStatement);
+    return addSectionBreaks(normalizeText(cleaned));
+  }
+
+  const jsonStatement = extractGfgFromEmbeddedJson(html);
+  if (jsonStatement) {
+    const cleaned = cleanupGfgText(jsonStatement);
+    return addSectionBreaks(normalizeText(cleaned));
+  }
+
+  const selectors = [
+    '[class*="problems_problem_content"]',
+    '[class*="problem-statement"]',
+    '[class*="problemStatement"]',
+    '#problem-statement',
+    '[data-tab="problem"]',
+    '[class*="problem__content"]',
+    'article',
+    'main',
+  ];
+
+  let best = '';
+
+  for (const selector of selectors) {
+    $(selector).each((_, el) => {
+      const text = normalizeText($(el).text());
+      if (looksLikeJsonBlob(text)) return;
+      if (!isLikelyProblemStatement(text)) return;
+      if (text.length > best.length) best = text;
+    });
+  }
+
+  if (!best) {
+    $('div, section').each((_, el) => {
+      const text = normalizeText($(el).text());
+      if (text.length < 200) return;
+      if (looksLikeJsonBlob(text)) return;
+      if (!/(Input\s*:|Output\s*:|Example\s*\d+\s*:|Examples\s*:|Constraints\s*:|Note\s*:)/i.test(text)) return;
+      if (!isLikelyProblemStatement(text)) return;
+      if (text.length > best.length) best = text;
+    });
+  }
+
+  if (!best) {
+    const bodyText = normalizeText($('body').text());
+    if (bodyText) {
+      let sliced = bodyText;
+      if (title) {
+        const titleIndex = bodyText.indexOf(title);
+        if (titleIndex >= 0) sliced = bodyText.slice(titleIndex + title.length);
+      }
+      sliced = sliced.replace(/Difficulty:\s*(Easy|Medium|Hard)[\s\S]*?(?=(You are given|Given|Note:|Examples?:|Constraints?:))/i, '').trim();
+      if (isLikelyProblemStatement(sliced)) best = sliced;
+    }
+  }
+
+  if (!best) return '';
+
+  const cleaned = cleanupGfgText(best);
+  return addSectionBreaks(normalizeText(cleaned));
+}
+
 // ─── LeetCode Scraper ─────────────────────────────────────────────────────────
 
 async function scrapeLeetCode(url: string): Promise<ParsedProblem> {
@@ -294,6 +587,9 @@ async function scrapeGFG(url: string): Promise<ParsedProblem> {
   const html = await res.text();
   const $ = cheerio.load(html);
 
+  // Remove noisy script/style content before text extraction
+  $('script, style, noscript').remove();
+
   // Title
   const title = (
     $('h1').first().text() ||
@@ -302,14 +598,8 @@ async function scrapeGFG(url: string): Promise<ParsedProblem> {
     $('title').text().replace(/\s*[-|].*$/, '')
   ).trim();
 
-  // Problem statement — GFG wraps it in specific containers
-  const statementEl =
-    $('[class*="problems_problem_content"]').first() ||
-    $('[class*="problem-statement"]').first() ||
-    $('.problems_problem_content__Xm_eO').first() ||
-    $('#problem-statement').first();
-
-  let problemStatement = statementEl.text().trim();
+  let problemStatement = extractGfgProblemStatement($, title, html);
+  let cppCodeTemplate = extractGfgCppTemplate($, html);
 
   if (!problemStatement) {
     // Fallback: grab paragraphs from main content area
@@ -320,7 +610,34 @@ async function scrapeGFG(url: string): Promise<ParsedProblem> {
         paragraphs.push(text);
       }
     });
-    problemStatement = paragraphs.slice(0, 8).join('\n\n');
+    const fallbackText = paragraphs.slice(0, 8).join('\n\n');
+    problemStatement = isLikelyProblemStatement(fallbackText) ? fallbackText : '';
+  }
+
+  if (!problemStatement || !cppCodeTemplate) {
+    const slug = extractGfgSlug(url);
+    if (slug) {
+      const apiUrl = `https://practiceapi.geeksforgeeks.org/api/v1/problems/${slug}`;
+      try {
+        const apiRes = await fetch(apiUrl, {
+          headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0' },
+          signal: AbortSignal.timeout(8000),
+        });
+        if (apiRes.ok) {
+          const apiJson = await apiRes.json();
+          if (!problemStatement) {
+            const apiStatement = extractGfgStatementFromApiData(apiJson);
+            if (apiStatement) problemStatement = apiStatement;
+          }
+          if (!cppCodeTemplate) {
+            const apiTemplate = extractGfgCppTemplateFromApiData(apiJson);
+            if (apiTemplate) cppCodeTemplate = apiTemplate;
+          }
+        }
+      } catch {
+        // Ignore API failures and fall back to manual entry
+      }
+    }
   }
 
   // Examples
@@ -348,7 +665,8 @@ async function scrapeGFG(url: string): Promise<ParsedProblem> {
 
   // Difficulty
   const difficultyEl = $('[class*="difficulty"], [class*="Difficulty"]').first().text().trim();
-  const difficulty = difficultyEl || 'Medium';
+  const difficultyMatch = normalizeText($('body').text()).match(/Difficulty\s*:\s*(Easy|Medium|Hard)/i);
+  const difficulty = difficultyEl || difficultyMatch?.[1] || 'Medium';
 
   return {
     title: title || 'Untitled Problem',
@@ -359,6 +677,7 @@ async function scrapeGFG(url: string): Promise<ParsedProblem> {
     topics,
     sourceUrl: url,
     platform: 'geeksforgeeks',
+    cppCodeTemplate,
   };
 }
 

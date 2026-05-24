@@ -8,11 +8,16 @@ export interface FunctionSignature {
 
 
 export function parseCppSignature(cppTemplate: string): FunctionSignature | null {
-  
-  const match = cppTemplate.match(/public:\s*\n\s*([\s\S]*?)\s*\{/);
-  if (!match) return null;
+  const match = cppTemplate.match(/public:\s*([\s\S]*?)\s*\{/);
+  if (match) {
+    const sigLine = match[1].trim().replace(/\s+/g, ' ');
+    const parsed = parseSignatureLine(sigLine);
+    if (parsed) return parsed;
+  }
 
-  const sigLine = match[1].trim().replace(/\s+/g, ' ');
+  const fallback = cppTemplate.match(/([A-Za-z_][\w:<>&\s\*]+)\s+([A-Za-z_]\w*)\s*\(([^)]*)\)\s*\{/);
+  if (!fallback) return null;
+  const sigLine = `${fallback[1].trim()} ${fallback[2].trim()}(${fallback[3].trim()})`.replace(/\s+/g, ' ');
   return parseSignatureLine(sigLine);
 }
 
@@ -84,7 +89,7 @@ function parseSingleParam(paramStr: string): { type: string; name: string } | nu
 // ─── Type → Parser / Formatter Mapping ────────────────────────────────────────
 
 function normalizeType(type: string): string {
-  return type.replace(/\s+/g, ' ').trim();
+  return type.replace(/\s+/g, ' ').replace(/\s*\*\s*/g, '*').trim();
 }
 
 const TYPE_PARSERS: Record<string, string> = {
@@ -109,6 +114,7 @@ const TYPE_PARSERS: Record<string, string> = {
   'vector<vector<string>>': '__parseVectorVectorString',
   'ListNode*': '__parseListNode',
   'TreeNode*': '__parseTreeNode',
+  'Node*': '__parseNode',
 };
 
 const TYPE_FORMATTERS: Record<string, string> = {
@@ -133,6 +139,7 @@ const TYPE_FORMATTERS: Record<string, string> = {
   'vector<vector<string>>': '__formatVectorVectorString',
   'ListNode*': '__formatListNode',
   'TreeNode*': '__formatTreeNode',
+  'Node*': '__formatNode',
 };
 
 
@@ -158,6 +165,15 @@ struct TreeNode {
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
+struct Node {
+  int data;
+  Node *left;
+  Node *right;
+  Node() : data(0), left(nullptr), right(nullptr) {}
+  Node(int x) : data(x), left(nullptr), right(nullptr) {}
+  Node(int x, Node *left, Node *right) : data(x), left(left), right(right) {}
+};
+
 // ---- Trim ----
 string __trim(const string& s) {
     size_t a = s.find_first_not_of(" \\t\\n\\r");
@@ -166,6 +182,16 @@ string __trim(const string& s) {
 }
 
 // ---- Input Parsers ----
+string __lower(string s) {
+  for (char &c : s) c = (char)tolower(c);
+  return s;
+}
+
+bool __isNullToken(const string& s) {
+  string t = __lower(__trim(s));
+  return t == "null" || t == "n";
+}
+
 int __parseInt(const string& s) { return stoi(__trim(s)); }
 long long __parseLongLong(const string& s) { return stoll(__trim(s)); }
 long __parseLong(const string& s) { return stol(__trim(s)); }
@@ -323,11 +349,32 @@ vector<vector<string>> __parseVectorVectorString(const string& s) {
 }
 
 ListNode* __parseListNode(const string& s) {
-    auto v = __parseVectorInt(s);
-    ListNode dummy;
-    ListNode* cur = &dummy;
-    for (int x : v) { cur->next = new ListNode(x); cur = cur->next; }
-    return dummy.next;
+  string t = __trim(s);
+  string listPart = t;
+  int pos = -1;
+  size_t sep = t.find('|');
+  if (sep == string::npos) sep = t.find(';');
+  if (sep != string::npos) {
+    listPart = t.substr(0, sep);
+    string posPart = __trim(t.substr(sep + 1));
+    if (posPart.rfind("pos", 0) == 0) {
+      size_t eq = posPart.find('=');
+      if (eq != string::npos) posPart = posPart.substr(eq + 1);
+    }
+    if (!posPart.empty()) pos = stoi(posPart);
+  }
+
+  auto v = __parseVectorInt(listPart);
+  ListNode dummy;
+  ListNode* cur = &dummy;
+  vector<ListNode*> nodes;
+  for (int x : v) { cur->next = new ListNode(x); cur = cur->next; nodes.push_back(cur); }
+
+  if (pos >= 0 && pos < (int)nodes.size()) {
+    cur->next = nodes[pos];
+  }
+
+  return dummy.next;
 }
 
 TreeNode* __parseTreeNode(const string& s) {
@@ -337,25 +384,53 @@ TreeNode* __parseTreeNode(const string& s) {
     vector<string> tokens;
     stringstream ss(t); string item;
     while (getline(ss, item, ',')) tokens.push_back(__trim(item));
-    if (tokens.empty()) return nullptr;
-    TreeNode* root = new TreeNode(stoi(tokens[0]));
+  if (tokens.empty() || __isNullToken(tokens[0])) return nullptr;
+  TreeNode* root = new TreeNode(stoi(tokens[0]));
     queue<TreeNode*> q;
     q.push(root);
     int i = 1;
     while (!q.empty() && i < (int)tokens.size()) {
         TreeNode* node = q.front(); q.pop();
-        if (i < (int)tokens.size() && tokens[i] != "null") {
+    if (i < (int)tokens.size() && !__isNullToken(tokens[i])) {
             node->left = new TreeNode(stoi(tokens[i]));
             q.push(node->left);
         }
         i++;
-        if (i < (int)tokens.size() && tokens[i] != "null") {
+    if (i < (int)tokens.size() && !__isNullToken(tokens[i])) {
             node->right = new TreeNode(stoi(tokens[i]));
             q.push(node->right);
         }
         i++;
     }
     return root;
+}
+
+Node* __parseNode(const string& s) {
+  string t = __trim(s);
+  if (t.size() < 2 || t == "[]") return nullptr;
+  t = t.substr(1, t.size() - 2);
+  vector<string> tokens;
+  stringstream ss(t); string item;
+  while (getline(ss, item, ',')) tokens.push_back(__trim(item));
+  if (tokens.empty() || __isNullToken(tokens[0])) return nullptr;
+  Node* root = new Node(stoi(tokens[0]));
+  queue<Node*> q;
+  q.push(root);
+  int i = 1;
+  while (!q.empty() && i < (int)tokens.size()) {
+    Node* node = q.front(); q.pop();
+    if (i < (int)tokens.size() && !__isNullToken(tokens[i])) {
+      node->left = new Node(stoi(tokens[i]));
+      q.push(node->left);
+    }
+    i++;
+    if (i < (int)tokens.size() && !__isNullToken(tokens[i])) {
+      node->right = new Node(stoi(tokens[i]));
+      q.push(node->right);
+    }
+    i++;
+  }
+  return root;
 }
 
 // ---- Output Formatters ----
@@ -466,10 +541,30 @@ string __formatTreeNode(TreeNode* root) {
     for (int i = 0; i < (int)tokens.size(); i++) { if (i) s += ","; s += tokens[i]; }
     return s + "]";
 }
+
+string __formatNode(Node* root) {
+    if (!root) return "[]";
+    string s = "[";
+    queue<Node*> q;
+    q.push(root);
+    vector<string> tokens;
+    while (!q.empty()) {
+        Node* node = q.front(); q.pop();
+        if (node) {
+            tokens.push_back(to_string(node->data));
+            q.push(node->left);
+            q.push(node->right);
+        } else {
+            tokens.push_back("null");
+        }
+    }
+    while (!tokens.empty() && tokens.back() == "null") tokens.pop_back();
+    for (int i = 0; i < (int)tokens.size(); i++) { if (i) s += ","; s += tokens[i]; }
+    return s + "]";
+}
 `;
 
 // ─── Program Generator ───────────────────────────────────────────────────────
-
 /**
  * Generate a complete C++ program that:
  * 1. Includes all helper code (parsers, formatters, structs)
@@ -516,9 +611,10 @@ export function generateCppProgram(
   if (signature.returnType === 'void') {
     main += `        Solution().${signature.functionName}(${args});\n`;
     // For void return, print the first vector/list parameter (common LeetCode pattern)
-    const mutableParam = signature.params.find(p =>
-      p.type.startsWith('vector') || p.type === 'ListNode*' || p.type === 'TreeNode*'
-    );
+    const mutableParam = signature.params.find(p => {
+      const nt = normalizeType(p.type);
+      return nt.startsWith('vector') || nt === 'ListNode*' || nt === 'TreeNode*' || nt === 'Node*';
+    });
     if (mutableParam) {
       const formatter = TYPE_FORMATTERS[normalizeType(mutableParam.type)];
       main += `        cout << ${formatter}(${mutableParam.name}) << endl;\n`;
@@ -541,9 +637,9 @@ export function generateCppProgram(
   cleanCode = cleanCode.replace(/#include\s*<[^>]+>\s*/g, '');
   cleanCode = cleanCode.replace(/using\s+namespace\s+std\s*;\s*/g, '');
   // Remove user-defined ListNode/TreeNode (with optional preceding comment block)
-  cleanCode = cleanCode.replace(/\/\*\*[\s\S]*?\*\/\s*struct\s+(ListNode|TreeNode)\s*\{[\s\S]*?\};\s*/g, '');
-  cleanCode = cleanCode.replace(/\/\/[^\n]*\nstruct\s+(ListNode|TreeNode)\s*\{[\s\S]*?\};\s*/g, '');
-  cleanCode = cleanCode.replace(/struct\s+(ListNode|TreeNode)\s*\{[\s\S]*?\};\s*/g, '');
+  cleanCode = cleanCode.replace(/\/\*\*[\s\S]*?\*\/\s*struct\s+(ListNode|TreeNode|Node)\s*\{[\s\S]*?\};\s*/g, '');
+  cleanCode = cleanCode.replace(/\/\/[^\n]*\nstruct\s+(ListNode|TreeNode|Node)\s*\{[\s\S]*?\};\s*/g, '');
+  cleanCode = cleanCode.replace(/struct\s+(ListNode|TreeNode|Node)\s*\{[\s\S]*?\};\s*/g, '');
 
   return CPP_HELPERS + '\n// ---- User Solution ----\n' + cleanCode.trim() + '\n\n// ---- Auto-generated Main ----' + main;
 }
