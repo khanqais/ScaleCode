@@ -137,28 +137,18 @@ const Navbar = () => {
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed left-0 right-0 z-50 pointer-events-none ${
+      className={`fixed left-0 right-0 z-50 pointer-events-none transition-all duration-300 ${
         isScrolled 
-          ? 'top-3 px-4 sm:px-6 md:px-8' 
+          ? 'top-4 px-4 sm:px-6 md:px-8' 
           : 'top-0 px-0'
       }`}
-      style={{ 
-        background: 'transparent',
-        transition: 'top 300ms, padding 300ms'
-      }}
     >
       <div 
-        className={`pointer-events-auto ${
+        className={`pointer-events-auto transition-all duration-300 ease-in-out ${
           isScrolled
-            ? 'max-w-3xl mx-auto backdrop-blur-xl shadow-2xl shadow-black/20 rounded-full px-6 py-2.5 border border-gray-700/50'
-            : 'max-w-7xl mx-auto px-6 py-6'
+            ? 'max-w-3xl mx-auto backdrop-blur-md shadow-lg rounded-full px-6 py-3 border border-gray-200/50 dark:border-gray-800/50 bg-white/80 dark:bg-gray-950/80'
+            : 'max-w-7xl mx-auto px-6 py-6 bg-transparent'
         }`}
-        style={{
-          backgroundColor: isScrolled 
-            ? 'rgba(17, 24, 39, 0.9)' // gray-900 with 90% opacity
-            : 'transparent',
-          transition: 'all 300ms ease-in-out'
-        }}
       >
         <div className="flex items-center justify-between">
         <motion.div 
@@ -171,18 +161,18 @@ const Navbar = () => {
               isScrolled ? 'w-8 h-8' : 'w-12 h-12'
             }`}>
               <Image
-                src="/logo_white.png"
+                src="/logo_black.png"
                 alt="AlgoGrid Logo"
-                className={`object-contain ${isScrolled ? 'hidden' : 'dark:hidden'}`}
+                className={`object-contain block dark:hidden`}
                 draggable="false"
                 width={48}
                 height={48}
                 unoptimized
               />
               <Image
-                src="/logo_black.png"
+                src="/logo_white.png"
                 alt="AlgoGrid Logo"
-                className={`object-contain ${isScrolled ? 'block' : 'hidden dark:block'}`}
+                className={`object-contain hidden dark:block`}
                 draggable="false"
                 width={48}
                 height={48}
@@ -190,7 +180,7 @@ const Navbar = () => {
               />
             </div>
             <span className={`font-bold transition-all duration-300 leading-none ${
-              isScrolled ? 'text-base text-white' : 'text-xl text-black dark:text-white'
+              isScrolled ? 'text-lg text-black dark:text-white' : 'text-xl text-black dark:text-white'
             }`}>AlgoGrid</span>
           </Link>
         </motion.div>

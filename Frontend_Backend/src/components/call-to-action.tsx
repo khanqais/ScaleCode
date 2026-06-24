@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { useSession } from 'next-auth/react'
 import { GlowingEffect } from '@/components/ui/glowing-effect'
 
-
 const CallToAction = () => {
   const { status } = useSession()
   const isSignedIn = status === 'authenticated'

@@ -1,11 +1,8 @@
-
-
 export interface FunctionSignature {
   returnType: string;
   functionName: string;
   params: { type: string; name: string }[];
 }
-
 
 export function parseCppSignature(cppTemplate: string): FunctionSignature | null {
   const match = cppTemplate.match(/public:\s*([\s\S]*?)\s*\{/);
@@ -27,7 +24,6 @@ function parseSignatureLine(sig: string): FunctionSignature | null {
 
   const beforeParen = sig.substring(0, parenIdx).trim();
   const paramsStr = sig.substring(parenIdx + 1, sig.lastIndexOf(')')).trim();
-
   
   const lastSpaceIdx = findLastSpaceOutsideTemplates(beforeParen);
   if (lastSpaceIdx === -1) return null;
