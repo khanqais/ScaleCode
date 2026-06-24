@@ -12,22 +12,19 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
+  // Initialize from the DOM class that the inline script already set
+  // This avoids re-rendering children after mount
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      // The inline script in layout.tsx already set the correct class
+      return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+    }
+    // SSR fallback — inline script will correct this before paint
+    return 'dark'
+  })
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    
-    const savedTheme = localStorage.getItem('theme') as Theme
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-
-    if (savedTheme) {
-      setTheme(savedTheme)
-    } else if (systemPrefersDark) {
-      setTheme('dark')
-    } else {
-      setTheme('dark')
-    }
-    
     setMounted(true)
   }, [])
 

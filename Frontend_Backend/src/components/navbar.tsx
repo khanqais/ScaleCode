@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -157,7 +156,6 @@ const Navbar = () => {
                 width={48}
                 height={48}
                 priority
-                unoptimized
               />
               <Image
                 src="/logo_black.webp"
@@ -167,7 +165,6 @@ const Navbar = () => {
                 width={48}
                 height={48}
                 priority
-                unoptimized
               />
             </div>
             <span className={`font-bold transition-all duration-300 leading-none ${
@@ -258,13 +255,14 @@ const Navbar = () => {
     </nav>
   )
 
-  if (!mounted) return null
-
   return (
     <>
       {/* Spacer to prevent content from hiding behind fixed navbar */}
       <div className="h-24" />
-      {createPortal(navContent, document.body)}
+      {/* Render directly (no portal) — visible only after mount to avoid hydration mismatch */}
+      <div className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        {navContent}
+      </div>
     </>
   )
 }

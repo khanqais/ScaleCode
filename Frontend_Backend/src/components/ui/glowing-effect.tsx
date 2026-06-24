@@ -2,7 +2,6 @@
 
 import { memo, useCallback, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { animate } from "framer-motion";
 
 interface GlowingEffectProps {
   blur?: number;
@@ -33,6 +32,9 @@ const GlowingEffect = memo(
     const containerRef = useRef<HTMLDivElement>(null);
     const lastPosition = useRef({ x: 0, y: 0 });
     const animationFrameRef = useRef<number>(0);
+    // Lerp state for smooth angle without framer-motion
+    const currentAngleRef = useRef<number>(0);
+    const lerpFrameRef = useRef<number>(0);
 
     const handleMove = useCallback(
       (e?: MouseEvent | { x: number; y: number }) => {
@@ -76,23 +78,32 @@ const GlowingEffect = memo(
 
           if (!isActive) return;
 
-          const currentAngle =
-            parseFloat(element.style.getPropertyValue("--start")) || 0;
           const targetAngle =
             (180 * Math.atan2(mouseY - center[1], mouseX - center[0])) /
               Math.PI +
             90;
 
-          const angleDiff = ((targetAngle - currentAngle + 180) % 360) - 180;
-          const newAngle = currentAngle + angleDiff;
+          // Lightweight lerp instead of framer-motion animate()
+          const angleDiff = ((targetAngle - currentAngleRef.current + 180) % 360) - 180;
+          const targetNormalized = currentAngleRef.current + angleDiff;
 
-          animate(currentAngle, newAngle, {
-            duration: movementDuration,
-            ease: [0.16, 1, 0.3, 1],
-            onUpdate: (value: number) => {
-              element.style.setProperty("--start", String(value));
-            },
-          });
+          if (lerpFrameRef.current) {
+            cancelAnimationFrame(lerpFrameRef.current);
+          }
+
+          const lerpFactor = Math.min(1, 1 / (movementDuration * 60));
+          const step = () => {
+            const diff = targetNormalized - currentAngleRef.current;
+            if (Math.abs(diff) < 0.1) {
+              currentAngleRef.current = targetNormalized;
+              element.style.setProperty("--start", String(currentAngleRef.current));
+              return;
+            }
+            currentAngleRef.current += diff * lerpFactor * 8;
+            element.style.setProperty("--start", String(currentAngleRef.current));
+            lerpFrameRef.current = requestAnimationFrame(step);
+          };
+          lerpFrameRef.current = requestAnimationFrame(step);
         });
       },
       [inactiveZone, proximity, movementDuration]
@@ -112,6 +123,9 @@ const GlowingEffect = memo(
       return () => {
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current);
+        }
+        if (lerpFrameRef.current) {
+          cancelAnimationFrame(lerpFrameRef.current);
         }
         window.removeEventListener("scroll", handleScroll);
         document.body.removeEventListener("pointermove", handlePointerMove);

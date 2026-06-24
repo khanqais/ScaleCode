@@ -108,9 +108,16 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${montserrat.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
         <title>AlgoGrid - Master DSA Patterns &amp; Coding Challenges</title>
+
+        {/* Inline script to set theme BEFORE first paint — eliminates FOUC & theme re-render */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})()`,
+          }}
+        />
 
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
