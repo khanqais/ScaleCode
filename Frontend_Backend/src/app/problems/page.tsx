@@ -227,9 +227,24 @@ function ProblemsPageContent() {
     return (
       <div className="min-h-screen bg-transparent transition-colors">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh] pt-32">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-        </div>
+        <main className="max-w-7xl mx-auto p-4 sm:p-6 pt-32 min-h-screen">
+          <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-pulse">
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+          </div>
+          <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4 animate-pulse">
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full sm:w-80"></div>
+          </div>
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 h-48 animate-pulse">
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mt-auto"></div>
+              </div>
+            ))}
+          </div>
+        </main>
       </div>
     )
   }

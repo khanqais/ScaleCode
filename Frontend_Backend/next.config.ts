@@ -40,8 +40,48 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
   },
 
-  
   poweredByHeader: false,
+  
+  async headers() {
+    return [
+      {
+        source: "/login",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache",
+          },
+        ],
+      },
+      {
+        source: "/add-problem",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache",
+          },
+        ],
+      },
+      {
+        source: "/problems",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache",
+          },
+        ],
+      },
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

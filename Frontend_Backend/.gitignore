@@ -17,6 +17,7 @@ AI-HINT-IMPLEMENTATION.txt
 
 # testing
 /coverage
+/.unlighthouse/
 
 # next.js
 /.next/

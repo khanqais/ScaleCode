@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useSession, signOut } from 'next-auth/react'
 import AnimatedThemeSwitch from './AnimatedThemeSwitch'
 import { Button } from '@/components/ui/button'
@@ -55,14 +54,9 @@ function UserButton() {
         </div>
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+      {isOpen && (
+          <div
+            className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-150"
           >
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-3">
@@ -104,9 +98,8 @@ function UserButton() {
                 Sign out
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   )
 }
@@ -115,6 +108,7 @@ const Navbar = () => {
   const { data: session, status } = useSession()
   const pathname = usePathname()
   const isSignedIn = status === 'authenticated'
+  const isLoading = status === 'loading'
   const [isScrolled, setIsScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -133,11 +127,8 @@ const Navbar = () => {
   }, [])
 
   const navContent = (
-    <motion.nav
-      initial={{ y: -50, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed left-0 right-0 z-50 pointer-events-none transition-all duration-300 ${
+    <nav
+      className={`fixed left-0 right-0 z-50 pointer-events-none transition-all duration-300 animate-in fade-in slide-in-from-top-12 duration-500 ${
         isScrolled 
           ? 'top-4 px-4 sm:px-6 md:px-8' 
           : 'top-0 px-0'
@@ -151,31 +142,31 @@ const Navbar = () => {
         }`}
       >
         <div className="flex items-center justify-between">
-        <motion.div 
-          className="flex items-center space-x-3"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        <div 
+          className="flex items-center space-x-3 transition-transform duration-200 hover:scale-105 active:scale-95"
         >
           <Link href="/" className="flex items-center space-x-3">
             <div className={`rounded-lg overflow-hidden flex items-center justify-center pointer-events-none select-none transition-all duration-300 ${
               isScrolled ? 'w-8 h-8' : 'w-12 h-12'
             }`}>
               <Image
-                src="/logo_black.png"
+                src="/logo_white.webp"
                 alt="AlgoGrid Logo"
                 className={`object-contain block dark:hidden`}
                 draggable="false"
                 width={48}
                 height={48}
+                priority
                 unoptimized
               />
               <Image
-                src="/logo_white.png"
+                src="/logo_black.webp"
                 alt="AlgoGrid Logo"
                 className={`object-contain hidden dark:block`}
                 draggable="false"
                 width={48}
                 height={48}
+                priority
                 unoptimized
               />
             </div>
@@ -183,11 +174,13 @@ const Navbar = () => {
               isScrolled ? 'text-lg text-black dark:text-white' : 'text-xl text-black dark:text-white'
             }`}>AlgoGrid</span>
           </Link>
-        </motion.div>
+        </div>
 
       <div className={`hidden md:flex items-center ${isScrolled ? 'space-x-4' : 'space-x-8'}`}>
-        {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
-          <motion.div whileHover={{ scale: 1.05 }}>
+        {isLoading ? (
+          <div className="w-32 h-10 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg hidden lg:block"></div>
+        ) : isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
+          <div className="transition-transform duration-200 hover:scale-105">
             <Link href="/add-problem">
               <Button 
                 className={`flex items-center gap-2 text-white font-medium transition-colors ${isScrolled ? 'bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded-full text-sm' : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 py-2 rounded-lg'}`}
@@ -197,12 +190,14 @@ const Navbar = () => {
                 Add Problem
               </Button>
             </Link>
-          </motion.div>
+          </div>
         )}
 
         <AnimatedThemeSwitch />
         
-        {isSignedIn ? (
+        {isLoading ? (
+          <div className="w-32 h-10 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg"></div>
+        ) : isSignedIn ? (
           <div className="flex items-center space-x-4">
             {!isScrolled && (
               <span className="text-black dark:text-white font-medium transition-colors">
@@ -212,7 +207,7 @@ const Navbar = () => {
             <UserButton />
           </div>
         ) : (
-          <motion.div whileHover={{ scale: 1.05 }}>
+          <div className="transition-transform duration-200 hover:scale-105">
             <Link href="/login">
               <Button 
                 className={`font-medium transition-colors ${isScrolled ? 'bg-white text-black hover:bg-gray-200 px-4 py-1.5 rounded-full text-sm' : 'bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200'}`}
@@ -221,13 +216,15 @@ const Navbar = () => {
                 Log in
               </Button>
             </Link>
-          </motion.div>
+          </div>
         )}
       </div>
 
       {}
       <div className="md:hidden flex items-center space-x-4">
-        {isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
+        {isLoading ? (
+          <div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg hidden sm:block"></div>
+        ) : isSignedIn && pathname !== '/' && pathname !== '/organize' && pathname !== '/pricing' && (
           <Link href="/add-problem">
             <Button 
               size="sm"
@@ -240,7 +237,9 @@ const Navbar = () => {
           </Link>
         )}
         <AnimatedThemeSwitch />
-        {isSignedIn ? (
+        {isLoading ? (
+          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-full"></div>
+        ) : isSignedIn ? (
           <UserButton />
         ) : (
           <Link href="/login">
@@ -256,7 +255,7 @@ const Navbar = () => {
       </div>
       </div>
       </div>
-    </motion.nav>
+    </nav>
   )
 
   if (!mounted) return null

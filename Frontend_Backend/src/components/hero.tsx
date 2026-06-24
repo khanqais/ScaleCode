@@ -12,7 +12,7 @@ const Hero = () => {
     >
 
 
-      {/* Main Icon */}
+
       <div
         className="mb-4 sm:mb-6 transition-transform duration-300 hover:scale-110 hover:rotate-3"
       >
@@ -66,15 +66,7 @@ const Hero = () => {
             </Button>
           </div>
         </Link>
-        <Link href="/problems">
-          <Button
-            variant="outline"
-            size="lg"
-            className="px-8 py-6 text-lg font-medium rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-sm border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors shadow-sm"
-          >
-            View Demo
-          </Button>
-        </Link>
+
       </div>
     </div>
   )

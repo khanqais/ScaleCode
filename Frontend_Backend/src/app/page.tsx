@@ -1,8 +1,10 @@
 import React from 'react'
 import Navbar from '@/components/navbar'
 import Hero from '@/components/hero'
-import Features from '@/components/features'
-import CallToAction from '@/components/call-to-action'
+import dynamic from 'next/dynamic'
+
+const Features = dynamic(() => import('@/components/features'))
+const CallToAction = dynamic(() => import('@/components/call-to-action'))
 
 const page = () => {
   return (

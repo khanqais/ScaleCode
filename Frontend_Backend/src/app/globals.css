@@ -42,7 +42,7 @@
 }
 
 :root {
-  
+
   --background: white;
   --foreground: black;
   --card: white;
@@ -75,8 +75,8 @@
   --sidebar-accent-foreground: white;
   --sidebar-border: #e5e5e5;
   --sidebar-ring: #333333;
-  --font-sans: "Montserrat", sans-serif;
-  --font-serif: "Playfair Display", serif;
+  --font-sans: var(--font-montserrat), "Montserrat", sans-serif;
+  --font-serif: var(--font-playfair), "Playfair Display", serif;
   --font-mono: Fira Code, monospace;
   --radius: 0.35rem;
   --shadow-2xs: 0px 4px 6px 0px hsl(0 0% 0% / 0.06);
@@ -92,7 +92,7 @@
 }
 
 .dark {
-  
+
   --background: black;
   --foreground: white;
   --card: #0a0a0a;
@@ -125,8 +125,8 @@
   --sidebar-accent-foreground: black;
   --sidebar-border: #1a1a1a;
   --sidebar-ring: #cccccc;
-  --font-sans: "Montserrat", sans-serif;
-  --font-serif: "Playfair Display", serif;
+  --font-sans: var(--font-montserrat), "Montserrat", sans-serif;
+  --font-serif: var(--font-playfair), "Playfair Display", serif;
   --font-mono: Fira Code, monospace;
   --radius: 0.35rem;
   --shadow-2xs: 0px 4px 6px 0px hsl(0 0% 100% / 0.06);
@@ -206,7 +206,7 @@ body,
 
 html {
   background-color: white;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(200, 200, 200, 0.4) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(200, 200, 200, 0.4) 1px, transparent 1px);
   background-size: 24px 24px;
@@ -215,7 +215,7 @@ html {
 
 html.dark {
   background-color: black;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(37, 37, 37, 1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(37, 37, 37, 1) 1px, transparent 1px);
   background-size: 24px 24px;
@@ -230,7 +230,9 @@ body {
 }
 
 
-input, textarea, select {
+input,
+textarea,
+select {
   @apply bg-white dark:bg-gray-900 text-black dark:text-white border-gray-300 dark:border-gray-600;
 }
 
@@ -457,6 +459,7 @@ button:focus-visible {
 
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
