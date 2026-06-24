@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/login",
+        source: "/login(.*)",
         headers: [
           {
             key: "Cache-Control",

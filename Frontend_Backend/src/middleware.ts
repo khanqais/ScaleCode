@@ -30,14 +30,16 @@ export default auth((req) => {
   )
 
   if (isProtectedRoute && !isLoggedIn) {
-    const loginUrl = new URL('/login', req.url)
+    const canonicalBase = process.env.NEXTAUTH_URL || 'https://algogrid.dev'
+    const loginUrl = new URL('/login', canonicalBase)
     loginUrl.searchParams.set('callbackUrl', nextUrl.pathname)
     return NextResponse.redirect(loginUrl)
   }
 
   if (nextUrl.pathname === '/login' && isLoggedIn) {
     const callbackUrl = nextUrl.searchParams.get('callbackUrl') || '/organize'
-    return NextResponse.redirect(new URL(callbackUrl, req.url))
+    const canonicalBase = process.env.NEXTAUTH_URL || 'https://algogrid.dev'
+    return NextResponse.redirect(new URL(callbackUrl, canonicalBase))
   }
 
   return response
