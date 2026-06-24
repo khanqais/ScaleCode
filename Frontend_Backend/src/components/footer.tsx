@@ -2,55 +2,27 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { Github, Twitter, Linkedin } from 'lucide-react'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
 
-  const footerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: 'easeOut' as const
-      }
-    }
-  }
-
-  const linkVariants = {
-    hover: {
-      scale: 1.05,
-      transition: {
-        duration: 0.2
-      }
-    }
-  }
-
   return (
-    <motion.footer
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      variants={footerVariants}
-      className="bg-transparent backdrop-blur-none mt-16 transition-colors"
+    <footer
+      className="bg-transparent backdrop-blur-none mt-16 transition-all duration-700 ease-out animate-in fade-in slide-in-from-bottom-8"
     >
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="inline-block mb-4">
-              <motion.div 
-                className="flex items-center space-x-3"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+            <Link href="/" className="inline-block mb-4 group">
+              <div 
+                className="flex items-center space-x-3 transition-transform duration-300 group-hover:scale-105"
               >
                 <div className="w-10 h-10 bg-black dark:bg-white rounded-lg flex items-center justify-center transition-colors">
                   <span className="text-white dark:text-black font-bold text-lg">{'</>'}</span>
                 </div>
                 <span className="text-xl font-bold text-black dark:text-white transition-colors">AlgoGrid</span>
-              </motion.div>
+              </div>
             </Link>
             <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md transition-colors">
               Organize and manage your coding solutions from LeetCode, HackerRank, 
@@ -68,14 +40,14 @@ const Footer = () => {
                 { name: 'Organize', href: '/organize' }
               ].map((link) => (
                 <li key={link.name}>
-                  <motion.div variants={linkVariants} whileHover="hover">
+                  <div className="transition-transform duration-200 hover:scale-105 origin-left">
                     <Link 
                       href={link.href}
-                      className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                      className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors block"
                     >
                       {link.name}
                     </Link>
-                  </motion.div>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -91,14 +63,14 @@ const Footer = () => {
                 { name: 'Terms of Service', href: '#' }
               ].map((link) => (
                 <li key={link.name}>
-                  <motion.div variants={linkVariants} whileHover="hover">
+                  <div className="transition-transform duration-200 hover:scale-105 origin-left">
                     <Link 
                       href={link.href}
-                      className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                      className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors block"
                     >
                       {link.name}
                     </Link>
-                  </motion.div>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -117,24 +89,22 @@ const Footer = () => {
                 { name: 'Twitter', href: '#', Icon: Twitter, label: 'Follow us on Twitter' },
                 { name: 'LinkedIn', href: '#', Icon: Linkedin, label: 'Connect on LinkedIn' }
               ].map((social) => (
-                <motion.a
+                <a
                   key={social.name}
                   href={social.href}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 hover:-translate-y-1 hover:scale-110 active:scale-95"
                   aria-label={social.label}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <social.Icon className="w-5 h-5" aria-hidden="true" />
-                </motion.a>
+                </a>
               ))}
             </div>
           </div>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   )
 }
 
