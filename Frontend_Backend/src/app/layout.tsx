@@ -32,14 +32,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/logo_black.webp" },
-      { url: "/logo_black.webp", sizes: "16x16", type: "image/webp" },
-      { url: "/logo_black.webp", sizes: "32x32", type: "image/webp" },
-      { url: "/logo_black.webp", sizes: "192x192", type: "image/webp" },
-      { url: "/logo_black.webp", sizes: "512x512", type: "image/webp" }
+      { url: "/bg_white.webp" },
+      { url: "/bg_white.webp", sizes: "16x16", type: "image/webp" },
+      { url: "/bg_white.webp", sizes: "32x32", type: "image/webp" },
+      { url: "/bg_white.webp", sizes: "192x192", type: "image/webp" },
+      { url: "/bg_white.webp", sizes: "512x512", type: "image/webp" }
     ],
-    shortcut: "/logo_black.webp",
-    apple: "/logo_black.webp",
+    shortcut: "/bg_white.webp",
+    apple: "/bg_white.webp",
   },
   manifest: "/manifest.json",
   openGraph: {
@@ -110,8 +110,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
-        <title>AlgoGrid - Master DSA Patterns &amp; Coding Challenges</title>
-
         {/* Inline script to set theme BEFORE first paint — eliminates FOUC & theme re-render */}
         <script
           dangerouslySetInnerHTML={{
@@ -121,14 +119,10 @@ export default function RootLayout({
 
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
-        <link rel="icon" type="image/webp" href="/logo_black.webp" />
-        <link rel="apple-touch-icon" href="/logo_black.webp" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta charSet="UTF-8" />
       </head>
       <body className="font-normal text-black dark:text-white transition-colors">
         {/* Universal Background grids */}
