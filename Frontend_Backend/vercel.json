@@ -1,6 +1,9 @@
 {
   "version": 2,
   "functions": {
+    "src/app/api/run-code/route.ts": {
+      "maxDuration": 60
+    },
     "src/app/api/**/*.ts": {
       "maxDuration": 10
     }

@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
           'compiler-option-raw': '-O2',
           'runtime-option-raw': '',
         }),
-        signal: AbortSignal.timeout(30000),
+        signal: AbortSignal.timeout(55000),
       });
 
       if (!wandboxRes.ok) {

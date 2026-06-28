@@ -484,22 +484,23 @@ export default function RevisionPage() {
 
       if (!data.success) {
         if (data.error === 'Compilation Error') {
-          setCompileError(data.compileError || 'Compilation failed')
+          setCompileError(typeof data.compileError === 'string' ? data.compileError : 'Compilation failed')
         } else if (data.error === 'Runtime Error') {
           setRunError(`Runtime Error (exit code ${data.exitCode}): ${data.runtimeError || 'Unknown error'}`)
         } else {
-          setRunError(data.error || 'Failed to run code')
+          setRunError(typeof data.error === 'string' ? data.error : 'Failed to run code')
         }
         return
       }
 
       setTestResults(data.results ?? null)
     } catch (error) {
-      const axiosErr = error as { response?: { data?: { error?: string } } }
-      if (axiosErr?.response?.data?.error) {
-        setRunError(axiosErr.response.data.error)
+      const axiosErr = error as { response?: { data?: { error?: unknown } }; message?: string }
+      const errMsg = axiosErr?.response?.data?.error
+      if (typeof errMsg === 'string' && errMsg) {
+        setRunError(errMsg)
       } else {
-        setRunError('Failed to run code. Please try again.')
+        setRunError(axiosErr?.message || 'Failed to run code. Please try again.')
       }
     } finally {
       setRunningCode(false)
