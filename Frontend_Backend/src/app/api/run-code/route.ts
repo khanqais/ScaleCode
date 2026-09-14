@@ -11,16 +11,41 @@ import {
 } from '@/utils/cppDriver';
 
 
-const WANDBOX_URL = 'https://wandbox.org/api/compile.json';
+const GODBOLT_URL = 'https://godbolt.org/api/compiler/g132/compile';
 
-interface WandboxResponse {
-  status: string;           
-  program_output?: string;  
-  program_error?: string;    
-  compiler_error?: string;   
-  compiler_message?: string; 
-  signal?: string;           
-  program_message?: string;  
+interface GodboltLine {
+  text: string;
+}
+
+interface GodboltExecResult {
+  code: number;
+  signal?: string;
+  stdout: GodboltLine[];
+  stderr: GodboltLine[];
+  buildResult?: {
+    code: number;
+    stdout: GodboltLine[];
+    stderr: GodboltLine[];
+  };
+}
+
+interface GodboltResponse {
+  code: number;
+  signal?: string;
+  stdout: GodboltLine[];
+  stderr: GodboltLine[];
+  didExecute?: boolean;
+  buildResult?: {
+    code: number;
+    stdout: GodboltLine[];
+    stderr: GodboltLine[];
+  };
+  asm?: unknown[];
+}
+
+function joinLines(lines: GodboltLine[] | undefined): string {
+  if (!lines || lines.length === 0) return '';
+  return lines.map(l => l.text).join('\n');
 }
 
 interface TestCaseResult {
@@ -32,11 +57,8 @@ interface TestCaseResult {
   error?: string;
 }
 
-
-
 export async function POST(request: NextRequest) {
   try {
-    
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -72,7 +94,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    
     const testCases = problem.testCases as Array<{
       input: string;
       expectedOutput: string;
@@ -122,36 +143,52 @@ export async function POST(request: NextRequest) {
 
     const stdin = buildStdin(validTestCases);
 
-    let wandboxResult: WandboxResponse;
+    let godboltResult: GodboltResponse;
     try {
-      const wandboxRes = await fetch(WANDBOX_URL, {
+      const res = await fetch(GODBOLT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         body: JSON.stringify({
-          code: fullProgram,
-          compiler: 'gcc-head',
-          options: 'warning,gnu++17',
-          stdin: stdin,
-          'compiler-option-raw': '-O2',
-          'runtime-option-raw': '',
+          source: fullProgram,
+          compiler: 'g132',
+          options: {
+            userArguments: '-O2 -std=gnu++17',
+            executeParameters: {
+              args: [],
+              stdin: stdin,
+            },
+            compilerOptions: {
+              executorRequest: true,  // run the program, not just compile
+            },
+            filters: {
+              execute: true,
+            },
+            tools: [],
+            libraries: [],
+          },
+          lang: 'c++',
+          allowStoreCodeDebug: false,
         }),
-        signal: AbortSignal.timeout(55000),
+        signal: AbortSignal.timeout(35000),
       });
 
-      if (!wandboxRes.ok) {
-        const text = await wandboxRes.text();
+      if (!res.ok) {
+        const text = await res.text();
         return NextResponse.json(
-          { success: false, error: `Code execution service error (${wandboxRes.status}): ${text}` },
+          { success: false, error: `Code execution service error (${res.status}): ${text}` },
           { status: 502 }
         );
       }
 
-      wandboxResult = await wandboxRes.json() as WandboxResponse;
+      godboltResult = await res.json() as GodboltResponse;
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
       if (msg.includes('timed out') || msg.includes('AbortError')) {
         return NextResponse.json(
-          { success: false, error: 'Code execution timed out. The execution service may be unavailable.' },
+          { success: false, error: 'Code execution timed out. Please try again.' },
           { status: 504 }
         );
       }
@@ -161,21 +198,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for compilation errors (status !== "0" and no program_output usually means compile fail)
-    const compilerError = wandboxResult.compiler_error || '';
-    const hasCompileError = compilerError.toLowerCase().includes('error');
-    
-    if (hasCompileError && !wandboxResult.program_output) {
+
+    const buildCode = godboltResult.buildResult?.code ?? 0;
+    if (buildCode !== 0 && !godboltResult.didExecute) {
+      const compileStderr = joinLines(godboltResult.buildResult?.stderr);
       return NextResponse.json({
         success: false,
         error: 'Compilation Error',
-        compileError: compilerError || wandboxResult.compiler_message || 'Unknown compilation error',
+        compileError: compileStderr || 'Unknown compilation error',
       }, { status: 200 });
     }
 
-    if (wandboxResult.signal) {
-      const sig = wandboxResult.signal.toLowerCase();
-      if (sig.includes('kill') || sig.includes('timeout')) {
+
+    if (godboltResult.signal) {
+      const sig = godboltResult.signal.toUpperCase();
+      if (sig === 'SIGKILL' || sig.includes('KILL')) {
         return NextResponse.json({
           success: false,
           error: 'Time Limit Exceeded',
@@ -185,25 +222,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Runtime Error',
-        runtimeError: wandboxResult.program_error || `Signal: ${wandboxResult.signal}`,
-        exitCode: parseInt(wandboxResult.status) || 1,
+        runtimeError: joinLines(godboltResult.stderr) || `Killed by signal: ${godboltResult.signal}`,
       }, { status: 200 });
     }
 
-    if (wandboxResult.status !== '0' && wandboxResult.status !== undefined) {
-      const statusNum = parseInt(wandboxResult.status);
-      if (statusNum !== 0 && !isNaN(statusNum)) {
-        return NextResponse.json({
-          success: false,
-          error: 'Runtime Error',
-          runtimeError: wandboxResult.program_error || 'Program exited with non-zero status',
-          exitCode: statusNum,
-        }, { status: 200 });
-      }
+
+    if (godboltResult.code !== 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'Runtime Error',
+        runtimeError: joinLines(godboltResult.stderr) || `Program exited with code ${godboltResult.code}`,
+        exitCode: godboltResult.code,
+      }, { status: 200 });
     }
 
-    // Parse outputs and compare
-    const stdout = wandboxResult.program_output || '';
+    const stdout = joinLines(godboltResult.stdout);
     const actualOutputs = parseOutput(stdout, validTestCases.length);
     const results: TestCaseResult[] = [];
     let allPassed = true;
@@ -230,7 +263,7 @@ export async function POST(request: NextRequest) {
       results,
       totalTests: validTestCases.length,
       passedTests: results.filter(r => r.passed).length,
-      stderr: wandboxResult.program_error || undefined,
+      stderr: joinLines(godboltResult.stderr) || undefined,
     });
 
   } catch (error: unknown) {
